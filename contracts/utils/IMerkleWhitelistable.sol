@@ -9,7 +9,7 @@ pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-abstract contract IWhitelistable {
+abstract contract IMerkleWhitelistable {
 	// Errors
 	error IWhitelistable_NOT_SET();
 	error IWhitelistable_CONSUMED( address account );

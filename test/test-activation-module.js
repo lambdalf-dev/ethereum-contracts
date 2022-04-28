@@ -2,22 +2,22 @@ const TEST_ACTIVATION = {
 	CORRECT_INPUT : true,
 	INVALID_INPUT : false,
 	// UTILS
-	ERC2981Base          : false,
-	IInitializable       : false,
-	IOwnable             : false,
-	IPausable            : false,
-	ITradable            : false,
-	IMerkleWhitelistable : true,
+	ERC2981Base          : true,
+	IInitializable       : true,
+	IOwnable             : true,
+	IPausable            : true,
+	ITradable            : true,
+	IMerkleWhitelistable : false,
 	// ERC721
+	Consec_ERC721Batch         : true,
 	ERC721A                    : false,
 	ERC721B                    : false,
 	ERC721OZ                   : false,
-	Consec_ERC721Batch         : false,
-	Reg_ERC721Batch            : false,
+	Reg_ERC721Batch            : true,
 	// ERC721 EXTENSIONS
-	Consec_ERC721BatchBurnable : false,
-	Reg_ERC721BatchBurnable    : false,
+	Consec_ERC721BatchBurnable : true,
 	ERC721BatchStakable        : false,
+	Reg_ERC721BatchBurnable    : true,
 	// ERC20
 	ERC20Base         : false,
 	// ERC20 EXTENSIONS
