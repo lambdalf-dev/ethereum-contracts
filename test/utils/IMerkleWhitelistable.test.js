@@ -58,6 +58,10 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 				SIGNATURE             : `setWhitelist(bytes32)`,
 				PARAMS                : [ `root_` ],
 			},
+			isAccountWhitelisted    : {
+				SIGNATURE             : `isAccountWhitelisted(address,bytes32[])`,
+				PARAMS                : [ `account_`, `proof_` ],
+			},
 		},
 	}
 
@@ -67,6 +71,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 			checkWhitelistAllowance : true,
 			consumeWhitelist        : true,
 			setWhitelist            : true,
+			isAccountWhitelisted    : true,
 		},
 	  ACCESS_LIST        : {
 	    "0x0010e29271bbca7abfbbbda1bdec668720cca795": 1,
@@ -166,6 +171,13 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 							merkleTree.root,
 						]
 					}
+					defaultArgs [ CONTRACT.METHODS.isAccountWhitelisted.SIGNATURE ] = {
+						err  : null,
+						args : [
+							users[ TOKEN_OWNER ].address,
+							merkleProof,
+						]
+					}
 				})
 
 				Object.entries( CONTRACT.METHODS ).forEach( function( [ prop, val ] ) {
@@ -206,6 +218,40 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
 				})
 
+				describe( CONTRACT.METHODS.checkWhitelistAllowance.SIGNATURE, function () {
+					if ( TEST.METHODS.checkWhitelistAllowance ) {
+						it( `Should revert when whitelist is not set`, async function () {
+							accesslist = TEST.ACCESS_LIST
+							accesslist[ users[ TOKEN_OWNER ].address ] = 1
+							merkleTree = generateRoot( accesslist )
+							maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
+
+							const account = users[ TOKEN_OWNER ].address
+							const proof   = merkleProof
+							await shouldRevertWhenWitelistIsNotSet(
+								contract.checkWhitelistAllowance( account, proof )
+							)
+						})
+					}
+				})
+
+				describe( CONTRACT.METHODS.isAccountWhitelisted.SIGNATURE, function () {
+					if ( TEST.METHODS.isAccountWhitelisted ) {
+						it( `Should revert when whitelist is not set`, async function () {
+							accesslist = TEST.ACCESS_LIST
+							accesslist[ users[ TOKEN_OWNER ].address ] = 1
+							merkleTree = generateRoot( accesslist )
+							maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
+
+							const account = users[ TOKEN_OWNER ].address
+							const proof   = merkleProof
+							await shouldRevertWhenWitelistIsNotSet(
+								contract.isAccountWhitelisted( account, proof )
+							)
+						})
+					}
+				})
+
 				describe( CONTRACT.METHODS.setWhitelist.SIGNATURE, function () {
 					if ( TEST.METHODS.setWhitelist ) {
 						describe( `Setting up a whitelist`, function () {
@@ -215,8 +261,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 								merkleTree = generateRoot( accesslist )
 								maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
 
-								// const root = `0x${ merkleTree.root }`
-								const root = merkleTree.root
+								const root = `0x${ merkleTree.root }`
+								// const root = merkleTree.root
 								await expect(
 									contract.connect( users[ CONTRACT_DEPLOYER ] )
 													.setWhitelist( root )
@@ -271,8 +317,14 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 										await contract.connect( users[ TOKEN_OWNER ] )
 																	.consumeWhitelist( proof )
 
-										shouldRevertWhenWhitelistIsConsumed(
-											await contract.checkWhitelistAllowance( account, proof )
+										await shouldRevertWhenWhitelistIsConsumed(
+											contract.checkWhitelistAllowance( account, proof ),
+											account
+										)
+
+										await shouldRevertWhenWhitelistIsConsumed(
+											contract.isAccountWhitelisted( account, proof ),
+											account
 										)
 									})
 								}

@@ -242,6 +242,12 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 												.approve( to, tokenId ),
 								tokenId
 							)
+
+							await shouldRevertWhenRequestedTokenDoesNotExist(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.approve( to, 0 ),
+								0
+							)
 						})
 
 						it( `Should be reverted when caller is not approved operator`, async function () {

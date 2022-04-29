@@ -18,7 +18,7 @@ abstract contract IMerkleWhitelistable {
 	bytes32 private _root;
 	mapping( address => uint256 ) private _consumed;
 
-	modifier isWhitelisted( address account_, bytes32[] memory proof_/*, uint256 passMax_, uint256 qty_*/ ) {
+	modifier isWhitelisted( address account_, bytes32[] memory proof_, uint256 passMax_, uint256 qty_ ) {
 		// if ( qty_ > passMax_ ) {
 		// 	revert IWhitelistable_FORBIDDEN( account_ );
 		// }

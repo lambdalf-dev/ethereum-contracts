@@ -157,6 +157,16 @@
 					}
 				})
 
+				describe( CONTRACT.METHODS.totalSupply.SIGNATURE, function () {
+					if ( TEST.METHODS.totalSupply ) {
+						it( `Total supply should now be ${ TEST.MINTED_SUPPLY - 1 }`, async function () {
+							expect(
+								await contract.totalSupply()
+							).to.equal( TEST.MINTED_SUPPLY - 1 )
+						})
+					}
+				})
+
 				describe( CONTRACT.METHODS.getApproved.SIGNATURE, function () {
 					if ( TEST.METHODS.getApproved ) {
 						it( `Approved addresses for burnt token should be the NULL address`, async function() {

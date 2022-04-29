@@ -7,7 +7,7 @@ const TEST_ACTIVATION = {
 	IOwnable             : true,
 	IPausable            : true,
 	ITradable            : true,
-	IMerkleWhitelistable : false,
+	IMerkleWhitelistable : true,
 	// ERC721
 	Consec_ERC721Batch         : true,
 	ERC721A                    : false,
