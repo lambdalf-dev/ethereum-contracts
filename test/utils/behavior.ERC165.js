@@ -55,7 +55,7 @@
 // **************************************
 // *****        TEST  SUITES        *****
 // **************************************
-	function shouldSupportInterface ( fixture, interfaces ) {
+	function shouldSupportInterface ( fixture, interfaces, CONTRACT ) {
 		describe( CONTRACT.METHODS.supportsInterface.SIGNATURE, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {

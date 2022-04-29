@@ -27,6 +27,10 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 		getTestCasesByFunction,
 		generateTestCase
 	} = require( `../fail-test-module` )
+
+	const {
+		INTERFACE_ID,
+	} = require( '../utils/behavior.ERC165' )
 // **************************************
 
 // **************************************
@@ -97,9 +101,6 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 	function shouldBehaveLikeERC721BatchBeforeMint ( fixture, TEST, CONTRACT ) {
 		describe( `Should behave like ERC721Batch before any token is minted`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
-				before( async function () {
-				})
-
 				beforeEach( async function () {
 					const {
 						test_user1,
@@ -336,10 +337,38 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							)
 						})
 
-						it( `${ USER_NAMES[ TOKEN_OWNER ] } safe transfering token ${ TEST.FIRST_TOKEN } owned`, async function () {
+						it( `Safe transfer of very first minted token`, async function () {
 							const from    = users[ TOKEN_OWNER ].address
 							const to      = users[ USER1       ].address
 							const tokenId = TEST.FIRST_TOKEN
+							await shouldEmitTransferEvent(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+								contract,
+								from,
+								to,
+								tokenId
+							)
+						})
+
+						it( `Safe transfer of very last minted token`, async function () {
+							const from    = users[ TOKEN_OWNER ].address
+							const to      = users[ USER1       ].address
+							const tokenId = TEST.LAST_TOKEN
+							await shouldEmitTransferEvent(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+								contract,
+								from,
+								to,
+								tokenId
+							)
+						})
+
+						it( `${ USER_NAMES[ TOKEN_OWNER ] } safe transfering token ${ TEST.TOKEN_OWNER_FIRST } owned`, async function () {
+							const from    = users[ TOKEN_OWNER ].address
+							const to      = users[ USER1       ].address
+							const tokenId = TEST.TOKEN_OWNER_FIRST
 							await shouldEmitTransferEvent(
 								contract.connect( users[ TOKEN_OWNER ] )
 												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
@@ -582,10 +611,40 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							)
 						})
 
-						it( `${ USER_NAMES[ TOKEN_OWNER ] } safe transfering token ${ TEST.FIRST_TOKEN } owned`, async function () {
+						it( `Safe transfer of very first minted token`, async function () {
 							const from    = users[ TOKEN_OWNER ].address
 							const to      = users[ USER1       ].address
 							const tokenId = TEST.FIRST_TOKEN
+							const data    = '0x'
+							await shouldEmitTransferEvent(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+								contract,
+								from,
+								to,
+								tokenId
+							)
+						})
+
+						it( `Safe transfer of very last minted token`, async function () {
+							const from    = users[ TOKEN_OWNER ].address
+							const to      = users[ USER1       ].address
+							const tokenId = TEST.LAST_TOKEN
+							const data    = '0x'
+							await shouldEmitTransferEvent(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+								contract,
+								from,
+								to,
+								tokenId
+							)
+						})
+
+						it( `${ USER_NAMES[ TOKEN_OWNER ] } safe transfering token ${ TEST.TOKEN_OWNER_FIRST } owned`, async function () {
+							const from    = users[ TOKEN_OWNER ].address
+							const to      = users[ USER1       ].address
+							const tokenId = TEST.TOKEN_OWNER_FIRST
 							const data    = `0x`
 							await shouldEmitTransferEvent(
 								contract.connect( users[ TOKEN_OWNER ] )
@@ -889,10 +948,38 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							)
 						})
 
-						it( `${ USER_NAMES[ TOKEN_OWNER ] } transfering token ${ TEST.FIRST_TOKEN } owned`, async function () {
+						it( `Transfer of very first minted token`, async function () {
 							const from    = users[ TOKEN_OWNER ].address
 							const to      = users[ USER1       ].address
 							const tokenId = TEST.FIRST_TOKEN
+							await shouldEmitTransferEvent(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.transferFrom( from, to, tokenId ),
+								contract,
+								from,
+								to,
+								tokenId
+							)
+						})
+
+						it( `Transfer of very last minted token`, async function () {
+							const from    = users[ TOKEN_OWNER ].address
+							const to      = users[ USER1       ].address
+							const tokenId = TEST.LAST_TOKEN
+							await shouldEmitTransferEvent(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.transferFrom( from, to, tokenId ),
+								contract,
+								from,
+								to,
+								tokenId
+							)
+						})
+
+						it( `${ USER_NAMES[ TOKEN_OWNER ] } transfering token ${ TEST.TOKEN_OWNER_FIRST } owned`, async function () {
+							const from    = users[ TOKEN_OWNER ].address
+							const to      = users[ USER1       ].address
+							const tokenId = TEST.TOKEN_OWNER_FIRST
 							await shouldEmitTransferEvent(
 								contract.connect( users[ TOKEN_OWNER ] )
 												.transferFrom( from, to, tokenId ),

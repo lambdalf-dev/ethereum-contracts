@@ -195,7 +195,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Reg_ERC72
 	const OTHER_OWNER_FIRST       = TOKEN_OWNER_LAST + 1
 	const OTHER_OWNER_LAST        = OTHER_OWNER_FIRST + OTHER_OWNER_SUPPLY - 1
 	// NON EXISTENT
-	const LAST_TOKEN              = FIRST_TOKEN + TOKEN_OWNER_SUPPLY + OTHER_OWNER_SUPPLY -1
+	const LAST_TOKEN              = FIRST_TOKEN + INIT_SUPPLY + TOKEN_OWNER_SUPPLY + OTHER_OWNER_SUPPLY - 1
 	const UNMINTED_TOKEN          = TOKEN_OWNER_SUPPLY + OTHER_OWNER_SUPPLY + 10
 	// METADATA
 	const INIT_BASE_URI           = `https://api.exemple.com/`
@@ -250,8 +250,9 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Reg_ERC72
 		INIT_SUPPLY                 : INIT_SUPPLY,
 		MINTED_SUPPLY               : INIT_SUPPLY + TOKEN_OWNER_SUPPLY + OTHER_OWNER_SUPPLY,
 		// TARGET TOKEN
-		FIRST_TOKEN                 : INIT_SUPPLY + FIRST_TOKEN,
-		SECOND_TOKEN                : INIT_SUPPLY + SECOND_TOKEN,
+		FIRST_TOKEN                 : FIRST_TOKEN,
+		SECOND_TOKEN                : SECOND_TOKEN,
+		LAST_TOKEN                  : LAST_TOKEN,
 		TARGET_TOKEN                : INIT_SUPPLY + TARGET_TOKEN,
 		UNMINTED_TOKEN              : INIT_SUPPLY + UNMINTED_TOKEN,
 		// TOKEN OWNER
@@ -882,7 +883,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Reg_ERC72
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
 		testInvalidInputs( noMintFixture, TEST_DATA, CONTRACT_INTERFACE )
-		shouldSupportInterface( noMintFixture, TEST_DATA.INTERFACES )
+		shouldSupportInterface( noMintFixture, TEST_DATA.INTERFACES, CONTRACT_INTERFACE )
 		shouldBehaveLikeERC721BatchBeforeMint( noMintFixture, TEST_DATA, CONTRACT_INTERFACE )
 		shouldBehaveLikeERC721BatchEnumerableBeforeMint( noMintFixture, TEST_DATA, CONTRACT_INTERFACE )
 		shouldBehaveLikeMock_Reg_ERC721BatchBurnableBeforeMint( noMintFixture, TEST_DATA, CONTRACT_INTERFACE )

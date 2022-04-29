@@ -250,7 +250,7 @@ const ARTIFACT = require( '../../artifacts/contracts/mocks/utils/Mock_ERC2981Bas
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
 		// testInvalidInputs( fixture, TEST_DATA )
-		shouldSupportInterface( fixture, TEST_DATA.INTERFACES )
+		shouldSupportInterface( fixture, TEST_DATA.INTERFACES, CONTRACT_INTERFACE )
 		shouldBehaveLikeERC2981Base( fixture, TEST_DATA, CONTRACT_INTERFACE )
 	}
 })
