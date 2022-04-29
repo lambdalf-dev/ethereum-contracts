@@ -30,6 +30,7 @@ const ARTIFACT = require( '../../artifacts/contracts/mocks/utils/Mock_ERC2981Bas
 	} = require( '../fail-test-module' )
 
 	const {
+		INTERFACE_ID,
 		shouldSupportInterface,
 	} = require( '../utils/behavior.ERC165' )
 
@@ -215,7 +216,7 @@ const ARTIFACT = require( '../../artifacts/contracts/mocks/utils/Mock_ERC2981Bas
 					defaultArgs[ CONTRACT.METHODS.supportsInterface.SIGNATURE ] = {
 						err  : null,
 						args : [
-							CST.INTERFACE_ID.IERC165,
+							INTERFACE_ID.IERC165,
 						]
 					}
 					defaultArgs [ CONTRACT.METHODS.setRoyaltyInfo.SIGNATURE ] = {

@@ -30,6 +30,12 @@
 // **************************************
 // *****       TEST VARIABLES       *****
 // **************************************
+	// SALE STATE
+	const SALE_STATE = {
+		CLOSED  : 0,
+		PRESALE : 1,
+		SALE    : 2,
+	}
 	let contract
 	let users = {}
 // **************************************
@@ -81,10 +87,10 @@
 				describe( `Default sale state is CLOSED`, function () {
 					describe( CONTRACT.METHODS.saleState.SIGNATURE, function () {
 						if ( TEST.METHODS.saleState ) {
-							it( `Should be ${ CST.SALE_STATE.CLOSED }`, async function () {
+							it( `Should be ${ SALE_STATE.CLOSED }`, async function () {
 								expect(
 									await contract.saleState()
-								).to.equal( CST.SALE_STATE.CLOSED )
+								).to.equal( SALE_STATE.CLOSED )
 							})
 						}
 					})
@@ -93,8 +99,8 @@
 				describe( CONTRACT.METHODS.setSaleState.SIGNATURE, function () {
 					if ( TEST.METHODS.setSaleState ) {
 						it( `Setting the sale state to PRESALE`, async function () {
-							const previousState = CST.SALE_STATE.CLOSE
-							const newState      = CST.SALE_STATE.PRESALE
+							const previousState = SALE_STATE.CLOSE
+							const newState      = SALE_STATE.PRESALE
 							await shouldEmitSaleStateChangedEvent(
 								contract.connect( users[ CONTRACT_DEPLOYER ] )
 												.setSaleState( newState ),
@@ -109,8 +115,8 @@
 						})
 
 						it( `Setting the sale state to SALE`, async function () {
-							const previousState = CST.SALE_STATE.CLOSE
-							const newState      = CST.SALE_STATE.SALE
+							const previousState = SALE_STATE.CLOSE
+							const newState      = SALE_STATE.SALE
 							await shouldEmitSaleStateChangedEvent(
 								contract.connect( users[ CONTRACT_DEPLOYER ] )
 												.setSaleState( newState ),
@@ -134,6 +140,7 @@
 // *****           EXPORT           *****
 // **************************************
 module.exports = {
+	SALE_STATE,
 	shouldBehaveLikeIPausable,
 	shouldEmitSaleStateChangedEvent,
 	shouldRevertWhenSaleStateIsNotClose,

@@ -28,8 +28,9 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 	} = require( `../fail-test-module` )
 
 	const {
+		INTERFACE_ID,
 		shouldSupportInterface,
-	} = require( `../utils/behavior.ERC165` )
+	} = require( '../utils/behavior.ERC165' )
 
 	const {
 		ERC721ReceiverError,
@@ -571,7 +572,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 						defaultArgs[ CONTRACT.METHODS.supportsInterface.SIGNATURE ] = {
 							err  : null,
 							args : [
-								CST.INTERFACE_ID.IERC165,
+								INTERFACE_ID.IERC165,
 							]
 						}
 						defaultArgs[ CONTRACT.METHODS.symbol.SIGNATURE ] = {
@@ -674,7 +675,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 							})
 
 							it( `Should be reverted when minting to a receiver contract returning unexpected value`, async function () {
-								const retval = CST.INTERFACE_ID.IERC165
+								const retval = INTERFACE_ID.IERC165
 								const error  = ERC721ReceiverError.None
 								const holder_params = [
 									retval,
@@ -694,7 +695,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 							})
 
 							it( `Should be reverted when minting to a receiver contract that reverts with custom error`, async function () {
-								const retval = CST.INTERFACE_ID.IERC721Receiver
+								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithERC721ReceiverError
 								const holder_params = [
 									retval,
@@ -715,7 +716,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 							})
 
 							it( `Should be reverted when minting to a receiver contract that reverts with message`, async function () {
-								const retval = CST.INTERFACE_ID.IERC721Receiver
+								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithMessage
 								const holder_params = [
 									retval,
@@ -736,7 +737,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 							})
 
 							it( `Should be reverted when minting to a receiver contract that reverts without message`, async function () {
-								const retval = CST.INTERFACE_ID.IERC721Receiver
+								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithoutMessage
 								const holder_params = [
 									retval,
@@ -756,7 +757,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 							})
 
 							it( `Should be reverted when minting to a receiver contract that panics`, async function () {
-								const retval = CST.INTERFACE_ID.IERC721Receiver
+								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.Panic
 								const holder_params = [
 									retval,
@@ -777,7 +778,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 							})
 
 							it( `To a valid ERC721Receiver contract`, async function () {
-								const retval = CST.INTERFACE_ID.IERC721Receiver
+								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.None
 								const holder_params = [
 									retval,

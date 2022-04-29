@@ -28,6 +28,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 	} = require( `../fail-test-module` )
 
 	const {
+		SALE_STATE,
 		shouldBehaveLikeIPausable,
 		shouldEmitSaleStateChangedEvent,
 		shouldRevertWhenSaleStateIsNotClose,
@@ -149,7 +150,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 					defaultArgs [ CONTRACT.METHODS.setSaleState.SIGNATURE ] = {
 						err  : null,
 						args : [
-							CST.SALE_STATE.SALE,
+							SALE_STATE.SALE,
 						],
 					}
 					defaultArgs [ CONTRACT.METHODS.saleIsClosed.SIGNATURE ] = {
@@ -215,8 +216,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 
 			describe( `Switch state: PRESALE`, function () {
 				beforeEach( async function () {
-					const previousState = CST.SALE_STATE.CLOSE
-					const newState      = CST.SALE_STATE.PRESALE
+					const previousState = SALE_STATE.CLOSE
+					const newState      = SALE_STATE.PRESALE
 					await shouldEmitSaleStateChangedEvent(
 						contract.connect( users[ CONTRACT_DEPLOYER ] )
 										.setSaleState( newState ),
@@ -247,8 +248,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 
 			describe( `Switch state: SALE`, function () {
 				beforeEach( async function () {
-					const previousState = CST.SALE_STATE.CLOSE
-					const newState      = CST.SALE_STATE.SALE
+					const previousState = SALE_STATE.CLOSE
+					const newState      = SALE_STATE.SALE
 					await shouldEmitSaleStateChangedEvent(
 						contract.connect( users[ CONTRACT_DEPLOYER ] )
 										.setSaleState( newState ),
