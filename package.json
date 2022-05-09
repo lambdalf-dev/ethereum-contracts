@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "An alternative to Open Zeppelin contracts for deployment with cheaper gas cost",
   "main": "index.js",
-  "repository": "https://github.com/silvereh/EthereumContracts.git",
-  "author": "Lambdalf the White <silvere.heraudeau@gmail.com>",
+  "repository": "https://github.com/lambdalf-dev/EthereumContracts.git",
+  "author": "Lambdalf the White <silvereh@protonmail.com>",
   "license": "MIT",
   "private": true,
   "devDependencies": {
@@ -29,9 +29,7 @@
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.13",
     "solhint": "^3.3.6",
-    "solidity-coverage": "^0.7.17"
-  },
-  "dependencies": {
+    "solidity-coverage": "^0.7.17",
     "hardhat-watcher": "^2.1.1",
     "merkletreejs": "^0.2.31"
   }

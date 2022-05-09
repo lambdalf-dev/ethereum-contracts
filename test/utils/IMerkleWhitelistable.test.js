@@ -84,7 +84,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 	}
 
 	let accesslist = {}
-	let merkleProof = []
 	let merkleTree = { tree: undefined, root: '0x' }
 	let maxPass
 	let users = {}
@@ -109,6 +108,9 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
 		await test_contract.deployed()
 
+		test_accesslist = JSON.parse( JSON.stringify( TEST_DATA.ACCESS_LIST ) )
+		test_accesslist[ test_token_owner.address ] = 1
+
 		return {
 			test_user1,
 			test_user2,
@@ -117,6 +119,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 			test_token_owner,
 			test_other_owner,
 			test_contract_deployer,
+			test_accesslist,
 		}
 	}
 // **************************************
@@ -136,9 +139,11 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 						test_token_owner,
 						test_other_owner,
 						test_contract_deployer,
+						test_accesslist,
 					} = await loadFixture( fixture )
 
 					contract       = test_contract
+					accesslist     = JSON.parse( JSON.stringify( test_accesslist ) )
 					users[ USER1             ] = test_user1
 					users[ USER2             ] = test_user2
 					users[ PROXY_USER        ] = test_proxy_user
@@ -146,10 +151,9 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 					users[ OTHER_OWNER       ] = test_other_owner
 					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
 
-					accesslist = TEST.ACCESS_LIST
-					accesslist[ users[ TOKEN_OWNER ].address ] = 1
+					const merkleProof = []
 					merkleTree = generateRoot( accesslist )
-					maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
+					maxPass    = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
 
 					defaultArgs = {}
 					defaultArgs [ CONTRACT.METHODS.checkWhitelistAllowance.SIGNATURE ] = {
@@ -207,9 +211,11 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 						test_token_owner,
 						test_other_owner,
 						test_contract_deployer,
+						test_accesslist,
 					} = await loadFixture( fixture )
 
 					contract       = test_contract
+					accesslist     = JSON.parse( JSON.stringify( test_accesslist ) )
 					users[ USER1             ] = test_user1
 					users[ USER2             ] = test_user2
 					users[ PROXY_USER        ] = test_proxy_user
@@ -221,8 +227,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 				describe( CONTRACT.METHODS.checkWhitelistAllowance.SIGNATURE, function () {
 					if ( TEST.METHODS.checkWhitelistAllowance ) {
 						it( `Should revert when whitelist is not set`, async function () {
-							accesslist = TEST.ACCESS_LIST
-							accesslist[ users[ TOKEN_OWNER ].address ] = 1
+							const merkleProof = []
 							merkleTree = generateRoot( accesslist )
 							maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
 
@@ -238,8 +243,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 				describe( CONTRACT.METHODS.isAccountWhitelisted.SIGNATURE, function () {
 					if ( TEST.METHODS.isAccountWhitelisted ) {
 						it( `Should revert when whitelist is not set`, async function () {
-							accesslist = TEST.ACCESS_LIST
-							accesslist[ users[ TOKEN_OWNER ].address ] = 1
+							const merkleProof = []
 							merkleTree = generateRoot( accesslist )
 							maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
 
@@ -256,8 +260,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 					if ( TEST.METHODS.setWhitelist ) {
 						describe( `Setting up a whitelist`, function () {
 							beforeEach( async function () {
-								accesslist = TEST.ACCESS_LIST
-								accesslist[ users[ TOKEN_OWNER ].address ] = 1
+								const merkleProof = []
 								merkleTree = generateRoot( accesslist )
 								maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
 
@@ -272,8 +275,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 							describe( CONTRACT.METHODS.checkWhitelistAllowance.SIGNATURE, function () {
 								if ( TEST.METHODS.checkWhitelistAllowance ) {
 									it( `${ USER_NAMES[ TOKEN_OWNER ] } is whitelisted`, async function () {
-										accesslist = TEST.ACCESS_LIST
-										accesslist[ users[ TOKEN_OWNER ].address ] = 1
+										const merkleProof = []
 										merkleTree = generateRoot( accesslist )
 										maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
 
@@ -288,8 +290,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 									})
 
 									it( `${ USER_NAMES[ OTHER_OWNER ] } is not whitelisted`, async function () {
-										accesslist = TEST.ACCESS_LIST
-										accesslist[ users[ TOKEN_OWNER ].address ] = 1
+										const merkleProof = []
 										merkleTree = generateRoot( accesslist )
 										maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
 
@@ -306,8 +307,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 							describe( CONTRACT.METHODS.consumeWhitelist.SIGNATURE, function () {
 								if ( TEST.METHODS.consumeWhitelist ) {
 									it( `${ USER_NAMES[ TOKEN_OWNER ] } consumes their whitelist allowance`, async function () {
-										accesslist = TEST.ACCESS_LIST
-										accesslist[ users[ TOKEN_OWNER ].address ] = 1
+										const merkleProof = []
 										merkleTree = generateRoot( accesslist )
 										maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
 
