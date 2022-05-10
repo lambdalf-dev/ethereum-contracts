@@ -22,11 +22,6 @@
 
 	const { ethers, waffle } = require( 'hardhat' )
 	const { loadFixture, deployContract } = waffle
-
-	const {
-		getTestCasesByFunction,
-		generateTestCase
-	} = require( '../fail-test-module' )
 // **************************************
 
 // **************************************
@@ -55,8 +50,8 @@
 // **************************************
 // *****        TEST  SUITES        *****
 // **************************************
-	function shouldSupportInterface ( fixture, interfaces, CONTRACT ) {
-		describe( CONTRACT.METHODS.supportsInterface.SIGNATURE, function () {
+	function shouldSupportInterface ( fixture, interfaces ) {
+		describe( `supportsInterface(bytes4)`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {

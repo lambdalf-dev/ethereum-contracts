@@ -313,7 +313,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Reg_ERC72
 		] = await ethers.getSigners()
 
 		test_contract_params = [
-			TEST_DATA.PARAMS.initSupply_,
 			TEST_DATA.PARAMS.baseURI_,
 			TEST_DATA.PARAMS.symbol_,
 			TEST_DATA.PARAMS.name_,
@@ -348,7 +347,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Reg_ERC72
 		] = await ethers.getSigners()
 
 		test_contract_params = [
-			TEST_DATA.PARAMS.initSupply_,
 			TEST_DATA.PARAMS.baseURI_,
 			TEST_DATA.PARAMS.symbol_,
 			TEST_DATA.PARAMS.name_,
@@ -398,7 +396,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Reg_ERC72
 		] = await ethers.getSigners()
 
 		test_contract_params = [
-			TEST_DATA.PARAMS.initSupply_,
 			TEST_DATA.PARAMS.baseURI_,
 			TEST_DATA.PARAMS.symbol_,
 			TEST_DATA.PARAMS.name_,

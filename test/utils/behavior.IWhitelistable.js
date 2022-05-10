@@ -22,11 +22,6 @@
 	const { loadFixture, deployContract } = waffle
 	
 	const { MerkleTree } = require( `merkletreejs` )
-
-	const {
-		getTestCasesByFunction,
-		generateTestCase
-	} = require( `../fail-test-module` )
 // **************************************
 
 // **************************************
@@ -45,7 +40,7 @@
       return ethers.utils.getAddress( account )
     }
     catch( err ) {
-      console.warn( err )
+      // console.warn( err )
       return account
     }
   }
@@ -68,14 +63,14 @@
 
     const merkleRoot = _merkle_.getRoot().toString( `hex` )
     // setRoot( merkleRoot )
-    console.debug( { merkleRoot } )
+    // console.debug( { merkleRoot } )
     return { root: merkleRoot, tree: _merkle_ }
   }
 
   function getProof ( merkle, account, proof ) {
     account = normalize( account )
     const maxQty = normalized[ account ]
-    console.debug( `MaxQty ${ maxQty }`)
+    // console.debug( `MaxQty ${ maxQty }`)
     if ( maxQty ) {
       const hashed = ethers.utils.keccak256( account )
       proof.push( ...merkle.getHexProof( hashed ) )

@@ -6,9 +6,9 @@
 
 pragma solidity 0.8.10;
 
-import "@openzeppelin/contracts/interfaces/IERC721Enumerable.sol";
-import "@openzeppelin/contracts/interfaces/IERC721Metadata.sol";
-import "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
+import "../../interfaces/IERC721Enumerable.sol";
+import "../../interfaces/IERC721Metadata.sol";
+import "../../interfaces/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 
 /**
@@ -18,7 +18,7 @@ abstract contract Consec_ERC721Batch is Context, IERC721Metadata, IERC721Enumera
   /**
   * @dev See EIP2309 https://eips.ethereum.org/EIPS/eip-2309
   */
-  event ConsecutiveTransfer(uint256 indexed fromTokenId, uint256 indexed toTokenId, address fromAddress, address indexed toAddress);
+  event ConsecutiveTransfer(uint256 indexed fromTokenId, uint256 toTokenId, address indexed fromAddress, address indexed toAddress);
 
   // Errors
   error IERC721_CALLER_NOT_APPROVED( address tokenOwner, address operator, uint256 tokenId );

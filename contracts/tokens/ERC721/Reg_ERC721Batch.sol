@@ -6,9 +6,9 @@
 
 pragma solidity 0.8.10;
 
-import "@openzeppelin/contracts/interfaces/IERC721Enumerable.sol";
-import "@openzeppelin/contracts/interfaces/IERC721Metadata.sol";
-import "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
+import "../../interfaces/IERC721Enumerable.sol";
+import "../../interfaces/IERC721Metadata.sol";
+import "../../interfaces/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 
 /**

@@ -21,11 +21,8 @@ import "../../tokens/ERC721/extensions/Reg_ERC721BatchBurnable.sol";
 * those functions should be avoided inside non-view functions.
 */
 contract Mock_Reg_ERC721BatchBurnable is Reg_ERC721BatchBurnable {
-	constructor( uint256 initSupply_, string memory baseURI_, string memory symbol_, string memory name_ ) {
+	constructor( string memory baseURI_, string memory symbol_, string memory name_ ) {
 		_initERC721Metadata( name_, symbol_, baseURI_ );
-		if ( initSupply_ > 0 ) {
-			_mint( _msgSender(), initSupply_ );
-		}
 	}
 
 	function mint( address to_, uint256 qty_ ) public {

@@ -22,11 +22,6 @@
 	const { loadFixture, deployContract } = waffle
 
 	const {
-		getTestCasesByFunction,
-		generateTestCase
-	} = require( `../fail-test-module` )
-
-	const {
 		shouldRevertWhenRequestedTokenDoesNotExist,
 	} = require( `./behavior.ERC721Batch` )
 // **************************************

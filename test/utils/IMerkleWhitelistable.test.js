@@ -281,9 +281,9 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 
 										const account = users[ TOKEN_OWNER ].address
 										const proof   = merkleProof
-										console.debug( `Account ${ account }`)
-										console.debug( accesslist )
-										console.debug( proof )
+										// console.debug( `Account ${ account }`)
+										// console.debug( accesslist )
+										// console.debug( proof )
 										expect(
 											await contract.checkWhitelistAllowance( account, proof )
 										).to.equal( maxPass )
@@ -300,6 +300,22 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 											contract.checkWhitelistAllowance( account, proof ),
 											account
 										)
+									})
+								}
+							})
+
+							describe( CONTRACT.METHODS.isAccountWhitelisted.SIGNATURE, function () {
+								if ( TEST.METHODS.isAccountWhitelisted ) {
+									it( `Should revert when whitelist is not set`, async function () {
+										const merkleProof = []
+										merkleTree = generateRoot( accesslist )
+										maxPass = getProof ( merkleTree.tree, users[ TOKEN_OWNER ].address, merkleProof )
+
+										const account = users[ TOKEN_OWNER ].address
+										const proof   = merkleProof
+										expect(
+											await contract.isAccountWhitelisted( account, proof )
+										).to.be.true
 									})
 								}
 							})

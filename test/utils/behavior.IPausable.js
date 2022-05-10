@@ -20,11 +20,6 @@
 
 	const { ethers, waffle } = require( `hardhat` )
 	const { loadFixture, deployContract } = waffle
-
-	const {
-		getTestCasesByFunction,
-		generateTestCase
-	} = require( `../fail-test-module` )
 // **************************************
 
 // **************************************

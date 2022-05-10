@@ -21,11 +21,8 @@ import "../../tokens/ERC721/Consec_ERC721Batch.sol";
 * those functions should be avoided inside non-view functions.
 */
 contract Mock_Consec_ERC721Batch is Consec_ERC721Batch {
-	constructor( uint256 initSupply_, string memory baseURI_, string memory symbol_, string memory name_ ) {
+	constructor( string memory baseURI_, string memory symbol_, string memory name_ ) {
 		_initERC721Metadata( name_, symbol_, baseURI_ );
-		if ( initSupply_ > 0 ) {
-			_mint( _msgSender(), initSupply_ );
-		}
 	}
 
 	function mint( address to_, uint256 qty_ ) public {

@@ -307,7 +307,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 		] = await ethers.getSigners()
 
 		test_contract_params = [
-			TEST_DATA.PARAMS.initSupply_,
 			TEST_DATA.PARAMS.baseURI_,
 			TEST_DATA.PARAMS.symbol_,
 			TEST_DATA.PARAMS.name_,
@@ -342,7 +341,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 		] = await ethers.getSigners()
 
 		test_contract_params = [
-			TEST_DATA.PARAMS.initSupply_,
 			TEST_DATA.PARAMS.baseURI_,
 			TEST_DATA.PARAMS.symbol_,
 			TEST_DATA.PARAMS.name_,
@@ -720,7 +718,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 								const qty         = 1
 								const to          = holder.address
 								const fromTokenId = TEST.FIRST_TOKEN
-								const toTokenId   = TEST.FIRST_TOKEN
+								const toTokenId   = TEST.INIT_SUPPLY + qty
 								const fromAddress = CST.ADDRESS_ZERO
 								await shouldEmitConsecutiveTransferEvent(
 									contract.connect( users[ TOKEN_OWNER ] )
@@ -729,7 +727,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 									fromTokenId,
 									toTokenId,
 									fromAddress,
-									to
+									to,
+									1
 								)
 
 								expect(
@@ -749,7 +748,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 								const qty         = TEST.TOKEN_OWNER_INIT_SUPPLY
 								const to          = users[ TOKEN_OWNER ].address
 								const fromTokenId = TEST.FIRST_TOKEN
-								const toTokenId   = qty
+								const toTokenId   = TEST.INIT_SUPPLY + qty
 								const fromAddress = CST.ADDRESS_ZERO
 								await shouldEmitConsecutiveTransferEvent(
 									contract.connect( users[ TOKEN_OWNER ] )

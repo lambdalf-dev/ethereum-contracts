@@ -24,11 +24,6 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 	const { loadFixture, deployContract } = waffle
 
 	const {
-		getTestCasesByFunction,
-		generateTestCase
-	} = require( `../fail-test-module` )
-
-	const {
 		INTERFACE_ID,
 	} = require( '../utils/behavior.ERC165' )
 // **************************************
@@ -50,15 +45,21 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 // *****        TEST  SUITES        *****
 // **************************************
 	async function shouldEmitApprovalEvent ( promise, contract, owner, approved, tokenId ) {
-		await expect( promise ).to.emit( contract, `Approval` ).withArgs( owner, approved, tokenId )
+		await expect( promise )
+			.to.emit( contract, `Approval` )
+			.withArgs( owner, approved, tokenId )
 	}
 
 	async function shouldEmitApprovalForAllEvent ( promise, contract, owner, operator, approved ) {
-		await expect( promise ).to.emit( contract, `ApprovalForAll` ).withArgs( owner, operator, approved )
+		await expect( promise )
+			.to.emit( contract, `ApprovalForAll` )
+			.withArgs( owner, operator, approved )
 	}
 
 	async function shouldEmitTransferEvent ( promise, contract, from, to, tokenId ) {
-		await expect( promise ).to.emit( contract, `Transfer` ).withArgs( from, to, tokenId )
+		await expect( promise )
+			.to.emit( contract, `Transfer` )
+			.withArgs( from, to, tokenId )
 	}
 
 	async function shouldRevertWhenCallerIsNotApproved ( promise, tokenOwner, operator, tokenId, error = `IERC721_CALLER_NOT_APPROVED` ) {
