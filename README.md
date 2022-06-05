@@ -1,6 +1,6 @@
 # Ethereum Contracts
 
-This project is an attempt to create a more efficient implementation of the common interfaces IERC20, IERC721, IERC1155 compared to Open Zeppelin's implementation.
+This project is an attempt to create a more efficient implementation of the common interface IERC721 compared to Open Zeppelin's implementation.
 
 Commands:
 
