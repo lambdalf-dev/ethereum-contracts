@@ -17,17 +17,6 @@ const TEST_ACTIVATION = {
 	// ERC721 EXTENSIONS
 	Consec_ERC721BatchBurnable : true,
 	Reg_ERC721BatchBurnable    : true,
-	// ERC20
-	ERC20Base         : false,
-	// ERC20 EXTENSIONS
-	ERC20BaseBurnable : false,
-	ERC20BaseCapped   : false,
-	ERC20BaseMetadata : false,
-	// ERC1155
-	ERC1155Base            : false,
-	// ERC1155 EXTENSIONS
-	ERC1155BaseMetadataURI : false,
-	ERC1155BaseBurnable    : false,
 	// NFT BASE
 	NFTBaseC : true,
 	NFTBaseR : true,
