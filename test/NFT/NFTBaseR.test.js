@@ -999,7 +999,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 // *****          TEST RUN          *****
 // **************************************
 describe( TEST_DATA.NAME, function () {
-	if ( true ) {
+	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
 		testInvalidInputs( deployFixture, TEST_DATA, CONTRACT_INTERFACE )
 		shouldSupportInterface( deployFixture, TEST_DATA.INTERFACES )
 		shouldBehaveLikeNFTAtDeploy( deployFixture, TEST_DATA, CONTRACT_INTERFACE )

@@ -3,7 +3,7 @@ const TEST_ACTIVATION = {
 	// *****           INPUTS           *****
 	// **************************************
 		CORRECT_INPUT                 : true,
-		INVALID_INPUT                 : true,
+		INVALID_INPUT                 : false,
 	// **************************************
 
 	// **************************************

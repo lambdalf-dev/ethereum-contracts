@@ -8,8 +8,20 @@ pragma solidity 0.8.10;
 
 import "../../utils/IPausable.sol";
 
-contract Mock_IPausable is IPausable {
+contract Mock_IPausable_extended is IPausable {
+	uint8 constant STAGE2  = 3;
+
 	constructor() {}
+
+	/**
+	* @dev Throws if sale state is not ``SALE``.
+	*/
+	modifier stage2Open {
+		if ( saleState != STAGE2 ) {
+			revert IPausable_INCORRECT_SALE_STATE( saleState, STAGE2 );
+		}
+		_;
+	}
 
 	function setSaleState( uint8 newState_ ) public {
 		_setSaleState( newState_ );
@@ -24,6 +36,10 @@ contract Mock_IPausable is IPausable {
 	}
 
 	function saleIsOpen() public view saleOpen returns ( bool ) {
+		return true;
+	}
+
+	function saleIsStage2() public view stage2Open returns ( bool ) {
 		return true;
 	}
 }

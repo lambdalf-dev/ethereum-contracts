@@ -7,27 +7,27 @@
 pragma solidity 0.8.10;
 
 abstract contract IPausable {
-	// Errors
-	error IPausable_SALE_NOT_CLOSED();
-	error IPausable_SALE_CLOSED();
-	error IPausable_PRESALE_CLOSED();
-
 	// Enum to represent the sale state, defaults to ``CLOSED``.
-	enum SaleState { CLOSED, PRESALE, SALE }
+	uint8 constant CLOSED  = 0;
+	uint8 constant PRESALE = 1;
+	uint8 constant SALE    = 2;
+
+	// Errors
+	error IPausable_INCORRECT_SALE_STATE( uint8 currentState, uint8 requiredState );
 
 	// The current state of the contract
-	SaleState public saleState;
+	uint8 public saleState;
 
 	/**
 	* @dev Emitted when the sale state changes
 	*/
-	event SaleStateChanged( SaleState indexed previousState, SaleState indexed newState );
+	event SaleStateChanged( uint8 indexed previousState, uint8 indexed newState );
 
 	/**
 	* @dev Sale state can have one of 3 values, ``CLOSED``, ``PRESALE``, or ``SALE``.
 	*/
-	function _setSaleState( SaleState newState_ ) internal virtual {
-		SaleState _previousState_ = saleState;
+	function _setSaleState( uint8 newState_ ) internal virtual {
+		uint8 _previousState_ = saleState;
 		saleState = newState_;
 		emit SaleStateChanged( _previousState_, newState_ );
 	}
@@ -36,8 +36,8 @@ abstract contract IPausable {
 	* @dev Throws if sale state is not ``CLOSED``.
 	*/
 	modifier saleClosed {
-		if ( saleState != SaleState.CLOSED ) {
-			revert IPausable_SALE_NOT_CLOSED();
+		if ( saleState != CLOSED ) {
+			revert IPausable_INCORRECT_SALE_STATE( saleState, CLOSED );
 		}
 		_;
 	}
@@ -46,8 +46,8 @@ abstract contract IPausable {
 	* @dev Throws if sale state is not ``SALE``.
 	*/
 	modifier saleOpen {
-		if ( saleState != SaleState.SALE ) {
-			revert IPausable_SALE_CLOSED();
+		if ( saleState != SALE ) {
+			revert IPausable_INCORRECT_SALE_STATE( saleState, SALE );
 		}
 		_;
 	}
@@ -56,8 +56,8 @@ abstract contract IPausable {
 	* @dev Throws if sale state is not ``PRESALE``.
 	*/
 	modifier presaleOpen {
-		if ( saleState != SaleState.PRESALE ) {
-			revert IPausable_PRESALE_CLOSED();
+		if ( saleState != PRESALE ) {
+			revert IPausable_INCORRECT_SALE_STATE( saleState, PRESALE );
 		}
 		_;
 	}

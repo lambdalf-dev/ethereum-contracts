@@ -262,7 +262,7 @@ abstract contract NFTBaseC is Consec_ERC721Batch, IOwnable, IPausable, ITradable
 		* 
 		* - Caller must be the contract owner.
 		*/
-		function setSaleState( SaleState newState_ ) external onlyOwner {
+		function setSaleState( uint8 newState_ ) external onlyOwner {
 			_setSaleState( newState_ );
 		}
 

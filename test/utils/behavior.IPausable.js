@@ -44,16 +44,16 @@
 		await expect( promise ).to.emit( contract, `SaleStateChanged` )/*.withArgs( previousState, newState )*/
 	}
 
-	async function shouldRevertWhenSaleStateIsNotClose ( promise, error = `IPausable_SALE_NOT_CLOSED` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }()` )
+	async function shouldRevertWhenSaleStateIsNotClose ( promise, currentState, error = `IPausable_INCORRECT_SALE_STATE` ) {
+		await expect( promise ).to.be.revertedWith( `${ error }(${ currentState }, 0)` )
 	}
 
-	async function shouldRevertWhenSaleStateIsNotPreSale ( promise, error = `IPausable_PRESALE_CLOSED` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }()` )
+	async function shouldRevertWhenSaleStateIsNotPreSale ( promise, currentState, error = `IPausable_INCORRECT_SALE_STATE` ) {
+		await expect( promise ).to.be.revertedWith( `${ error }(${ currentState }, 1)` )
 	}
 
-	async function shouldRevertWhenSaleStateIsNotSale ( promise, error = `IPausable_SALE_CLOSED` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }()` )
+	async function shouldRevertWhenSaleStateIsNotSale ( promise, currentState, error = `IPausable_INCORRECT_SALE_STATE` ) {
+		await expect( promise ).to.be.revertedWith( `${ error }(${ currentState }, 2)` )
 	}
 
 	function shouldBehaveLikeIPausable ( fixture, TEST, CONTRACT ) {
@@ -94,7 +94,7 @@
 				describe( CONTRACT.METHODS.setSaleState.SIGNATURE, function () {
 					if ( TEST.METHODS.setSaleState ) {
 						it( `Setting the sale state to PRESALE`, async function () {
-							const previousState = SALE_STATE.CLOSE
+							const previousState = SALE_STATE.CLOSED
 							const newState      = SALE_STATE.PRESALE
 							await shouldEmitSaleStateChangedEvent(
 								contract.connect( users[ CONTRACT_DEPLOYER ] )
@@ -110,7 +110,7 @@
 						})
 
 						it( `Setting the sale state to SALE`, async function () {
-							const previousState = SALE_STATE.CLOSE
+							const previousState = SALE_STATE.CLOSED
 							const newState      = SALE_STATE.SALE
 							await shouldEmitSaleStateChangedEvent(
 								contract.connect( users[ CONTRACT_DEPLOYER ] )

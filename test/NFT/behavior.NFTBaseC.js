@@ -360,7 +360,8 @@
 								}
 								await shouldRevertWhenSaleStateIsNotSale(
 									contract.connect( users[ TOKEN_OWNER ] )
-													.mintSale( qty, tx_params )
+													.mintSale( qty, tx_params ),
+									SALE_STATE.CLOSED
 								)
 							})
 						}
@@ -483,7 +484,8 @@
 								}
 								await shouldRevertWhenSaleStateIsNotSale(
 									contract.connect( users[ TOKEN_OWNER ] )
-													.mintSale( qty, tx_params )
+													.mintSale( qty, tx_params ),
+									SALE_STATE.PRESALE
 								)
 							})
 						}
