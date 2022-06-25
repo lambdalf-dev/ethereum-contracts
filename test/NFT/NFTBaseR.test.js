@@ -215,15 +215,6 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 					PARAMS             : [],
 				},
 			// **************************************
-
-			// **************************************
-			// *****            PURE            *****
-			// **************************************
-				onERC721Received     : {
-					SIGNATURE          : 'onERC721Received(address,address,uint256,bytes)',
-					PARAMS             : [ 'operator_', 'from_', 'tokenId_', 'data_' ],
-				},
-			// **************************************
 		},
 	}
 
@@ -308,12 +299,6 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 				tokenOfOwnerByIndex : true,
 				tokenURI            : true,
 				totalSupply         : true,
-			// **************************************
-
-			// **************************************
-			// *****            PURE            *****
-			// **************************************
-				onERC721Received    : true,
 			// **************************************
 		},
 		// SUPPLY
@@ -903,11 +888,50 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 					// **************************************
 					// *****       CONTRACT_OWNER       *****
 					// **************************************
+						defaultArgs[ CONTRACT.METHODS.addProxyRegistry.SIGNATURE ] = {
+							err  : null,
+							args : [
+								test_proxy_contract.address,
+							],
+						}
+						defaultArgs[ CONTRACT.METHODS.airdrop.SIGNATURE ] = {
+							err  : null,
+							args : [
+								[
+									users[ TOKEN_OWNER ].address,
+									users[ USER1 ].address,
+								],
+								[ 1, 2 ],
+							],
+						}
 						defaultArgs[ CONTRACT.METHODS.setBaseURI.SIGNATURE ] = {
 							err  : null,
 							args : [
 								TEST.NEW_BASE_URI,
 							],
+						}
+						defaultArgs[ CONTRACT.METHODS.setRoyaltyInfo.SIGNATURE ] = {
+							err  : null,
+							args : [
+								users[ CONTRACT_DEPLOYER ].address,
+								TEST.PARAMS.royaltyRate_,
+							],
+						}
+						defaultArgs[ CONTRACT.METHODS.setSaleState.SIGNATURE ] = {
+							err  : null,
+							args : [
+								SALE_STATE.SALE,
+							],
+						}
+						defaultArgs[ CONTRACT.METHODS.transferOwnership.SIGNATURE ] = {
+							err  : null,
+							args : [
+								users[ USER1 ].address,
+							]
+						}
+						defaultArgs[ CONTRACT.METHODS.withdraw.SIGNATURE ] = {
+							err  : null,
+							args : [],
 						}
 					// **************************************
 
@@ -937,11 +961,26 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 							err  : null,
 							args : [],
 						}
+						defaultArgs[ CONTRACT.METHODS.owner.SIGNATURE ] = {
+							err  : null,
+							args : []
+						}
 						defaultArgs[ CONTRACT.METHODS.ownerOf.SIGNATURE ] = {
 							err  : null,
 							args : [
 								TEST.FIRST_TOKEN,
 							],
+						}
+						defaultArgs[ CONTRACT.METHODS.royaltyInfo.SIGNATURE ] = {
+							err  : null,
+							args : [
+								0,
+								CST.ONE_ETH,
+							],
+						}
+						defaultArgs[ CONTRACT.METHODS.saleState.SIGNATURE ] = {
+							err  : null,
+							args : [],
 						}
 						defaultArgs[ CONTRACT.METHODS.supportsInterface.SIGNATURE ] = {
 							err  : null,

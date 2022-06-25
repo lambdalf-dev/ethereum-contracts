@@ -14,10 +14,8 @@ const THROW = {
 	INCORRECT_PARAMETERS     : /incorrect parameters/,
 	INVALID_ADDRESS          : /invalid address/,
 	INVALID_ADDRESS_OR_ENS   : /invalid address or ENS name/,
-	NO_ENS_SUPPORT           : /network does not support ENS/,
-	NO_ENS_CONFIGURATION     : /resolver or addr is not configured for ENS name/,
-	INVALID_BIG_NUMBER_STR   : /invalid BigNumber string/,
-	INVALID_BIG_NUMBER_VALUE : /invalid BigNumber value/,
+	NO_ENS_SUPPORT           : /(network does not support ENS)|(resolver or addr is not configured for ENS name)/,
+	INVALID_BIG_NUMBER       : /invalid BigNumber/,
 	INVALID_ARRAYIFY_VALUE   : /invalid arrayify value/,
 	INVALID_VALUE_FOR_ARRAY  : /invalid value for array/,
 	OVERFLOW                 : /overflow/,
@@ -29,18 +27,28 @@ const THROW = {
 
 // For constant test variables
 const TEST_VAR = {
-	ADDRESS      : '0x6A740a382dAd40a4713651B7B76b08C1Acc32b5e',
-	BYTE         : ethers.utils.randomBytes( 1  ),
-	BYTES4       : ethers.utils.randomBytes( 4  ),
-	BYTES32      : ethers.utils.randomBytes( 32 ),
-	BYTES_ARRAY  : ethers.utils.randomBytes( 64 ),
+	ADDRESS      : '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
+	BYTE         : '0x35',
+	BYTES4       : '0x93c35b29',
+	BYTES32      : '0x78f551d6dff4c9be08c7ac89ebe3ed59f381d99f6a6d3d38dd6e2ad029aaaad0',
+	BYTES_ARRAY  : '0xf1fe061cbe963e5633e3750f4b9d8afe6ede45035bffc0ae63cf376f19ee6288ade29bfcaeb05e5513c423c3ea840cc2508e67accb7035e4a0f809cae76fc3cd',
 	BOOLEAN      : true,
 	STRING       : 'Hello',
 	ENS_NAME     : 'lambdalfthewhite.eth',
 	EMPTY_STRING : '',
 	NUMBER_ZERO  : 0,
 	NUMBER_ONE   : 1,
-	BIG_NUMBER   : ethers.BigNumber.from( ethers.utils.randomBytes( 8 ) ),
+	BIG_NUMBER   : ethers.BigNumber.from( '0x6e69f34b7c5dd0d1' ),
+	ARRAY        : {
+		ADDRESS    : [ '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', '0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2' ],
+		BOOLEAN    : [ true, false ],
+		BYTE       : [ '0x35', '0x19' ],
+		BYTES4     : [ '0x93c35b29', '0x93c32b29' ],
+		BYTES32    : [ '0x78f551d6dff4c9be08c7ac89ebe3ed59f381d99f6a6d3d38dd6e2ad029aaaad0','0x78f551d6dff4c9be08c7ac89ebe3ed59f781d99f6a6d3d38dd6e2ad029aaaad0' ],
+		STRING     : [ 'Hello', 'World' ],
+		NUMBER     : [ 1, 2 ],
+		BIG_NUMBER : [ ethers.BigNumber.from( '0x6e69f34b7c5dd0d1' ), ethers.BigNumber.from( '0x6e69f34b7c5dd0d0' ) ],
+	}
 }
 
 function getTestCasesByFunction ( signature, params ) {
@@ -108,7 +116,7 @@ function getTestCases ( varType, varName, index ) {
 			return uint256ArrayCases( varName, index )
 			break
 		case 'uint8':
-			return enumCases( varName, index )
+			return uint8Cases( varName, index )
 			break
 	}
 }
@@ -184,49 +192,49 @@ function addressArrayCases ( varName, index ) {
 			test_variable_index : index,
 			test_description    : 'Input array of array of address instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS_OR_ENS + '"',
 			expected_error      : THROW.INVALID_ADDRESS_OR_ENS,
-			test_variable       : [ [ TEST_VAR.ADDRESS ] ],
+			test_variable       : [ TEST_VAR.ARRAY.ADDRESS ],
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input array of byte instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS + '"',
 			expected_error      : THROW.INVALID_ADDRESS,
-			test_variable       : [ TEST_VAR.BYTE ],
+			test_variable       : TEST_VAR.ARRAY.BYTE,
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input array of bytes4 instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS + '"',
 			expected_error      : THROW.INVALID_ADDRESS,
-			test_variable       : [ TEST_VAR.BYTES4 ],
+			test_variable       : TEST_VAR.ARRAY.BYTES4,
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input array of bytes32 instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS + '"',
 			expected_error      : THROW.INVALID_ADDRESS,
-			test_variable       : [ TEST_VAR.BYTES32 ],
+			test_variable       : TEST_VAR.ARRAY.BYTES32,
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input array of booldean instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS_OR_ENS + '"',
 			expected_error      : THROW.INVALID_ADDRESS_OR_ENS,
-			test_variable       : [ TEST_VAR.BOOLEAN ],
+			test_variable       : TEST_VAR.ARRAY.BOOLEAN,
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input array of string instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS_OR_ENS + '"',
-			expected_error      : THROW.NO_ENS_CONFIGURATION,
-			test_variable       : [ TEST_VAR.STRING ],
+			expected_error      : THROW.NO_ENS_SUPPORT,
+			test_variable       : TEST_VAR.ARRAY.STRING,
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input array of number instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS_OR_ENS + '"',
 			expected_error      : THROW.INVALID_ADDRESS_OR_ENS,
-			test_variable       : [ TEST_VAR.NUMBER_ONE ],
+			test_variable       : TEST_VAR.ARRAY.NUMBER,
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input array of BigNumber instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS_OR_ENS + '"',
 			expected_error      : THROW.INVALID_ADDRESS_OR_ENS,
-			test_variable       : [ TEST_VAR.BIG_NUMBER ],
+			test_variable       : TEST_VAR.ARRAY.BIG_NUMBER,
 		},
 	]
 }
@@ -341,30 +349,6 @@ function bytesCases ( varName, index ) {
 	return [
 		{
 			test_variable_index : index,
-			test_description    : 'Input address instead of `' + varName + '` should not throw',
-			expected_error      : null,
-			test_variable       : TEST_VAR.ADDRESS,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input byte instead of `' + varName + '` should not throw',
-			expected_error      : null,
-			test_variable       : TEST_VAR.BYTE,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input bytes4 instead of `' + varName + '` should not throw',
-			expected_error      : null,
-			test_variable       : TEST_VAR.BYTES4,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input bytes32 instead of `' + varName + '` should not throw',
-			expected_error      : null,
-			test_variable       : TEST_VAR.BYTES32,
-		},
-		{
-			test_variable_index : index,
 			test_description    : 'Input array of bytes[] instead of `' + varName + '` should throw "' + THROW.INVALID_ARRAYIFY_VALUE + '"',
 			expected_error      : THROW.INVALID_ARRAYIFY_VALUE,
 			test_variable       : [ TEST_VAR.BYTES_ARRAY ],
@@ -380,18 +364,6 @@ function bytesCases ( varName, index ) {
 			test_description    : 'Input string instead of `' + varName + '` should throw "' + THROW.INVALID_ARRAYIFY_VALUE + '"',
 			expected_error      : THROW.INVALID_ARRAYIFY_VALUE,
 			test_variable       : TEST_VAR.STRING,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input number instead of `' + varName + '` should not throw',
-			expected_error      : null,
-			test_variable       : TEST_VAR.NUMBER_ONE,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input BigNumber instead of `' + varName + '` should not throw',
-			expected_error      : null,
-			test_variable       : TEST_VAR.BIG_NUMBER,
 		},
 	]
 }
@@ -478,25 +450,25 @@ function stringCases ( varName, index ) {
 		{
 			test_variable_index : index,
 			test_description    : 'Input byte instead of `' + varName + '` should not throw',
-			expected_error      : THROW.STRING_ARRAY,
+			expected_error      : null,
 			test_variable       : TEST_VAR.BYTE,
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input bytes4 instead of `' + varName + '` should not throw',
-			expected_error      : THROW.STRING_ARRAY,
+			expected_error      : null,
 			test_variable       : TEST_VAR.BYTES4,
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input bytes32 instead of `' + varName + '` should not throw',
-			expected_error      : THROW.STRING_ARRAY,
+			expected_error      : null,
 			test_variable       : TEST_VAR.BYTES32,
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input bytes[] instead of `' + varName + '` should not throw',
-			expected_error      : THROW.STRING_ARRAY,
+			expected_error      : null,
 			test_variable       : TEST_VAR.BYTES_ARRAY,
 		},
 		{
@@ -507,7 +479,7 @@ function stringCases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input array of string instead of `' + varName + '` should not throw',
+			test_description    : 'Input array of string instead of `' + varName + '` should throw "' + THROW.STRING_ARRAY + '"',
 			expected_error      : THROW.STRING_ARRAY,
 			test_variable       : [ TEST_VAR.STRING ],
 		},
@@ -542,50 +514,20 @@ function uint256Cases ( varName, index ) {
 	return [
 		{
 			test_variable_index : index,
-			test_description    : 'Input address instead of `' + varName + '` should be converted to a number',
-			expected_error      : null,
-			test_variable       : TEST_VAR.ADDRESS,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input byte instead of `' + varName + '` should be converted to a number',
-			expected_error      : null,
-			test_variable       : TEST_VAR.BYTE,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input bytes4 instead of `' + varName + '` should be converted to a number',
-			expected_error      : null,
-			test_variable       : TEST_VAR.BYTES4,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input bytes32 instead of `' + varName + '` should be converted to a number',
-			expected_error      : null,
-			test_variable       : TEST_VAR.BYTES32,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input booldean instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER_VALUE + '"',
-			expected_error      : THROW.INVALID_BIG_NUMBER_VALUE,
+			test_description    : 'Input booldean instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
+			expected_error      : THROW.INVALID_BIG_NUMBER,
 			test_variable       : TEST_VAR.BOOLEAN,
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input string instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER_STR + '"',
-			expected_error      : THROW.INVALID_BIG_NUMBER_STR,
+			test_description    : 'Input string instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
+			expected_error      : THROW.INVALID_BIG_NUMBER,
 			test_variable       : TEST_VAR.STRING,
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input array of number instead of `' + varName + '` should resolve to the last number in the array',
-			expected_error      : null,
-			test_variable       : [ TEST_VAR.NUMBER_ONE ],
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input array of BigNumber instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER_VALUE + '"',
-			expected_error      : THROW.INVALID_BIG_NUMBER_VALUE,
+			test_description    : 'Input array of BigNumber instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
+			expected_error      : THROW.INVALID_BIG_NUMBER,
 			test_variable       : [ TEST_VAR.BIG_NUMBER ],
 		},
 	]
@@ -595,45 +537,21 @@ function uint256ArrayCases ( varName, index ) {
 	return [
 		{
 			test_variable_index : index,
-			test_description    : 'Input array of address instead of `' + varName + '` should be converted to a number',
-			expected_error      : null,
-			test_variable       : [ TEST_VAR.ADDRESS ],
+			test_description    : 'Input array of boolean instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
+			expected_error      : THROW.INVALID_BIG_NUMBER,
+			test_variable       : TEST_VAR.ARRAY.BOOLEAN,
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input array of byte instead of `' + varName + '` should be converted to a number',
-			expected_error      : null,
-			test_variable       : [ TEST_VAR.BYTE ],
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input array of bytes4 instead of `' + varName + '` should be converted to a number',
-			expected_error      : null,
-			test_variable       : [ TEST_VAR.BYTES4 ],
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input array of bytes32 instead of `' + varName + '` should be converted to a number',
-			expected_error      : null,
-			test_variable       : [ TEST_VAR.BYTES32 ],
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input array of booldean instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER_VALUE + '"',
-			expected_error      : THROW.INVALID_BIG_NUMBER_VALUE,
-			test_variable       : [ TEST_VAR.BOOLEAN ],
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input array of string instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER_STR + '"',
-			expected_error      : THROW.INVALID_BIG_NUMBER_STR,
-			test_variable       : [ TEST_VAR.STRING ],
+			test_description    : 'Input array of string instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
+			expected_error      : THROW.INVALID_BIG_NUMBER,
+			test_variable       : TEST_VAR.ARRAY.STRING,
 		},
 		{
 			test_variable_index : index,
 			test_description    : 'Input array of array of number instead of `' + varName + '` should resolve to the last number in the array',
 			expected_error      : null,
-			test_variable       : [ [ TEST_VAR.NUMBER_ONE ] ],
+			test_variable       : [ TEST_VAR.ARRAY.NUMBER ],
 		},
 		{
 			test_variable_index : index,
@@ -644,8 +562,8 @@ function uint256ArrayCases ( varName, index ) {
 		{
 			test_variable_index : index,
 			test_description    : 'Input array of array of BigNumber instead of `' + varName + '` should resolve to the last BigNumber in the array',
-			expected_error      : THROW.INVALID_BIG_NUMBER_VALUE,
-			test_variable       : [ [ TEST_VAR.BIG_NUMBER ] ],
+			expected_error      : THROW.INVALID_BIG_NUMBER,
+			test_variable       : [ TEST_VAR.ARRAY.BIG_NUMBER ],
 		},
 		{
 			test_variable_index : index,
@@ -656,7 +574,7 @@ function uint256ArrayCases ( varName, index ) {
 	]
 }
 
-function enumCases ( varName, index ) {
+function uint8Cases ( varName, index ) {
 	return [
 		{
 			test_variable_index : index,
@@ -666,45 +584,15 @@ function enumCases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input byte instead of `' + varName + '` should throw "' + THROW.INCORRECT_PARAMETERS + '"',
-			expected_error      : THROW.INCORRECT_PARAMETERS,
-			test_variable       : TEST_VAR.BYTE,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input bytes4 instead of `' + varName + '` should throw "' + THROW.VALUE_OUT_OF_BOUNDS + '"',
-			expected_error      : THROW.VALUE_OUT_OF_BOUNDS,
-			test_variable       : TEST_VAR.BYTES4,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input bytes32 instead of `' + varName + '` should throw "' + THROW.VALUE_OUT_OF_BOUNDS + '"',
-			expected_error      : THROW.VALUE_OUT_OF_BOUNDS,
-			test_variable       : TEST_VAR.BYTES32,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input booldean instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER_VALUE + '"',
-			expected_error      : THROW.INVALID_BIG_NUMBER_VALUE,
+			test_description    : 'Input booldean instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
+			expected_error      : THROW.INVALID_BIG_NUMBER,
 			test_variable       : TEST_VAR.BOOLEAN,
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input string instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER_STR + '"',
-			expected_error      : THROW.INVALID_BIG_NUMBER_STR,
+			test_description    : 'Input string instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
+			expected_error      : THROW.INVALID_BIG_NUMBER,
 			test_variable       : TEST_VAR.STRING,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input number instead of `' + varName + '` should resolve to the corresponding enum index',
-			expected_error      : null,
-			test_variable       : TEST_VAR.NUMBER_ONE,
-		},
-		{
-			test_variable_index : index,
-			test_description    : 'Input array of number instead of `' + varName + '` should resolve to the corresponding enum index of the last number in the array',
-			expected_error      : null,
-			test_variable       : [ TEST_VAR.NUMBER_ONE ],
 		},
 		{
 			test_variable_index : index,
@@ -714,8 +602,8 @@ function enumCases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input array of BigNumber instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER_VALUE + '"',
-			expected_error      : THROW.INVALID_BIG_NUMBER_VALUE,
+			test_description    : 'Input array of BigNumber instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
+			expected_error      : THROW.INVALID_BIG_NUMBER,
 			test_variable       : [ TEST_VAR.BIG_NUMBER ],
 		},
 	]
@@ -769,7 +657,7 @@ async function generateFailTest ( testedFunc, params, extra_var = null ) {
 async function generateFailTest__0 ( testedFunc, params, extra_var = null ) {
 	if ( params.err ) {
 		if ( extra_var ) {
-			await expect( testedFun, extra_varc() )?.to.be.rejectedWith( params.err )
+			await expect( testedFun, extra_var )?.to.be.rejectedWith( params.err )
 		}
 		else {
 			await expect( testedFunc() )?.to.be.rejectedWith( params.err )

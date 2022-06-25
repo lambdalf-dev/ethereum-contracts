@@ -82,6 +82,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable_
 			saleIsClosed  : true,
 			presaleIsOpen : true,
 			saleIsOpen    : true,
+			saleIsStage2  : true,
 		},
 	}
 	SALE_STATE.STAGE2 = 3
@@ -171,6 +172,10 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable_
 						args : [],
 					}
 					defaultArgs [ CONTRACT.METHODS.saleIsOpen.SIGNATURE ] = {
+						err  : null,
+						args : [],
+					}
+					defaultArgs [ CONTRACT.METHODS.saleIsStage2.SIGNATURE ] = {
 						err  : null,
 						args : [],
 					}

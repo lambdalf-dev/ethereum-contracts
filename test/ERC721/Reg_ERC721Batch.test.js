@@ -88,8 +88,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Reg_ERC72
 					PARAMS             : [ `to_`, `tokenId_` ],
 				},
 				mint                 : {
-					SIGNATURE          : `mint(uint256)`,
-					PARAMS             : [ `qty_` ],
+					SIGNATURE          : `mint(address,uint256)`,
+					PARAMS             : [ `to_`, `qty_` ],
 				},
 				safeTransferFrom     : {
 					SIGNATURE          : `safeTransferFrom(address,address,uint256)`,
@@ -413,6 +413,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Reg_ERC72
 						defaultArgs [ CONTRACT.METHODS.mint.SIGNATURE ] = {
 							err  : null,
 							args : [
+								users[ USER1 ].address,
 								5,
 							],
 						}
@@ -456,7 +457,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Reg_ERC72
 						defaultArgs[ CONTRACT.METHODS.setBaseURI.SIGNATURE ] = {
 							err  : null,
 							args : [
-								test_data.NEW_BASE_URI,
+								TEST.NEW_BASE_URI,
 							],
 						}
 					// **************************************
