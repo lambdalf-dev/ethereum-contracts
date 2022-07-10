@@ -1,10 +1,9 @@
-const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhitelistable.sol/Mock_IMerkleWhitelistable.json` )
+const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelistable_Merkle.sol/Mock_IWhitelistable_Merkle.json` )
 // **************************************
 // *****           IMPORT           *****
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,
@@ -44,7 +43,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 // **************************************
 	// For contract data
 	const CONTRACT = {
-		NAME : `Mock_IMerkleWhitelistable`,
+		NAME : `Mock_IWhitelistable_Merkle`,
 		METHODS : {
 			checkWhitelistAllowance : {
 				SIGNATURE             : `checkWhitelistAllowance(address,bytes32[])`,
@@ -66,7 +65,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 	}
 
 	const TEST_DATA = {
-		NAME : `IMerkleWhitelistable`,
+		NAME : `IWhitelistable_Merkle`,
 		METHODS : {
 			checkWhitelistAllowance : true,
 			consumeWhitelist        : true,
@@ -199,8 +198,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 		})
 	}
 
-	async function shouldBehaveLikeMock_IMerkleWhitelistable ( fixture, TEST, CONTRACT ) {
-		describe( `Should behave like Mock_IMerkleWhitelistable`, function () {
+	async function shouldBehaveLikeMock_IWhitelistable_Merkle ( fixture, TEST, CONTRACT ) {
+		describe( `Should behave like Mock_IWhitelistable_Merkle`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
@@ -359,6 +358,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IMerkleWhi
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
 		testInvalidInputs( fixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_IMerkleWhitelistable( fixture, TEST_DATA, CONTRACT )
+		shouldBehaveLikeMock_IWhitelistable_Merkle( fixture, TEST_DATA, CONTRACT )
 	}
 })
