@@ -191,6 +191,19 @@ abstract contract NFTBaseC is Consec_ERC721Batch, IOwnable, IPausable, ITradable
 		}
 
 		/**
+		* @dev See {ITradable-removeProxyRegistry}.
+		* 
+		* @param proxyRegistryAddress_ : the address of the proxy registry to be removed
+		* 
+		* Requirements:
+		* 
+		* - Caller must be the contract owner.
+		*/
+		function removeProxyRegistry( address proxyRegistryAddress_ ) external onlyOwner {
+			_removeProxyRegistry( proxyRegistryAddress_ );
+		}
+
+		/**
 		* @dev Mints `amounts_` tokens and transfers them to `accounts_`.
 		* 
 		* @param accounts_ : the list of accounts that will receive airdropped tokens

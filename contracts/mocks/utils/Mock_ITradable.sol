@@ -20,4 +20,8 @@ contract Mock_ITradable is ITradable {
 	function addProxyRegistry( address proxyRegistryAddress_ ) public {
 		_addProxyRegistry( proxyRegistryAddress_ );
 	}
+
+	function removeProxyRegistry( address proxyRegistryAddress_ ) public {
+		_removeProxyRegistry( proxyRegistryAddress_ );
+	}
 }

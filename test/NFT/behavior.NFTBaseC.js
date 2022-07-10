@@ -433,6 +433,37 @@
 						}
 					})
 				// **************************************
+
+				// **************************************
+				// *****       CONTRACT_OWNER       *****
+				// **************************************
+					describe( CONTRACT.METHODS.removeProxyRegistry.SIGNATURE, function () {
+						if ( TEST.METHODS.removeProxyRegistry ) {
+							it( `Transaction initiated by a regular user should be reverted`, async function () {
+								const proxyRegistryAddress = proxy_contract.address
+								await shouldRevertWhenCallerIsNotContractOwner(
+									contract.connect( users[ USER1 ] )
+													.removeProxyRegistry( proxyRegistryAddress ),
+									users[ USER1 ].address
+								)
+							})
+
+							it( `Removing a proxy registry`, async function () {
+								const proxyRegistryAddress = proxy_contract.address
+								await expect(
+									contract.connect( users[ CONTRACT_DEPLOYER ] )
+													.removeProxyRegistry( proxyRegistryAddress )
+								).to.be.fulfilled
+
+								const tokenOwner = users[ TOKEN_OWNER ].address
+								const operator   = users[ PROXY_USER ].address
+								expect(
+									await contract.isApprovedForAll( tokenOwner, operator )
+								).to.be.false
+							})
+						}
+					})
+				// **************************************
 			}
 		})
 	}

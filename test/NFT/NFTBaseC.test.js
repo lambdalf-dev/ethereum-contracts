@@ -132,6 +132,10 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 					SIGNATURE          : `airdrop(address[],uint256[])`,
 					PARAMS             : [ `accounts_`, `amounts_` ],
 				},
+				removeProxyRegistry  : {
+					SIGNATURE          : `removeProxyRegistry(address)`,
+					PARAMS             : [ `proxyRegistryAddress_` ],
+				},
 				setBaseURI           : {
 					SIGNATURE          : `setBaseURI(string)`,
 					PARAMS             : [ `baseURI_` ],
@@ -275,6 +279,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 			// **************************************
 				addProxyRegistry    : true,
 				airdrop             : true,
+				removeProxyRegistry : true,
 				setBaseURI          : true,
 				setRoyaltyInfo      : true,
 				transferOwnership   : true,
@@ -908,6 +913,12 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 								],
 								[ 1, 2 ],
 							],
+						}
+						defaultArgs [ CONTRACT.METHODS.removeProxyRegistry.SIGNATURE ] = {
+							err  : null,
+							args : [
+								test_proxy_contract.address,
+							]
 						}
 						defaultArgs[ CONTRACT.METHODS.setBaseURI.SIGNATURE ] = {
 							err  : null,

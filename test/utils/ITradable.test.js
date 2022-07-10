@@ -35,13 +35,17 @@ const PROXY = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRegis
 	const CONTRACT = {
 		NAME : `Mock_ITradable`,
 		METHODS : {
-			isRegisteredProxy : {
-				SIGNATURE       : `isRegisteredProxy(address,address)`,
-				PARAMS          : [ `tokenOwner_`, `operator_` ],
+			isRegisteredProxy    : {
+				SIGNATURE          : `isRegisteredProxy(address,address)`,
+				PARAMS             : [ `tokenOwner_`, `operator_` ],
 			},
-			addProxyRegistry  : {
-				SIGNATURE       : `addProxyRegistry(address)`,
-				PARAMS          : [ `proxyRegistryAddress_` ],
+			addProxyRegistry     : {
+				SIGNATURE          : `addProxyRegistry(address)`,
+				PARAMS             : [ `proxyRegistryAddress_` ],
+			},
+			removeProxyRegistry  : {
+				SIGNATURE          : `removeProxyRegistry(address)`,
+				PARAMS             : [ `proxyRegistryAddress_` ],
 			},
 		},
 	}
@@ -49,8 +53,9 @@ const PROXY = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRegis
 	const TEST_DATA = {
 		NAME : `ITradable`,
 		METHODS : {
-			isRegisteredProxy : true,
-			addProxyRegistry  : true,
+			isRegisteredProxy    : true,
+			addProxyRegistry     : true,
+			removeProxyRegistry  : true,
 		}
 	}
 
@@ -139,6 +144,12 @@ const PROXY = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRegis
 							test_proxy_contract.address,
 						]
 					}
+					defaultArgs [ CONTRACT.METHODS.removeProxyRegistry.SIGNATURE ] = {
+						err  : null,
+						args : [
+							test_proxy_contract.address,
+						]
+					}
 				})
 
 				Object.entries( CONTRACT.METHODS ).forEach( function( [ prop, val ] ) {
@@ -215,6 +226,24 @@ const PROXY = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRegis
 							expect(
 								await contract.isRegisteredProxy( tokenOwner, operator )
 							).to.be.false
+						})
+
+						describe( CONTRACT.METHODS.removeProxyRegistry.SIGNATURE, function () {
+							if ( TEST.METHODS.removeProxyRegistry ) {
+								it( `Removing a proxy registry`, async function () {
+									const proxyRegistryAddress = proxy_contract.address
+									await expect(
+										contract.connect( users[ CONTRACT_DEPLOYER ] )
+														.removeProxyRegistry( proxyRegistryAddress )
+									).to.be.fulfilled
+
+									const tokenOwner = users[ TOKEN_OWNER ].address
+									const operator   = users[ PROXY_USER ].address
+									expect(
+										await contract.isRegisteredProxy( tokenOwner, operator )
+									).to.be.false
+								})
+							}
 						})
 					}
 				})
