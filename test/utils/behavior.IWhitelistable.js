@@ -3,7 +3,6 @@
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,
@@ -47,24 +46,20 @@
 
   function generateRoot ( accesslist ) {
     let _normalized_ = {}
-    const values = Object.entries( accesslist ).map(
+    const _values_ = Object.entries( accesslist ).map(
       ( [ account, maxQty ] ) => {
         account = normalize( account )
         _normalized_[ account ] = maxQty
         return account
       }
     )
-    values.sort()
+    _values_.sort()
     normalized = _normalized_
 
-    const hashes = values.map( account => ethers.utils.keccak256( account ) )
-    let _merkle_ = new MerkleTree( hashes, ethers.utils.keccak256, { sortPairs: true } )
-    // setMerkle( _merkle_ )
-
-    const merkleRoot = _merkle_.getRoot().toString( `hex` )
-    // setRoot( merkleRoot )
-    // console.debug( { merkleRoot } )
-    return { root: merkleRoot, tree: _merkle_ }
+    const _hashes_ = _values_.map( account => ethers.utils.keccak256( account ) )
+    const _merkleTree_ = new MerkleTree( _hashes_, ethers.utils.keccak256, { sortPairs: true } )
+    const _merkleRoot_ = _merkleTree_.getRoot().toString( `hex` )
+    return { root: _merkleRoot_, tree: _merkleTree_ }
   }
 
   function getProof ( merkle, account, proof ) {

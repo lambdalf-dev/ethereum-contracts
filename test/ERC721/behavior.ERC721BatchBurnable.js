@@ -3,7 +3,6 @@
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,
@@ -90,7 +89,7 @@
 						it( `Contract should emit a ${ CONTRACT.EVENTS.Transfer } event mentioning token ${ TEST.TARGET_TOKEN } was transfered from ${ USER_NAMES[ TOKEN_OWNER ] } to the NULL address`, async function() {
 							const tokenId = TEST.TARGET_TOKEN
 							const from    = users[ TOKEN_OWNER ].address
-							const to      = CST.ADDRESS_ZERO
+							const to      = ethers.constants.AddressZero
 							await shouldEmitTransferEvent(
 								contract.connect( users[ TOKEN_OWNER ] )
 												.burn( tokenId ),
@@ -168,7 +167,7 @@
 							const tokenId = TEST.TARGET_TOKEN
 							expect(
 								await contract.getApproved( tokenId )
-							).to.equal( CST.ADDRESS_ZERO )
+							).to.equal( ethers.constants.AddressZero )
 						})
 					}
 				})

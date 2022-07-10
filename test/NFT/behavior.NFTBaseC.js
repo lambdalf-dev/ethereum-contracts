@@ -3,7 +3,6 @@
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,
@@ -256,7 +255,7 @@
 									]
 									const fromToken = TEST.INIT_SUPPLY + TEST.FIRST_TOKEN + TEST.AIRDROP1
 									const toToken   = TEST.INIT_SUPPLY + TEST.AIRDROP1 + TEST.AIRDROP2
-									const fromAddr  = CST.ADDRESS_ZERO
+									const fromAddr  = ethers.constants.AddressZero
 									const toAddr    = users[ USER2 ].address
 									await shouldEmitConsecutiveTransferEvent(
 										contract.connect( users[ CONTRACT_DEPLOYER ] )
@@ -589,7 +588,7 @@
 
 							it( `${ USER_NAMES[ TOKEN_OWNER ] } mints 1 token`, async function() {
 								const qty       = 1
-								const fromAddr  = CST.ADDRESS_ZERO
+								const fromAddr  = ethers.constants.AddressZero
 								const toAddr    = users[ TOKEN_OWNER ].address
 								const fromToken = TEST.FIRST_TOKEN
 								const toToken   = TEST.INIT_SUPPLY + qty
@@ -622,7 +621,7 @@
 
 							it( `${ USER_NAMES[ TOKEN_OWNER ] } mints 2 token`, async function() {
 								const qty       = 2
-								const fromAddr  = CST.ADDRESS_ZERO
+								const fromAddr  = ethers.constants.AddressZero
 								const toAddr    = users[ TOKEN_OWNER ].address
 								const fromToken = TEST.FIRST_TOKEN
 								const toToken   = TEST.INIT_SUPPLY + qty
@@ -655,7 +654,7 @@
 
 							it( `${ USER_NAMES[ TOKEN_OWNER ] } mints ${ TEST.PARAMS.maxBatch_ } token`, async function() {
 								const qty       = TEST.PARAMS.maxBatch_
-								const fromAddr  = CST.ADDRESS_ZERO
+								const fromAddr  = ethers.constants.AddressZero
 								const toAddr    = users[ TOKEN_OWNER ].address
 								const fromToken = TEST.FIRST_TOKEN
 								const toToken   = TEST.INIT_SUPPLY + qty

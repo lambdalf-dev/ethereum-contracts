@@ -3,7 +3,6 @@
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,
@@ -106,7 +105,7 @@
 
 							it( `Contract owner should now be the NULL address`, async function () {
 								const previousOwner = users[ CONTRACT_DEPLOYER ].address
-								const newOwner      = CST.ADDRESS_ZERO
+								const newOwner      = ethers.constants.AddressZero
 								await shouldEmitOwnershipTransferredEvent(
 									contract.connect( users[ CONTRACT_DEPLOYER ] )
 													.transferOwnership( newOwner ),
@@ -117,7 +116,7 @@
 
 								expect(
 									await contract.owner()
-								).to.equal( CST.ADDRESS_ZERO )
+								).to.equal( ethers.constants.AddressZero )
 							})
 						})
 					}

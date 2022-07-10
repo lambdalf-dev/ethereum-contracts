@@ -3,7 +3,6 @@
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,

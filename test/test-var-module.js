@@ -1,16 +1,3 @@
-// For common constants
-const CST = {
-	// ETHERS JS
-	ETH                : ethers.constants.EtherSymbol,
-	ONE_ETH            : ethers.constants.WeiPerEther,
-	ADDRESS_ZERO       : ethers.constants.AddressZero,
-	HASH_ZERO          : ethers.constants.HashZero,
-	NUMBER_ZERO        : ethers.constants.Zero,
-	NUMBER_ONE         : ethers.constants.One,
-	NUMBER_TWO         : ethers.constants.Two,
-	MAX_UINT256        : ethers.constants.MaxUint256,
-}
-
 const USER1             = 'USER1'
 const USER2             = 'USER2'
 const PROXY_USER        = 'PROXY_USER'
@@ -35,5 +22,4 @@ module.exports = {
 	USER_NAMES,
 	USER2,
 	USER1,
-	CST,
 }

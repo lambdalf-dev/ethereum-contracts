@@ -149,7 +149,7 @@ function addressCases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input booldean instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS_OR_ENS + '"',
+			test_description    : 'Input boolean instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS_OR_ENS + '"',
 			expected_error      : THROW.INVALID_ADDRESS_OR_ENS,
 			test_variable       : TEST_VAR.BOOLEAN,
 		},
@@ -214,7 +214,7 @@ function addressArrayCases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input array of booldean instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS_OR_ENS + '"',
+			test_description    : 'Input array of boolean instead of `' + varName + '` should throw "' + THROW.INVALID_ADDRESS_OR_ENS + '"',
 			expected_error      : THROW.INVALID_ADDRESS_OR_ENS,
 			test_variable       : TEST_VAR.ARRAY.BOOLEAN,
 		},
@@ -267,7 +267,7 @@ function bytes4Cases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input booldean instead of `' + varName + '` should throw "' + THROW.INVALID_ARRAYIFY_VALUE + '"',
+			test_description    : 'Input boolean instead of `' + varName + '` should throw "' + THROW.INVALID_ARRAYIFY_VALUE + '"',
 			expected_error      : THROW.INVALID_ARRAYIFY_VALUE,
 			test_variable       : TEST_VAR.BOOLEAN,
 		},
@@ -320,7 +320,7 @@ function bytes32Cases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input booldean instead of `' + varName + '` should throw "' + THROW.INVALID_ARRAYIFY_VALUE + '"',
+			test_description    : 'Input boolean instead of `' + varName + '` should throw "' + THROW.INVALID_ARRAYIFY_VALUE + '"',
 			expected_error      : THROW.INVALID_ARRAYIFY_VALUE,
 			test_variable       : TEST_VAR.BOOLEAN,
 		},
@@ -355,7 +355,7 @@ function bytesCases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input booldean instead of `' + varName + '` should throw "' + THROW.INVALID_ARRAYIFY_VALUE + '"',
+			test_description    : 'Input boolean instead of `' + varName + '` should throw "' + THROW.INVALID_ARRAYIFY_VALUE + '"',
 			expected_error      : THROW.INVALID_ARRAYIFY_VALUE,
 			test_variable       : TEST_VAR.BOOLEAN,
 		},
@@ -402,7 +402,7 @@ function booleanCases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input array of booldean instead of `' + varName + '` should be converted to `true`',
+			test_description    : 'Input array of boolean instead of `' + varName + '` should be converted to `true`',
 			expected_error      : null,
 			test_variable       : [ TEST_VAR.BOOLEAN ],
 		},
@@ -473,7 +473,7 @@ function stringCases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input booldean instead of `' + varName + '` should not throw',
+			test_description    : 'Input boolean instead of `' + varName + '` should not throw',
 			expected_error      : null,
 			test_variable       : TEST_VAR.BOOLEAN,
 		},
@@ -514,7 +514,7 @@ function uint256Cases ( varName, index ) {
 	return [
 		{
 			test_variable_index : index,
-			test_description    : 'Input booldean instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
+			test_description    : 'Input boolean instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
 			expected_error      : THROW.INVALID_BIG_NUMBER,
 			test_variable       : TEST_VAR.BOOLEAN,
 		},
@@ -584,7 +584,7 @@ function uint8Cases ( varName, index ) {
 		},
 		{
 			test_variable_index : index,
-			test_description    : 'Input booldean instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
+			test_description    : 'Input boolean instead of `' + varName + '` should throw "' + THROW.INVALID_BIG_NUMBER + '"',
 			expected_error      : THROW.INVALID_BIG_NUMBER,
 			test_variable       : TEST_VAR.BOOLEAN,
 		},

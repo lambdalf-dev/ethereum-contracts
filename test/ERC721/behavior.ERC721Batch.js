@@ -5,7 +5,6 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,
@@ -132,7 +131,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 						})
 
 						it( `Balance of the NULL address should be 0`, async function () {
-							const tokenOwner = CST.ADDRESS_ZERO
+							const tokenOwner = ethers.constants.AddressZero
 							expect(
 								await contract.balanceOf( tokenOwner )
 							).to.equal( 0 )
@@ -210,7 +209,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							const tokenId = TEST.UNMINTED_TOKEN
 							expect(
 								await contract.getApproved( tokenId )
-							).to.equal( CST.ADDRESS_ZERO )
+							).to.equal( ethers.constants.AddressZero )
 						})
 					}
 				})
@@ -383,7 +382,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 						describe( `${ USER_NAMES[ TOKEN_OWNER ] } safe transfering token ${ TEST.TARGET_TOKEN } owned`, function () {
 							it( `Should be reverted when transfering to the NULL address`, async function () {
 								const from    = users[ TOKEN_OWNER ].address
-								const to      = CST.ADDRESS_ZERO
+								const to      = ethers.constants.AddressZero
 								const tokenId = TEST.TARGET_TOKEN
 								await shouldRevertWhenTransferingToNullAddress(
 									contract.connect( users[ TOKEN_OWNER ] )
@@ -577,7 +576,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									const tokenId = TEST.TARGET_TOKEN
 									expect(
 										await contract.getApproved( tokenId )
-									).to.equal( CST.ADDRESS_ZERO )
+									).to.equal( ethers.constants.AddressZero )
 								})
 							})
 						})
@@ -660,7 +659,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 						describe( `${ USER_NAMES[ TOKEN_OWNER ] } safe transfering token ${ TEST.TARGET_TOKEN } owned`, function () {
 							it( `Should be reverted when transfering to the NULL address`, async function () {
 								const from    = users[ TOKEN_OWNER ].address
-								const to      = CST.ADDRESS_ZERO
+								const to      = ethers.constants.AddressZero
 								const tokenId = TEST.TARGET_TOKEN
 								const data    = `0x`
 								await shouldRevertWhenTransferingToNullAddress(
@@ -854,7 +853,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									const tokenId = TEST.TARGET_TOKEN
 									expect(
 										await contract.getApproved( tokenId )
-									).to.equal( CST.ADDRESS_ZERO )
+									).to.equal( ethers.constants.AddressZero )
 								})
 							})
 						})
@@ -994,7 +993,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 						describe( `${ USER_NAMES[ TOKEN_OWNER ] } transfering token ${ TEST.TARGET_TOKEN } owned`, function () {
 							it( `Should be reverted when transfering to the NULL address`, async function () {
 								const from    = users[ TOKEN_OWNER ].address
-								const to      = CST.ADDRESS_ZERO
+								const to      = ethers.constants.AddressZero
 								const tokenId = TEST.TARGET_TOKEN
 								await shouldRevertWhenTransferingToNullAddress(
 									contract.connect( users[ TOKEN_OWNER ] )
@@ -1052,7 +1051,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									const tokenId = TEST.TARGET_TOKEN
 									expect(
 										await contract.getApproved( tokenId )
-									).to.equal( CST.ADDRESS_ZERO )
+									).to.equal( ethers.constants.AddressZero )
 								})
 							})
 						})

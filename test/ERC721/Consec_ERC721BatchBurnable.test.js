@@ -4,7 +4,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,
@@ -649,8 +648,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 						if ( TEST.METHODS.mint ) {
 							it( `Should be reverted when minting to the NULL address`, async function () {
 								const qty     = 1
-								const from    = CST.ADDRESS_ZERO
-								const to      = CST.ADDRESS_ZERO
+								const from    = ethers.constants.AddressZero
+								const to      = ethers.constants.AddressZero
 								const tokenId = TEST.FIRST_TOKEN
 								await shouldRevertWhenTransferingToNullAddress(
 									contract.connect( users[ TOKEN_OWNER ] )
@@ -663,7 +662,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 								const non_holder = await deployContract( users[ CONTRACT_DEPLOYER ], NON_HOLDER_ARTIFACT, [] )
 
 								const qty     = 1
-								const from    = CST.ADDRESS_ZERO
+								const from    = ethers.constants.AddressZero
 								const to      = non_holder.address
 								const tokenId = TEST.FIRST_TOKEN
 								await shouldRevertWhenTransferingToNonERC721Receiver(
@@ -683,7 +682,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
 
 								const qty     = 1
-								const from    = CST.ADDRESS_ZERO
+								const from    = ethers.constants.AddressZero
 								const to      = invalidReceiver.address
 								const tokenId = TEST.FIRST_TOKEN
 								await shouldRevertWhenTransferingToNonERC721Receiver(
@@ -703,7 +702,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
 
 								const qty     = 1
-								const from    = CST.ADDRESS_ZERO
+								const from    = ethers.constants.AddressZero
 								const to      = invalidReceiver.address
 								const tokenId = TEST.FIRST_TOKEN
 								await shouldRevertWhenTransferingToNonERC721Receiver(
@@ -724,7 +723,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
 
 								const qty     = 1
-								const from    = CST.ADDRESS_ZERO
+								const from    = ethers.constants.AddressZero
 								const to      = invalidReceiver.address
 								const tokenId = TEST.FIRST_TOKEN
 								await shouldRevertWhenTransferingToNonERC721Receiver(
@@ -745,7 +744,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
 
 								const qty     = 1
-								const from    = CST.ADDRESS_ZERO
+								const from    = ethers.constants.AddressZero
 								const to      = invalidReceiver.address
 								const tokenId = TEST.FIRST_TOKEN
 								await shouldRevertWhenTransferingToNonERC721Receiver(
@@ -765,7 +764,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
 
 								const qty     = 1
-								const from    = CST.ADDRESS_ZERO
+								const from    = ethers.constants.AddressZero
 								const to      = invalidReceiver.address
 								const tokenId = TEST.FIRST_TOKEN
 								await shouldRevertWhenTransferingToNonERC721Receiver(
@@ -789,7 +788,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 								const to          = holder.address
 								const fromTokenId = TEST.FIRST_TOKEN
 								const toTokenId   = TEST.INIT_SUPPLY + qty
-								const fromAddress = CST.ADDRESS_ZERO
+								const fromAddress = ethers.constants.AddressZero
 								await shouldEmitConsecutiveTransferEvent(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mint( to, qty ),
@@ -819,7 +818,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/tokens/Mock_Consec_ER
 								const to          = users[ TOKEN_OWNER ].address
 								const fromTokenId = TEST.FIRST_TOKEN
 								const toTokenId   = TEST.INIT_SUPPLY + qty
-								const fromAddress = CST.ADDRESS_ZERO
+								const fromAddress = ethers.constants.AddressZero
 								await shouldEmitConsecutiveTransferEvent(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mint( to, qty ),

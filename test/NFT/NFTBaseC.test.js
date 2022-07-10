@@ -5,7 +5,6 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,
@@ -981,7 +980,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 							err  : null,
 							args : [
 								0,
-								CST.ONE_ETH,
+								ethers.constants.WeiPerEther,
 							],
 						}
 						defaultArgs[ CONTRACT.METHODS.saleState.SIGNATURE ] = {

@@ -3,7 +3,6 @@
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,
@@ -149,7 +148,7 @@
 						})
 
 						it( `Should be reverted when trying to get token of the NULL address`, async function() {
-							const tokenOwner = CST.ADDRESS_ZERO
+							const tokenOwner = ethers.constants.AddressZero
 							const index = TEST.TARGET_INDEX
 							await shouldRevertWhenOwnerIndexOutOfBounds(
 								contract.tokenOfOwnerByIndex( tokenOwner, index ),

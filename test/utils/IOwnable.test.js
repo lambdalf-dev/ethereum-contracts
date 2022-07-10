@@ -4,7 +4,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IOwnable.s
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		CST,
 		USER1,
 		USER2,
 		USER_NAMES,

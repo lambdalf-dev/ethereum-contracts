@@ -4,7 +4,6 @@ const ARTIFACT = require( '../../artifacts/contracts/mocks/utils/Mock_ERC2981Bas
 // **************************************
 	const { TEST_ACTIVATION } = require( '../test-activation-module' )
 	const {
-		CST,
 		THROW,
 		ERROR,
 		USER1,
@@ -210,7 +209,7 @@ const ARTIFACT = require( '../../artifacts/contracts/mocks/utils/Mock_ERC2981Bas
 						err  : null,
 						args : [
 							CONTRACT.TARGET_TOKEN,
-							CST.ONE_ETH,
+							ethers.constants.WeiPerEther,
 						],
 					}
 					defaultArgs[ CONTRACT.METHODS.supportsInterface.SIGNATURE ] = {
