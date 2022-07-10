@@ -13,6 +13,7 @@ npx hardhat node
 npx hardhat help
 npx hardhat coverage
 npx hardhat run scripts/deploy.js
+npx hardhat snapshot 
 node scripts/deploy.js
 ```
 

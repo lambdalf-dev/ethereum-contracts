@@ -6,7 +6,6 @@
   "repository": "https://github.com/lambdalf-dev/EthereumContracts.git",
   "author": "Lambdalf the White <silvereh@protonmail.com>",
   "license": "MIT",
-  "private": true,
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.7",
