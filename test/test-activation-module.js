@@ -15,6 +15,7 @@ const TEST_ACTIVATION = {
 		IPausable                     : true,
 		ITradable                     : true,
 		IWhitelistable_Merkle         : true,
+		IWhitelistable_MerkleMultiple : true,
 	// **************************************
 
 	// **************************************
