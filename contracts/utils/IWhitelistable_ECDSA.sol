@@ -8,6 +8,9 @@
 pragma solidity 0.8.10;
 
 abstract contract IWhitelistable_ECDSA {
+	// A constant encoded into the proof. To allow expandability of uses for the whitelist, it is kept constant instead of implemented as enum.
+	uint8 public constant DEFAULT_WHITELIST = 1;
+
 	// Errors
 	error IWhitelistable_NOT_SET();
 	error IWhitelistable_CONSUMED( address account );
@@ -20,10 +23,10 @@ abstract contract IWhitelistable_ECDSA {
 	}
 
 	address private _adminSigner;
-	mapping( address => uint256 ) private _consumed;
+	mapping( uint8 => mapping ( address => uint256 ) ) private _consumed;
 
-	modifier isWhitelisted( address account_, uint256 qty_, uint256 alloted_, Proof memory proof_ ) {
-		uint256 _allowed_ = _checkWhitelistAllowance( account_, alloted_, proof_ );
+	modifier isWhitelisted( address account_, uint8 whitelistType_, uint256 alloted_, Proof memory proof_, uint256 qty_ ) {
+		uint256 _allowed_ = _checkWhitelistAllowance( account_, whitelistType_, alloted_, proof_ );
 
 		if ( _allowed_ < qty_ ) {
 			revert IWhitelistable_FORBIDDEN( account_ );
@@ -46,21 +49,21 @@ abstract contract IWhitelistable_ECDSA {
 	* 
 	* - `_adminSigner` must be set.
 	*/
-	function _checkWhitelistAllowance( address account_, uint256 alloted_, Proof memory proof_ ) internal view returns ( uint256 ) {
+	function _checkWhitelistAllowance( address account_, uint8 whitelistType_, uint256 alloted_, Proof memory proof_ ) internal view returns ( uint256 ) {
 		if ( _adminSigner == address( 0 ) ) {
 			revert IWhitelistable_NOT_SET();
 		}
 
-		if ( _consumed[ account_ ] >= alloted_ ) {
+		if ( _consumed[ whitelistType_ ][ account_ ] >= alloted_ ) {
 			revert IWhitelistable_CONSUMED( account_ );
 		}
 
-		bytes32 _digest_ = keccak256( abi.encode( alloted_, account_ ) );
+		bytes32 _digest_ = keccak256( abi.encode( whitelistType_, alloted_, account_ ) );
 		if ( ! _validateProof( _digest_, proof_ ) ) {
 			revert IWhitelistable_FORBIDDEN( account_ );
 		}
 
-		return alloted_ - _consumed[ account_ ];
+		return alloted_ - _consumed[ whitelistType_ ][ account_ ];
 	}
 
 	function _validateProof( bytes32 digest_, Proof memory proof_ ) private view returns ( bool ) {
@@ -73,9 +76,9 @@ abstract contract IWhitelistable_ECDSA {
 	* 
 	* Note: Before calling this function, eligibility should be checked through {IWhitelistable-checkWhitelistAllowance}.
 	*/
-	function _consumeWhitelist( address account_, uint256 qty_ ) internal {
+	function _consumeWhitelist( address account_, uint8 whitelistType_, uint256 qty_ ) internal {
 		unchecked {
-			_consumed[ account_ ] += qty_;
+			_consumed[ whitelistType_ ][ account_ ] += qty_;
 		}
 	}
 }

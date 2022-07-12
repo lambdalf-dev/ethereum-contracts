@@ -13,8 +13,10 @@ const TEST_ACTIVATION = {
 		IInitializable                : true,
 		IOwnable                      : true,
 		IPausable                     : true,
+		IPausable_Extended            : true,
 		ITradable                     : true,
 		IWhitelistable_ECDSA          : true,
+		IWhitelistable_ECDSA_Extended : true,
 		IWhitelistable_Merkle         : true,
 		IWhitelistable_MerkleMultiple : true,
 	// **************************************

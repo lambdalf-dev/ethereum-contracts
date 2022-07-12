@@ -1,4 +1,4 @@
-const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelistable_ECDSA.sol/Mock_IWhitelistable_ECDSA.json` )
+const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelistable_ECDSA_Extended.sol/Mock_IWhitelistable_ECDSA_Extended.json` )
 // **************************************
 // *****           IMPORT           *****
 // **************************************
@@ -45,14 +45,14 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 // **************************************
 	// For contract data
 	const CONTRACT = {
-		NAME : `Mock_IWhitelistable_ECDSA`,
+		NAME : `Mock_IWhitelistable_ECDSA_Extended`,
 		METHODS : {
 			checkWhitelistAllowance : {
-				SIGNATURE             : `checkWhitelistAllowance(address,uint256,tuple(bytes32,bytes32,uint8))`,
+				SIGNATURE             : `checkWhitelistAllowance(address,uint8,uint256,tuple(bytes32,bytes32,uint8))`,
 				PARAMS                : [ `account_`, `alloted_`, `proof_` ],
 			},
 			consumeWhitelist        : {
-				SIGNATURE             : `consumeWhitelist(uint256,tuple(bytes32,bytes32,uint8),uint256)`,
+				SIGNATURE             : `consumeWhitelist(uint8,uint256,tuple(bytes32,bytes32,uint8),uint256)`,
 				PARAMS                : [ `alloted_`, `proof_`, `qty_` ],
 			},
 			setWhitelist            : {
@@ -66,7 +66,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 	const WHITELIST_AMOUNT_2 = 1
 
 	const TEST_DATA = {
-		NAME : `IWhitelistable_ECDSA`,
+		NAME : `IWhitelistable_ECDSA_Extended`,
 		METHODS : {
 			checkWhitelistAllowance : true,
 			consumeWhitelist        : true,
@@ -74,18 +74,10 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 		},
 		WHITELIST_AMOUNT_1 : WHITELIST_AMOUNT_1,
 		WHITELIST_AMOUNT_2 : WHITELIST_AMOUNT_2,
-		WHITELIST_ID_1 : 1,
-		ACCESS_LIST : {
-			"0x0010e29271bbca7abfbbbda1bdec668720cca795": WHITELIST_AMOUNT_1,
-			"0x003018F3b836e952775C07E9b7BCde83b519a299": WHITELIST_AMOUNT_1,
-			"0x009E7c27d5e3A1a4eB94b1ffCB258Eea12E17d1a": WHITELIST_AMOUNT_1,
-			"0x001709b366bb85f0fb2cC4eF18833392EBBA5756": WHITELIST_AMOUNT_2,
-			"0x00673506c19116893bdffa587d5ef968affe6a99": WHITELIST_AMOUNT_2,
-			"0x00a139733aD9A7D6DEb9e5B7E2C6a01122b17747": WHITELIST_AMOUNT_2
-		},
+		WHITELIST_TYPE_1 : 1,
+		WHITELIST_TYPE_2 : 2,
 	}
 
-	let accesslist = {}
 	let users = {}
 	let contract
 // **************************************
@@ -108,11 +100,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
 		await test_contract.deployed()
 
-		test_accesslist = JSON.parse( JSON.stringify( TEST_DATA.ACCESS_LIST ) )
-		test_accesslist[ test_token_owner.address ] = TEST_DATA.WHITELIST_AMOUNT_1
-		test_accesslist[ test_user1.address ] = TEST_DATA.WHITELIST_AMOUNT_1
-		test_accesslist[ test_user2.address ] = TEST_DATA.WHITELIST_AMOUNT_2
-
 		test_signer_wallet = getSignerWallet()
 		test_fake_signer   = getSignerWallet()
 
@@ -124,7 +111,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 			test_token_owner,
 			test_other_owner,
 			test_contract_deployer,
-			test_accesslist,
 			test_signer_wallet,
 			test_fake_signer,
 		}
@@ -145,11 +131,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
 		await test_contract.deployed()
 
-		test_accesslist = JSON.parse( JSON.stringify( TEST_DATA.ACCESS_LIST ) )
-		test_accesslist[ test_token_owner.address ] = TEST_DATA.WHITELIST_AMOUNT_1
-		test_accesslist[ test_user1.address ] = TEST_DATA.WHITELIST_AMOUNT_1
-		test_accesslist[ test_user2.address ] = TEST_DATA.WHITELIST_AMOUNT_2
-
 		test_signer_wallet = getSignerWallet()
 		test_fake_signer   = getSignerWallet()
 
@@ -164,7 +145,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 			test_token_owner,
 			test_other_owner,
 			test_contract_deployer,
-			test_accesslist,
 			test_signer_wallet,
 			test_fake_signer,
 		}
@@ -186,13 +166,11 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 						test_token_owner,
 						test_other_owner,
 						test_contract_deployer,
-						test_accesslist,
 						test_signer_wallet,
 						test_fake_signer,
 					} = await loadFixture( fixture )
 
 					contract       = test_contract
-					accesslist     = JSON.parse( JSON.stringify( test_accesslist ) )
 					users[ USER1             ] = test_user1
 					users[ USER2             ] = test_user2
 					users[ PROXY_USER        ] = test_proxy_user
@@ -204,7 +182,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 
 					const hashBuffer = generateHashBuffer(
 						[ 'uint8', 'uint256', 'address' ],
-						[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
+						[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 					)
 
 					defaultArgs = {}
@@ -241,8 +219,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 		})
 	}
 
-	async function shouldBehaveLikeMock_IWhitelistable_ECDSABeforeSettingWhitelist ( fixture, TEST, CONTRACT ) {
-		describe( `Should behave like Mock_IWhitelistable_ECDSA before setting whitelist`, function () {
+	async function shouldBehaveLikeMock_IWhitelistable_ECDSA_ExtendedBeforeSettingWhitelist ( fixture, TEST, CONTRACT ) {
+		describe( `Should behave like Mock_IWhitelistable_ECDSA_Extended before setting whitelist`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
@@ -253,13 +231,11 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 						test_token_owner,
 						test_other_owner,
 						test_contract_deployer,
-						test_accesslist,
 						test_signer_wallet,
 						test_fake_signer,
 					} = await loadFixture( fixture )
 
 					contract       = test_contract
-					accesslist     = JSON.parse( JSON.stringify( test_accesslist ) )
 					users[ USER1             ] = test_user1
 					users[ USER2             ] = test_user2
 					users[ PROXY_USER        ] = test_proxy_user
@@ -273,16 +249,19 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 				describe( CONTRACT.METHODS.checkWhitelistAllowance.SIGNATURE, function () {
 					if ( TEST.METHODS.checkWhitelistAllowance ) {
 						it( `Should revert when whitelist is not set`, async function () {
-							const account = users[ TOKEN_OWNER ].address
-							const hashBuffer = generateHashBuffer(
+							const account       = users[ TOKEN_OWNER ]
+							const hashBuffer    = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 							)
-							const alloted = TEST.WHITELIST_AMOUNT_1
-							const proof   = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
+							const alloted       = TEST.WHITELIST_AMOUNT_1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+							)
+							const whitelistType = TEST.WHITELIST_TYPE_1
 
 							await shouldRevertWhenWitelistIsNotSet(
-								contract.checkWhitelistAllowance( account, alloted, proof )
+								contract.checkWhitelistAllowance( account.address, whitelistType, alloted, proof )
 							)
 						})
 					}
@@ -291,17 +270,21 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 				describe( CONTRACT.METHODS.consumeWhitelist.SIGNATURE, function () {
 					if ( TEST.METHODS.consumeWhitelist ) {
 						it( `Should revert when whitelist is not set`, async function () {
-							const hashBuffer = generateHashBuffer(
+							const account       = users[ TOKEN_OWNER ]
+							const hashBuffer    = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 							)
-							const alloted = TEST.WHITELIST_AMOUNT_1
-							const proof   = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
-							const qty     = 1
+							const alloted       = TEST.WHITELIST_AMOUNT_1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+							)
+							const qty           = 1
+							const whitelistType = TEST.WHITELIST_TYPE_1
 
 							await shouldRevertWhenWitelistIsNotSet(
-								contract.connect( users[ TOKEN_OWNER ] )
-												.consumeWhitelist( alloted, proof, qty )
+								contract.connect( account )
+												.consumeWhitelist( whitelistType, alloted, proof, qty )
 							)
 						})
 					}
@@ -321,8 +304,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 		})
 	}
 
-	async function shouldBehaveLikeMock_IWhitelistable_ECDSAAfterSettingWhitelist ( fixture, TEST, CONTRACT ) {
-		describe( `Should behave like Mock_IWhitelistable_ECDSA after setting whitelist`, function () {
+	async function shouldBehaveLikeMock_IWhitelistable_ECDSA_ExtendedAfterSettingWhitelist ( fixture, TEST, CONTRACT ) {
+		describe( `Should behave like Mock_IWhitelistable_ECDSA_Extended after setting whitelist`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
@@ -333,13 +316,11 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 						test_token_owner,
 						test_other_owner,
 						test_contract_deployer,
-						test_accesslist,
 						test_signer_wallet,
 						test_fake_signer,
 					} = await loadFixture( fixture )
 
 					contract       = test_contract
-					accesslist     = JSON.parse( JSON.stringify( test_accesslist ) )
 					users[ USER1             ] = test_user1
 					users[ USER2             ] = test_user2
 					users[ PROXY_USER        ] = test_proxy_user
@@ -353,61 +334,91 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 				describe( CONTRACT.METHODS.checkWhitelistAllowance.SIGNATURE, function () {
 					if ( TEST.METHODS.checkWhitelistAllowance ) {
 						it( `User cannot access with someone else's proof`, async function () {
-							const account    = users[ OTHER_OWNER ].address
-							const hashBuffer = generateHashBuffer(
+							const account       = users[ OTHER_OWNER ]
+							const hashBuffer    = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 							)
-							const alloted    = TEST.WHITELIST_AMOUNT_1
-							const proof      = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
+							const alloted       = TEST.WHITELIST_AMOUNT_1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+							)
+							const whitelistType = TEST.WHITELIST_TYPE_1
 
 							await shouldRevertWhenNotWhitelisted(
-								contract.checkWhitelistAllowance( account, alloted, proof ),
-								account
+								contract.checkWhitelistAllowance( account.address, whitelistType, alloted, proof ),
+								account.address
 							)
 						})
 
 						it( `User cannot forge their own proof`, async function () {
-							const account    = users[ OTHER_OWNER ].address
-							const hashBuffer = generateHashBuffer(
+							const account       = users[ TOKEN_OWNER ]
+							const hashBuffer    = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, account ]
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 							)
-							const alloted    = TEST.WHITELIST_AMOUNT_1
-							const proof      = serializeProof( createProof( hashBuffer, users[ 'FAKE_SIGNER' ] ) )
+							const alloted       = TEST.WHITELIST_AMOUNT_1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'FAKE_SIGNER' ] )
+							)
+							const whitelistType = TEST.WHITELIST_TYPE_1
 
 							await shouldRevertWhenNotWhitelisted(
-								contract.checkWhitelistAllowance( account, alloted, proof ),
-								account
+								contract.checkWhitelistAllowance( account.address, whitelistType, alloted, proof ),
+								account.address
+							)
+						})
+
+						it( `Whitelisted user cannot access a different whitelist`, async function () {
+							const account       = users[ TOKEN_OWNER ]
+							const hashBuffer    = generateHashBuffer(
+								[ 'uint8', 'uint256', 'address' ],
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
+							)
+							const alloted       = TEST.WHITELIST_AMOUNT_1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+							)
+							const whitelistType = TEST.WHITELIST_TYPE_2
+
+							await shouldRevertWhenNotWhitelisted(
+								contract.checkWhitelistAllowance( account.address, whitelistType, alloted, proof ),
+								account.address
 							)
 						})
 
 						it( `Whitelisted user cannot access more than they are alloted`, async function () {
-							const account    = users[ TOKEN_OWNER ].address
-							const hashBuffer = generateHashBuffer(
+							const account       = users[ TOKEN_OWNER ]
+							const hashBuffer    = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, account ]
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 							)
-							const alloted    = TEST.WHITELIST_AMOUNT_1 + 1
-							const proof      = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
+							const alloted       = TEST.WHITELIST_AMOUNT_1 + 1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+							)
+							const whitelistType = TEST.WHITELIST_TYPE_1
 
 							await shouldRevertWhenNotWhitelisted(
-								contract.checkWhitelistAllowance( account, alloted, proof ),
-								account
+								contract.checkWhitelistAllowance( account.address, whitelistType, alloted, proof ),
+								account.address
 							)
 						})
 
 						it( `Whitelisted user can access`, async function () {
-							const account    = users[ TOKEN_OWNER ].address
-							const hashBuffer = generateHashBuffer(
+							const account       = users[ TOKEN_OWNER ]
+							const hashBuffer    = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, account ]
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 							)
-							const alloted    = TEST.WHITELIST_AMOUNT_1
-							const proof      = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
+							const alloted       = TEST.WHITELIST_AMOUNT_1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+							)
+							const whitelistType = TEST.WHITELIST_TYPE_1
 
 							expect(
-								await contract.checkWhitelistAllowance( account, alloted, proof )
+								await contract.checkWhitelistAllowance( account.address, whitelistType, alloted, proof )
 							).to.equal( alloted )
 						})
 					}
@@ -416,118 +427,159 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 				describe( CONTRACT.METHODS.consumeWhitelist.SIGNATURE, function () {
 					if ( TEST.METHODS.consumeWhitelist ) {
 						it( `User cannot access with someone else's proof`, async function () {
-							const account    = users[ OTHER_OWNER ].address
-							const hashBuffer = generateHashBuffer(
+							const account       = users[ OTHER_OWNER ]
+							const hashBuffer    = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 							)
-							const alloted    = TEST.WHITELIST_AMOUNT_1
-							const proof      = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
-							const qty        = 1
+							const alloted       = TEST.WHITELIST_AMOUNT_1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+							)
+							const qty           = 1
+							const whitelistType = TEST.WHITELIST_TYPE_1
 
 							await shouldRevertWhenNotWhitelisted(
-								contract.connect( users[ OTHER_OWNER ] )
-												.consumeWhitelist( alloted, proof, qty ),
-								account
+								contract.connect( account )
+												.consumeWhitelist( whitelistType, alloted, proof, qty ),
+								account.address
 							)
 						})
 
 						it( `User cannot forge their own proof`, async function () {
-							const account    = users[ OTHER_OWNER ].address
-							const hashBuffer = generateHashBuffer(
+							const account       = users[ TOKEN_OWNER ]
+							const hashBuffer    = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, account ]
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 							)
-							const alloted    = TEST.WHITELIST_AMOUNT_1
-							const proof      = serializeProof( createProof( hashBuffer, users[ 'FAKE_SIGNER' ] ) )
-							const qty        = 1
+							const alloted       = TEST.WHITELIST_AMOUNT_1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'FAKE_SIGNER' ] )
+							)
+							const qty           = 1
+							const whitelistType = TEST.WHITELIST_TYPE_1
 
 							await shouldRevertWhenNotWhitelisted(
-								contract.connect( users[ OTHER_OWNER ] )
-												.consumeWhitelist( alloted, proof, qty ),
-								account
+								contract.connect( account )
+												.consumeWhitelist( whitelistType, alloted, proof, qty ),
+								account.address
+							)
+						})
+
+						it( `User cannot access a different whitelist`, async function () {
+							const account       = users[ TOKEN_OWNER ]
+							const hashBuffer    = generateHashBuffer(
+								[ 'uint8', 'uint256', 'address' ],
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
+							)
+							const alloted       = TEST.WHITELIST_AMOUNT_1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+							)
+							const qty           = 1
+							const whitelistType = TEST.WHITELIST_TYPE_2
+
+							await shouldRevertWhenNotWhitelisted(
+								contract.connect( account )
+												.consumeWhitelist( whitelistType, alloted, proof, qty ),
+								account.address
 							)
 						})
 
 						it( `Whitelisted user cannot access more than they are alloted`, async function () {
-							const account    = users[ TOKEN_OWNER ].address
-							const hashBuffer = generateHashBuffer(
+							const account       = users[ TOKEN_OWNER ]
+							const hashBuffer    = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, account ]
+								[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 							)
-							const alloted    = TEST.WHITELIST_AMOUNT_1
-							const proof      = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
-							const qty        = 1 + TEST.WHITELIST_AMOUNT_1
+							const alloted       = TEST.WHITELIST_AMOUNT_1
+							const proof         = serializeProof(
+								createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+							)
+							const qty           = 1 + TEST.WHITELIST_AMOUNT_1
+							const whitelistType = TEST.WHITELIST_TYPE_1
 
 							await shouldRevertWhenNotWhitelisted(
-								contract.connect( users[ TOKEN_OWNER ] )
-												.consumeWhitelist( alloted, proof, qty ),
-								account
+								contract.connect( account )
+												.consumeWhitelist( whitelistType, alloted, proof, qty ),
+								account.address
 							)
 						})
 
 						describe( `Whitelisted user can access`, function () {
 							beforeEach( async function () {
-								const account    = users[ TOKEN_OWNER ].address
-								const hashBuffer = generateHashBuffer(
+								const account       = users[ TOKEN_OWNER ]
+								const hashBuffer    = generateHashBuffer(
 									[ 'uint8', 'uint256', 'address' ],
-									[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, account ]
+									[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 								)
-								const alloted    = TEST.WHITELIST_AMOUNT_1
-								const proof      = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
-								const qty        = 1
+								const alloted       = TEST.WHITELIST_AMOUNT_1
+								const proof         = serializeProof(
+									createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+								)
+								const qty           = 1
+								const whitelistType = TEST.WHITELIST_TYPE_1
 
-								await contract.connect( users[ TOKEN_OWNER ] )
-															.consumeWhitelist( alloted, proof, qty )
+								await contract.connect( account )
+															.consumeWhitelist( whitelistType, alloted, proof, qty )
 							})
 
 							it( `Whitelisted user cannot access more than alloted in several transactions`, async function () {
-								const account    = users[ TOKEN_OWNER ].address
-								const hashBuffer = generateHashBuffer(
+								const account       = users[ TOKEN_OWNER ]
+								const hashBuffer    = generateHashBuffer(
 									[ 'uint8', 'uint256', 'address' ],
-									[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, account ]
+									[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 								)
-								const alloted    = TEST.WHITELIST_AMOUNT_1
-								const proof      = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
-								const qty        = TEST.WHITELIST_AMOUNT_1
+								const alloted       = TEST.WHITELIST_AMOUNT_1
+								const proof         = serializeProof(
+									createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+								)
+								const qty           = TEST.WHITELIST_AMOUNT_1
+								const whitelistType = TEST.WHITELIST_TYPE_1
 
 								await shouldRevertWhenNotWhitelisted(
-									contract.connect( users[ TOKEN_OWNER ] )
-													.consumeWhitelist( alloted, proof, qty ),
-									account
+									contract.connect( account )
+													.consumeWhitelist( whitelistType, alloted, proof, qty ),
+									account.address
 								)
 							})
 						})
 
 						describe( `Whitelisted user consumes their entire whitelist allowance`, function () {
 							beforeEach( async function () {
-								const account    = users[ TOKEN_OWNER ].address
-								const hashBuffer = generateHashBuffer(
+								const account       = users[ TOKEN_OWNER ]
+								const hashBuffer    = generateHashBuffer(
 									[ 'uint8', 'uint256', 'address' ],
-									[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, account ]
+									[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 								)
-								const alloted    = TEST.WHITELIST_AMOUNT_1
-								const proof      = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
-								const qty        = TEST.WHITELIST_AMOUNT_1
+								const alloted       = TEST.WHITELIST_AMOUNT_1
+								const proof         = serializeProof(
+									createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+								)
+								const qty           = TEST.WHITELIST_AMOUNT_1
+								const whitelistType = TEST.WHITELIST_TYPE_1
 
-								await contract.connect( users[ TOKEN_OWNER ] )
-															.consumeWhitelist( alloted, proof, qty )
+								await contract.connect( account )
+															.consumeWhitelist( whitelistType, alloted, proof, qty )
 							})
 
 							it( `Whitelisted user cannot access more after consuming their whitelist allowance`, async function () {
-								const account    = users[ TOKEN_OWNER ].address
-								const hashBuffer = generateHashBuffer(
+								const account       = users[ TOKEN_OWNER ]
+								const hashBuffer    = generateHashBuffer(
 									[ 'uint8', 'uint256', 'address' ],
-									[ TEST.WHITELIST_ID_1, TEST.WHITELIST_AMOUNT_1, account ]
+									[ TEST.WHITELIST_TYPE_1, TEST.WHITELIST_AMOUNT_1, users[ TOKEN_OWNER ].address ]
 								)
-								const alloted    = TEST.WHITELIST_AMOUNT_1
-								const proof      = serializeProof( createProof( hashBuffer, users[ 'SIGNER_WALLET' ] ) )
-								const qty        = TEST.WHITELIST_AMOUNT_1
+								const alloted       = TEST.WHITELIST_AMOUNT_1
+								const proof         = serializeProof(
+									createProof( hashBuffer, users[ 'SIGNER_WALLET' ] )
+								)
+								const qty           = 1
+								const whitelistType = TEST.WHITELIST_TYPE_1
 
 								await shouldRevertWhenWhitelistIsConsumed(
-									contract.connect( users[ TOKEN_OWNER ] )
-													.consumeWhitelist( alloted, proof, qty ),
-									account
+									contract.connect( account )
+													.consumeWhitelist( whitelistType, alloted, proof, qty ),
+									account.address
 								)
 							})
 						})
@@ -544,7 +596,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
 		// testInvalidInputs( noAccessFixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_IWhitelistable_ECDSABeforeSettingWhitelist( noAccessFixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_IWhitelistable_ECDSAAfterSettingWhitelist( accessFixture, TEST_DATA, CONTRACT )
+		shouldBehaveLikeMock_IWhitelistable_ECDSA_ExtendedBeforeSettingWhitelist( noAccessFixture, TEST_DATA, CONTRACT )
+		shouldBehaveLikeMock_IWhitelistable_ECDSA_ExtendedAfterSettingWhitelist( accessFixture, TEST_DATA, CONTRACT )
 	}
 })
