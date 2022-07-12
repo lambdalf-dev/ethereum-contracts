@@ -25,10 +25,9 @@
 // *****       TEST VARIABLES       *****
 // **************************************
 	// SALE STATE
-	const SALE_STATE = {
-		CLOSED  : 0,
-		PRESALE : 1,
-		SALE    : 2,
+	const CONTRACT_STATE = {
+		CLOSED : 0,
+		OPEN   : 1,
 	}
 	let contract
 	let users = {}
@@ -39,20 +38,17 @@
 // **************************************
 	// For some reason, the processing of the enum type fails...
 	// While waiting to find a solution, it is simpler to skip the arguments verification
-	async function shouldEmitSaleStateChangedEvent ( promise, contract, previousState, newState ) {
-		await expect( promise ).to.emit( contract, `SaleStateChanged` )/*.withArgs( previousState, newState )*/
+	async function shouldEmitContractStateChangedEvent ( promise, contract, previousState, newState ) {
+		await expect( promise ).to.emit( contract, `ContractStateChanged` )
+													 .withArgs( previousState, newState )
 	}
 
-	async function shouldRevertWhenSaleStateIsNotClose ( promise, currentState, error = `IPausable_INCORRECT_SALE_STATE` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }(${ currentState }, 0)` )
+	async function shouldRevertWhenContractStateIsIncorrect ( promise, currentState, error = `IPausable_INCORRECT_STATE` ) {
+		await expect( promise ).to.be.revertedWith( `${ error }(${ currentState })` )
 	}
 
-	async function shouldRevertWhenSaleStateIsNotPreSale ( promise, currentState, error = `IPausable_INCORRECT_SALE_STATE` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }(${ currentState }, 1)` )
-	}
-
-	async function shouldRevertWhenSaleStateIsNotSale ( promise, currentState, error = `IPausable_INCORRECT_SALE_STATE` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }(${ currentState }, 2)` )
+	async function shouldRevertWhenContractStateIsInvalid ( promise, currentState, error = `IPausable_INVALID_STATE` ) {
+		await expect( promise ).to.be.revertedWith( `${ error }(${ currentState })` )
 	}
 
 	function shouldBehaveLikeIPausable ( fixture, TEST, CONTRACT ) {
@@ -79,51 +75,15 @@
 				})
 
 				describe( `Default sale state is CLOSED`, function () {
-					describe( CONTRACT.METHODS.saleState.SIGNATURE, function () {
-						if ( TEST.METHODS.saleState ) {
-							it( `Should be ${ SALE_STATE.CLOSED }`, async function () {
+					describe( CONTRACT.METHODS.getPauseState.SIGNATURE, function () {
+						if ( TEST.METHODS.getPauseState ) {
+							it( `Should be ${ CONTRACT_STATE.CLOSED }`, async function () {
 								expect(
-									await contract.saleState()
-								).to.equal( SALE_STATE.CLOSED )
+									await contract.getPauseState()
+								).to.equal( CONTRACT_STATE.CLOSED )
 							})
 						}
 					})
-				})
-
-				describe( CONTRACT.METHODS.setSaleState.SIGNATURE, function () {
-					if ( TEST.METHODS.setSaleState ) {
-						it( `Setting the sale state to PRESALE`, async function () {
-							const previousState = SALE_STATE.CLOSED
-							const newState      = SALE_STATE.PRESALE
-							await shouldEmitSaleStateChangedEvent(
-								contract.connect( users[ CONTRACT_DEPLOYER ] )
-												.setSaleState( newState ),
-								contract,
-								previousState,
-								newState
-							)
-
-							expect(
-								await contract.saleState()
-							).to.equal( newState )
-						})
-
-						it( `Setting the sale state to SALE`, async function () {
-							const previousState = SALE_STATE.CLOSED
-							const newState      = SALE_STATE.SALE
-							await shouldEmitSaleStateChangedEvent(
-								contract.connect( users[ CONTRACT_DEPLOYER ] )
-												.setSaleState( newState ),
-								contract,
-								previousState,
-								newState
-							)
-
-							expect(
-								await contract.saleState()
-							).to.equal( newState )
-						})
-					}
 				})
 			}
 		})
@@ -134,10 +94,9 @@
 // *****           EXPORT           *****
 // **************************************
 module.exports = {
-	SALE_STATE,
+	CONTRACT_STATE,
 	shouldBehaveLikeIPausable,
-	shouldEmitSaleStateChangedEvent,
-	shouldRevertWhenSaleStateIsNotClose,
-	shouldRevertWhenSaleStateIsNotPreSale,
-	shouldRevertWhenSaleStateIsNotSale,
+	shouldEmitContractStateChangedEvent,
+	shouldRevertWhenContractStateIsIncorrect,
+	shouldRevertWhenContractStateIsInvalid,
 }

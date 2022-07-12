@@ -33,7 +33,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 	} = require( `../utils/behavior.ERC165` )
 
 	const {
-		SALE_STATE,
+		CONTRACT_STATE,
 	} = require( `../utils/behavior.IPausable` )
 
 	const {
@@ -46,10 +46,9 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 		shouldRevertWhenContractHasNoBalance,
 		shouldRevertWhenEtherTransferFails,
 		shouldEmitPaymentReleasedEvent,
-		shouldBehaveLikeNFTAtDeploy,
+		shouldBehaveLikeNFTBaseRAtDeploy,
 		shouldBehaveLikeNFTAfterSettingProxy,
-		shouldBehaveLikeNFTAfterSettingPreSale,
-		shouldBehaveLikeNFTAfterSettingSale,
+		shouldBehaveLikeNFTBaseRAfterSettingStateToOpen,
 		shouldBehaveLikeNFTAfterMint,
 		shouldBehaveLikeNFTAfterMintingOut,
 	} = require( `../NFT/behavior.NFTBaseR` )
@@ -88,7 +87,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 			ConsecutiveTransfer  : `ConsecutiveTransfer`,
 			OwnershipTransferred : `OwnershipTransferred`,
 			PaymentReleased      : `PaymentReleased`,
-			SaleStateChanged     : `SaleStateChanged`,
+			ContractStateChanged : `ContractStateChanged`,
 			Transfer             : `Transfer`,
 		},
 		METHODS : {
@@ -99,8 +98,8 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 					SIGNATURE          : `approve(address,uint256)`,
 					PARAMS             : [ `to_`, `tokenId_` ],
 				},
-				mintSale             : {
-					SIGNATURE          : `mintSale(uint256)`,
+				mintPublic           : {
+					SIGNATURE          : `mintPublic(uint256)`,
 					PARAMS             : [ `qty_` ],
 				},
 				safeTransferFrom     : {
@@ -144,8 +143,8 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 					SIGNATURE          : `setRoyaltyInfo(address,uint256)`,
 					PARAMS             : [ `recipient_`, `royaltyRate_` ],
 				},
-				setSaleState         : {
-					SIGNATURE          : `setSaleState(uint8)`,
+				setPauseState         : {
+					SIGNATURE          : `setPauseState(uint8)`,
 					PARAMS             : [ `newState_` ],
 				},
 				transferOwnership    : {
@@ -189,8 +188,8 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 					SIGNATURE          : 'royaltyInfo(uint256,uint256)',
 					PARAMS             : [ 'tokenId_', 'salePrice_' ],
 				},
-				saleState            : {
-					SIGNATURE          : `saleState()`,
+				getPauseState        : {
+					SIGNATURE          : `getPauseState()`,
 					PARAMS             : [],
 				},
 				supportsInterface    : {
@@ -258,7 +257,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 			ConsecutiveTransfer  : true,
 			OwnershipTransferred : true,
 			PaymentReleased      : true,
-			SaleStateChanged     : true,
+			ContractStateChanged : true,
 			Transfer             : true,
 		},
 		// TEST METHODS
@@ -267,7 +266,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 			// *****           PUBLIC           *****
 			// **************************************
 				approve             : true,
-				mintSale            : true,
+				mintPublic          : true,
 				safeTransferFrom    : true,
 				safeTransferFrom_ol : true,
 				setApprovalForAll   : true,
@@ -296,7 +295,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 				owner               : true,
 				ownerOf             : true,
 				royaltyInfo         : true,
-				saleState           : true,
+				getPauseState       : true,
 				supportsInterface   : true,
 				symbol              : true,
 				tokenByIndex        : true,
@@ -514,70 +513,6 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 		}
 	}
 
-	async function presaleFixture () {
-		const [
-			test_team1,
-			test_team2,
-			test_team3,
-			test_team4,
-			test_user1,
-			test_user2,
-			test_proxy_user,
-			test_token_owner,
-			test_other_owner,
-			test_contract_deployer,
-			...addrs
-		] = await ethers.getSigners()
-
-		test_proxy_contract_params = []
-		test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
-		await test_proxy_contract.deployed()
-		await test_proxy_contract.setProxy( test_token_owner.address, test_proxy_user.address )
-
-		test_contract_params = [
-			TEST_DATA.PARAMS.reserve_,
-			TEST_DATA.PARAMS.maxBatch_,
-			TEST_DATA.PARAMS.maxSupply_,
-			TEST_DATA.PARAMS.salePrice_,
-			TEST_DATA.PARAMS.royaltyRate_,
-			TEST_DATA.PARAMS.name_,
-			TEST_DATA.PARAMS.symbol_,
-			TEST_DATA.PARAMS.baseURI_,
-			TEST_DATA.PARAMS.teamShares_,
-			[
-				test_team1.address,
-				test_team2.address,
-				test_team3.address,
-				test_team4.address,
-			],
-		]
-		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
-		await test_contract.deployed()
-
-		test_proxyRegistryAddress = test_proxy_contract.address
-		await test_contract.connect( test_contract_deployer )
-											 .addProxyRegistry( test_proxyRegistryAddress )
-
-		test_newState = SALE_STATE.PRESALE
-		await test_contract.connect( test_contract_deployer )
-											 .setSaleState( test_newState )
-
-		return {
-			test_team1,
-			test_team2,
-			test_team3,
-			test_team4,
-			test_user1,
-			test_user2,
-			test_contract,
-			test_proxy_user,
-			test_token_owner,
-			test_other_owner,
-			test_proxy_contract,
-			test_contract_deployer,
-		}
-	}
-
 	async function saleFixture () {
 		const [
 			test_team1,
@@ -622,9 +557,9 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 		await test_contract.connect( test_contract_deployer )
 											 .addProxyRegistry( test_proxyRegistryAddress )
 
-		test_newState = SALE_STATE.SALE
+		test_newState = CONTRACT_STATE.OPEN
 		await test_contract.connect( test_contract_deployer )
-											 .setSaleState( test_newState )
+											 .setPauseState( test_newState )
 
 		return {
 			test_team1,
@@ -686,9 +621,9 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 		)
 		await test_contract.deployed()
 
-		test_newState = SALE_STATE.SALE
+		test_newState = CONTRACT_STATE.OPEN
 		await test_contract.connect( test_contract_deployer )
-											 .setSaleState( test_newState )
+											 .setPauseState( test_newState )
 
 		test_qty   = TEST_DATA.TOKEN_OWNER_INIT_SUPPLY
 		test_value = TEST_DATA.PARAMS.salePrice_.mul( test_qty )
@@ -696,7 +631,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 			value : test_value
 		}
 		await test_contract.connect( test_token_owner )
-											 .mintSale( test_qty, test_tx_params )
+											 .mintPublic( test_qty, test_tx_params )
 
 		test_qty   = TEST_DATA.OTHER_OWNER_SUPPLY
 		test_value = TEST_DATA.PARAMS.salePrice_.mul( test_qty )
@@ -704,7 +639,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 			value : test_value
 		}
 		await test_contract.connect( test_other_owner )
-											 .mintSale( test_qty, test_tx_params )
+											 .mintPublic( test_qty, test_tx_params )
 
 		test_qty   = TEST_DATA.TOKEN_OWNER_MORE_SUPPLY
 		test_value = TEST_DATA.PARAMS.salePrice_.mul( test_qty )
@@ -712,7 +647,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 			value : test_value
 		}
 		await test_contract.connect( test_token_owner )
-											 .mintSale( test_qty, test_tx_params )
+											 .mintPublic( test_qty, test_tx_params )
 
 		return {
 			test_team1,
@@ -774,9 +709,9 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 		)
 		await test_contract.deployed()
 
-		test_newState = SALE_STATE.SALE
+		test_newState = CONTRACT_STATE.OPEN
 		await test_contract.connect( test_contract_deployer )
-											 .setSaleState( test_newState )
+											 .setPauseState( test_newState )
 
 		test_qty   = TEST_DATA.MINT_OUT.maxBatch_
 		test_value = TEST_DATA.PARAMS.salePrice_.mul( test_qty )
@@ -784,7 +719,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 			value : test_value
 		}
 		await test_contract.connect( test_token_owner )
-											 .mintSale( test_qty, test_tx_params )
+											 .mintPublic( test_qty, test_tx_params )
 
 		return {
 			test_team1,
@@ -849,7 +784,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 								TEST.FIRST_TOKEN,
 							],
 						}
-						defaultArgs [ CONTRACT.METHODS.mintSale.SIGNATURE ] = {
+						defaultArgs [ CONTRACT.METHODS.mintPublic.SIGNATURE ] = {
 							err  : null,
 							args : [
 								5,
@@ -927,10 +862,10 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 								TEST.PARAMS.royaltyRate_,
 							],
 						}
-						defaultArgs[ CONTRACT.METHODS.setSaleState.SIGNATURE ] = {
+						defaultArgs[ CONTRACT.METHODS.setPauseState.SIGNATURE ] = {
 							err  : null,
 							args : [
-								SALE_STATE.SALE,
+								CONTRACT_STATE.OPEN,
 							],
 						}
 						defaultArgs[ CONTRACT.METHODS.transferOwnership.SIGNATURE ] = {
@@ -988,7 +923,7 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 								ethers.constants.WeiPerEther,
 							],
 						}
-						defaultArgs[ CONTRACT.METHODS.saleState.SIGNATURE ] = {
+						defaultArgs[ CONTRACT.METHODS.getPauseState.SIGNATURE ] = {
 							err  : null,
 							args : [],
 						}
@@ -1051,10 +986,9 @@ describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
 		testInvalidInputs( deployFixture, TEST_DATA, CONTRACT_INTERFACE )
 		shouldSupportInterface( deployFixture, TEST_DATA.INTERFACES )
-		shouldBehaveLikeNFTAtDeploy( deployFixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeNFTBaseRAtDeploy( deployFixture, TEST_DATA, CONTRACT_INTERFACE )
 		shouldBehaveLikeNFTAfterSettingProxy( proxyFixture, TEST_DATA, CONTRACT_INTERFACE )
-		shouldBehaveLikeNFTAfterSettingPreSale( presaleFixture, TEST_DATA, CONTRACT_INTERFACE )
-		shouldBehaveLikeNFTAfterSettingSale( saleFixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeNFTBaseRAfterSettingStateToOpen( saleFixture, TEST_DATA, CONTRACT_INTERFACE )
 		shouldBehaveLikeNFTAfterMint( mintFixture, TEST_DATA, CONTRACT_INTERFACE )
 		shouldBehaveLikeNFTAfterMintingOut( mintOutFixture, TEST_DATA, CONTRACT_INTERFACE )
 	}

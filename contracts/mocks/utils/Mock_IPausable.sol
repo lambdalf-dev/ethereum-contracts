@@ -11,19 +11,27 @@ import "../../utils/IPausable.sol";
 contract Mock_IPausable is IPausable {
 	constructor() {}
 
-	function setSaleState( uint8 newState_ ) public {
-		_setSaleState( newState_ );
+	function setPauseState( uint8 newState_ ) public {
+		if ( newState_ > OPEN ) {
+			revert IPausable_INVALID_STATE( newState_ );
+		}
+
+		_setPauseState( newState_ );
 	}
 
-	function saleIsClosed() public view saleClosed returns ( bool ) {
+	function stateIsClosed() public view isClosed returns ( bool ) {
 		return true;
 	}
 
-	function presaleIsOpen() public view presaleOpen returns ( bool ) {
+	function stateIsNotClosed() public view isNotClosed returns ( bool ) {
 		return true;
 	}
 
-	function saleIsOpen() public view saleOpen returns ( bool ) {
+	function stateIsOpen() public view isOpen returns ( bool ) {
+		return true;
+	}
+
+	function stateIsNotOpen() public view isNotOpen returns ( bool ) {
 		return true;
 	}
 }

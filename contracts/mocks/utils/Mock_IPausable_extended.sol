@@ -8,38 +8,50 @@ pragma solidity 0.8.10;
 
 import "../../utils/IPausable.sol";
 
-contract Mock_IPausable_extended is IPausable {
-	uint8 constant STAGE2  = 3;
+contract Mock_IPausable_Extended is IPausable {
+	uint8 constant STAGE2  = 2;
 
 	constructor() {}
 
-	/**
-	* @dev Throws if sale state is not ``SALE``.
-	*/
-	modifier stage2Open {
-		if ( saleState != STAGE2 ) {
-			revert IPausable_INCORRECT_SALE_STATE( saleState, STAGE2 );
+	function setPauseState( uint8 newState_ ) public {
+		if ( newState_ > STAGE2 ) {
+			revert IPausable_INVALID_STATE( newState_ );
 		}
-		_;
+
+		_setPauseState( newState_ );
 	}
 
-	function setSaleState( uint8 newState_ ) public {
-		_setSaleState( newState_ );
-	}
-
-	function saleIsClosed() public view saleClosed returns ( bool ) {
+	function stateIsClosed() public view isClosed returns ( bool ) {
 		return true;
 	}
 
-	function presaleIsOpen() public view presaleOpen returns ( bool ) {
+	function stateIsNotClosed() public view isNotClosed returns ( bool ) {
 		return true;
 	}
 
-	function saleIsOpen() public view saleOpen returns ( bool ) {
+	function stateIsOpen() public view isOpen returns ( bool ) {
 		return true;
 	}
 
-	function saleIsStage2() public view stage2Open returns ( bool ) {
+	function stateIsNotOpen() public view isNotOpen returns ( bool ) {
+		return true;
+	}
+
+	function stateIsStage2() public view returns ( bool ) {
+		uint8 _currentState_ = getPauseState();
+		if ( _currentState_ != STAGE2 ) {
+			revert IPausable_INCORRECT_STATE( _currentState_ );
+		}
+
+		return true;
+	}
+
+	function stateIsNotStage2() public view returns ( bool ) {
+		uint8 _currentState_ = getPauseState();
+		if ( _currentState_ == STAGE2 ) {
+			revert IPausable_INCORRECT_STATE( _currentState_ );
+		}
+
 		return true;
 	}
 }

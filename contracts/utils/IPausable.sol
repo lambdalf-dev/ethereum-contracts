@@ -8,56 +8,78 @@ pragma solidity 0.8.10;
 
 abstract contract IPausable {
 	// Enum to represent the sale state, defaults to ``CLOSED``.
-	uint8 constant CLOSED  = 0;
-	uint8 constant PRESALE = 1;
-	uint8 constant SALE    = 2;
+	uint8 constant CLOSED = 0;
+	uint8 constant OPEN   = 1;
 
 	// Errors
-	error IPausable_INCORRECT_SALE_STATE( uint8 currentState, uint8 requiredState );
+	error IPausable_INCORRECT_STATE( uint8 currentState );
+	error IPausable_INVALID_STATE( uint8 newState );
 
 	// The current state of the contract
-	uint8 public saleState;
+	uint8 private _contractState;
 
 	/**
 	* @dev Emitted when the sale state changes
 	*/
-	event SaleStateChanged( uint8 indexed previousState, uint8 indexed newState );
+	event ContractStateChanged( uint8 indexed previousState, uint8 indexed newState );
 
 	/**
-	* @dev Sale state can have one of 3 values, ``CLOSED``, ``PRESALE``, or ``SALE``.
+	* @dev Internal function setting the contract state to `newState_`.
+	* 
+	* Note: Contract state can have one of 2 values by default, ``CLOSED`` or ``OPEN``.
+	* 			To maintain extendability, the 2 available states are kept as uint8 instead of enum.
+	* 			As a result, it is possible to set the state to an incorrect value.
+	* 			To avoid issues, `newState_` should be validated before calling this function
 	*/
-	function _setSaleState( uint8 newState_ ) internal virtual {
-		uint8 _previousState_ = saleState;
-		saleState = newState_;
-		emit SaleStateChanged( _previousState_, newState_ );
+	function _setPauseState( uint8 newState_ ) internal virtual {
+		uint8 _previousState_ = _contractState;
+		_contractState = newState_;
+		emit ContractStateChanged( _previousState_, newState_ );
+	}
+
+	/**
+	* @dev Internal function returning the contract state.
+	*/
+	function getPauseState() public virtual view returns ( uint8 ) {
+		return _contractState;
 	}
 
 	/**
 	* @dev Throws if sale state is not ``CLOSED``.
 	*/
-	modifier saleClosed {
-		if ( saleState != CLOSED ) {
-			revert IPausable_INCORRECT_SALE_STATE( saleState, CLOSED );
+	modifier isClosed {
+		if ( _contractState != CLOSED ) {
+			revert IPausable_INCORRECT_STATE( _contractState );
 		}
 		_;
 	}
 
 	/**
-	* @dev Throws if sale state is not ``SALE``.
+	* @dev Throws if sale state is ``CLOSED``.
 	*/
-	modifier saleOpen {
-		if ( saleState != SALE ) {
-			revert IPausable_INCORRECT_SALE_STATE( saleState, SALE );
+	modifier isNotClosed {
+		if ( _contractState == CLOSED ) {
+			revert IPausable_INCORRECT_STATE( _contractState );
 		}
 		_;
 	}
 
 	/**
-	* @dev Throws if sale state is not ``PRESALE``.
+	* @dev Throws if sale state is not ``OPEN``.
 	*/
-	modifier presaleOpen {
-		if ( saleState != PRESALE ) {
-			revert IPausable_INCORRECT_SALE_STATE( saleState, PRESALE );
+	modifier isOpen {
+		if ( _contractState != OPEN ) {
+			revert IPausable_INCORRECT_STATE( _contractState );
+		}
+		_;
+	}
+
+	/**
+	* @dev Throws if sale state is ``OPEN``.
+	*/
+	modifier isNotOpen {
+		if ( _contractState == OPEN ) {
+			revert IPausable_INCORRECT_STATE( _contractState );
 		}
 		_;
 	}

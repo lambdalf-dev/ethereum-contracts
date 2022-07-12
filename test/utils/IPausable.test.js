@@ -27,12 +27,11 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 	} = require( `../fail-test-module` )
 
 	const {
-		SALE_STATE,
+		CONTRACT_STATE,
 		shouldBehaveLikeIPausable,
-		shouldEmitSaleStateChangedEvent,
-		shouldRevertWhenSaleStateIsNotClose,
-		shouldRevertWhenSaleStateIsNotPreSale,
-		shouldRevertWhenSaleStateIsNotSale,
+		shouldEmitContractStateChangedEvent,
+		shouldRevertWhenContractStateIsIncorrect,
+		shouldRevertWhenContractStateIsInvalid,
 	} = require( `../utils/behavior.IPausable` )
 // **************************************
 
@@ -43,24 +42,28 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 	const CONTRACT_INTERFACE = {
 		NAME : `Mock_IPausable`,
 		METHODS : {
-			saleState            : {
-				SIGNATURE          : `saleState()`,
-				PARAMS             : [],
-			},
-			setSaleState         : {
-				SIGNATURE          : `setSaleState(uint8)`,
+			setPauseState        : {
+				SIGNATURE          : `setPauseState(uint8)`,
 				PARAMS             : [ `newState_` ],
 			},
-			saleIsClosed         : {
-				SIGNATURE          : `saleIsClosed()`,
+			getPauseState        : {
+				SIGNATURE          : `getPauseState()`,
 				PARAMS             : [],
 			},
-			presaleIsOpen        : {
-				SIGNATURE          : `presaleIsOpen()`,
+			stateIsClosed        : {
+				SIGNATURE          : `stateIsClosed()`,
 				PARAMS             : [],
 			},
-			saleIsOpen           : {
-				SIGNATURE          : `saleIsOpen()`,
+			stateIsNotClosed     : {
+				SIGNATURE          : `stateIsNotClosed()`,
+				PARAMS             : [],
+			},
+			stateIsOpen          : {
+				SIGNATURE          : `stateIsOpen()`,
+				PARAMS             : [],
+			},
+			stateIsNotOpen       : {
+				SIGNATURE          : `stateIsNotOpen()`,
 				PARAMS             : [],
 			},
 		},
@@ -69,14 +72,15 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 	const TEST_DATA = {
 		NAME : `IPausable`,
 		EVENTS : {
-			SaleStateChanged : true,
+			ContractStateChanged : true,
 		},
 		METHODS : {
-			saleState     : true,
-			setSaleState  : true,
-			saleIsClosed  : true,
-			presaleIsOpen : true,
-			saleIsOpen    : true,
+			setPauseState        : true,
+			getPauseState        : true,
+			stateIsClosed        : true,
+			stateIsNotClosed     : true,
+			stateIsOpen          : true,
+			stateIsNotOpen       : true,
 		},
 	}
 
@@ -142,25 +146,29 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
 
 					defaultArgs = {}
-					defaultArgs [ CONTRACT.METHODS.saleState.SIGNATURE ] = {
-						err  : null,
-						args : [],
-					}
-					defaultArgs [ CONTRACT.METHODS.setSaleState.SIGNATURE ] = {
+					defaultArgs [ CONTRACT.METHODS.setPauseState.SIGNATURE ] = {
 						err  : null,
 						args : [
-							SALE_STATE.SALE,
+							CONTRACT_STATE.OPEN,
 						],
 					}
-					defaultArgs [ CONTRACT.METHODS.saleIsClosed.SIGNATURE ] = {
+					defaultArgs [ CONTRACT.METHODS.getPauseState.SIGNATURE ] = {
 						err  : null,
 						args : [],
 					}
-					defaultArgs [ CONTRACT.METHODS.presaleIsOpen.SIGNATURE ] = {
+					defaultArgs [ CONTRACT.METHODS.stateIsClosed.SIGNATURE ] = {
 						err  : null,
 						args : [],
 					}
-					defaultArgs [ CONTRACT.METHODS.saleIsOpen.SIGNATURE ] = {
+					defaultArgs [ CONTRACT.METHODS.stateIsNotClosed.SIGNATURE ] = {
+						err  : null,
+						args : [],
+					}
+					defaultArgs [ CONTRACT.METHODS.stateIsOpen.SIGNATURE ] = {
+						err  : null,
+						args : [],
+					}
+					defaultArgs [ CONTRACT.METHODS.stateIsNotOpen.SIGNATURE ] = {
 						err  : null,
 						args : [],
 					}
@@ -182,107 +190,131 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 	}
 
 	function shouldBehaveLikeMock_IPausable ( fixture, TEST, CONTRACT ) {
-		if ( TEST_ACTIVATION.CORRECT_INPUT ) {
-			beforeEach( async function () {
-				const {
-					test_contract,
-					test_contract_deployer,
-				} = await loadFixture( fixture )
-
-				contract = test_contract
-				users[ CONTRACT_DEPLOYER ] = test_contract_deployer
-			})
-
-			describe( `Initial state: CLOSED`, function () {
-				it( `saleIsClosed() should be fulfilled when sale state is CLOSED`, async function () {
-					expect(
-						await contract.saleIsClosed()
-					).to.be.true
-				})
-
-				it( `presaleIsOpen() should be reverted when sale state is CLOSED`, async function () {
-					await shouldRevertWhenSaleStateIsNotPreSale(
-						contract.presaleIsOpen(),
-						SALE_STATE.CLOSED
-					)
-				})
-
-				it( `saleIsOpen() should be reverted when sale state is CLOSED`, async function () {
-					await shouldRevertWhenSaleStateIsNotSale(
-						contract.saleIsOpen(),
-						SALE_STATE.CLOSED
-					)
-				})
-			})
-
-			describe( `Switch state: PRESALE`, function () {
+		describe( `Should behave like Mock_IPausable`, function () {
+			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
-					const previousState = SALE_STATE.CLOSED
-					const newState      = SALE_STATE.PRESALE
-					await shouldEmitSaleStateChangedEvent(
-						contract.connect( users[ CONTRACT_DEPLOYER ] )
-										.setSaleState( newState ),
-						contract,
-						previousState,
-						newState
-					)
+					const {
+						test_contract,
+						test_contract_deployer,
+					} = await loadFixture( fixture )
+
+					contract = test_contract
+					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
 				})
 
-				it( `saleIsClosed() should be reverted when sale state is PRESALE`, async function () {
-					await shouldRevertWhenSaleStateIsNotClose(
-						contract.saleIsClosed(),
-						SALE_STATE.PRESALE
-					)
+				describe( `When contract state is CLOSED`, function () {
+					it( `${ CONTRACT.METHODS.stateIsClosed.SIGNATURE } should be fulfilled when contract state is CLOSED`, async function () {
+						expect(
+							await contract.stateIsClosed()
+						).to.be.true
+					})
+
+					it( `${ CONTRACT.METHODS.stateIsNotClosed.SIGNATURE } should be reverted when contract state is CLOSED`, async function () {
+						await shouldRevertWhenContractStateIsIncorrect(
+							contract.stateIsNotClosed(),
+							CONTRACT_STATE.CLOSED
+						)
+					})
+
+					it( `${ CONTRACT.METHODS.stateIsOpen.SIGNATURE } should be reverted when contract state is CLOSED`, async function () {
+						await shouldRevertWhenContractStateIsIncorrect(
+							contract.stateIsOpen(),
+							CONTRACT_STATE.CLOSED
+						)
+					})
+
+					it( `${ CONTRACT.METHODS.stateIsNotOpen.SIGNATURE } should be fulfilled when contract state is CLOSED`, async function () {
+						expect(
+							await contract.stateIsNotOpen()
+						).to.be.true
+					})
+
+					describe( CONTRACT.METHODS.setPauseState.SIGNATURE, function () {
+						if ( TEST.METHODS.setPauseState ) {
+							it( `should be reverted when an invalid state is entered`, async function () {
+								const newState = 5
+								await shouldRevertWhenContractStateIsInvalid(
+									contract.setPauseState( newState ),
+									newState
+								)
+							})
+
+							it( `Setting the sale state to OPEN`, async function () {
+								const previousState = CONTRACT_STATE.CLOSED
+								const newState      = CONTRACT_STATE.OPEN
+								await shouldEmitContractStateChangedEvent(
+									contract.connect( users[ CONTRACT_DEPLOYER ] )
+													.setPauseState( newState ),
+									contract,
+									previousState,
+									newState
+								)
+
+								expect(
+									await contract.getPauseState()
+								).to.equal( newState )
+							})
+
+							it( `Setting the sale state to OPEN`, async function () {
+								const previousState = CONTRACT_STATE.CLOSED
+								const newState      = CONTRACT_STATE.OPEN
+								await shouldEmitContractStateChangedEvent(
+									contract.connect( users[ CONTRACT_DEPLOYER ] )
+													.setPauseState( newState ),
+									contract,
+									previousState,
+									newState
+								)
+
+								expect(
+									await contract.getPauseState()
+								).to.equal( newState )
+							})
+						}
+					})
 				})
 
-				it( `presaleIsOpen() should be fulfilled when sale state is PRESALE`, async function () {
-					expect(
-						await contract.presaleIsOpen()
-					).to.be.true
-				})
+				describe( `New state: OPEN`, function () {
+					beforeEach( async function () {
+						const previousState = CONTRACT_STATE.CLOSED
+						const newState      = CONTRACT_STATE.OPEN
+						await shouldEmitContractStateChangedEvent(
+							contract.connect( users[ CONTRACT_DEPLOYER ] )
+											.setPauseState( newState ),
+							contract,
+							previousState,
+							newState
+						)
+					})
 
-				it( `saleIsOpen() should be reverted when sale state is PRESALE`, async function () {
-					await shouldRevertWhenSaleStateIsNotSale(
-						contract.saleIsOpen(),
-						SALE_STATE.PRESALE
-					)
-				})
-			})
+					it( `${ CONTRACT.METHODS.stateIsClosed.SIGNATURE } should be reverted when contract state is OPEN`, async function () {
+						await shouldRevertWhenContractStateIsIncorrect(
+							contract.stateIsClosed(),
+							CONTRACT_STATE.OPEN
+						)
+					})
 
-			describe( `Switch state: SALE`, function () {
-				beforeEach( async function () {
-					const previousState = SALE_STATE.CLOSED
-					const newState      = SALE_STATE.SALE
-					await shouldEmitSaleStateChangedEvent(
-						contract.connect( users[ CONTRACT_DEPLOYER ] )
-										.setSaleState( newState ),
-						contract,
-						previousState,
-						newState
-					)
-				})
+					it( `${ CONTRACT.METHODS.stateIsNotClosed.SIGNATURE } should be fulfilled when contract state is OPEN`, async function () {
+						expect(
+							await contract.stateIsNotClosed()
+						).to.be.true
+					})
 
-				it( `saleIsClosed() should be reverted when sale state is SALE`, async function () {
-					await shouldRevertWhenSaleStateIsNotClose(
-						contract.saleIsClosed(),
-						SALE_STATE.SALE
-					)
-				})
+					it( `${ CONTRACT.METHODS.stateIsOpen.SIGNATURE } should be fulfilled when contract state is OPEN`, async function () {
+						expect(
+							await contract.stateIsOpen()
+						).to.be.true
+					})
 
-				it( `presaleIsOpen() should be reverted when sale state is SALE`, async function () {
-					await shouldRevertWhenSaleStateIsNotPreSale(
-						contract.presaleIsOpen(),
-						SALE_STATE.SALE
-					)
+					it( `${ CONTRACT.METHODS.stateIsNotOpen.SIGNATURE } should be reverted when contract state is OPEN`, async function () {
+						await shouldRevertWhenContractStateIsIncorrect(
+							contract.stateIsNotOpen(),
+							CONTRACT_STATE.OPEN
+						)
+					})
 				})
-
-				it( `saleIsOpen() should be fulfilled when sale state is SALE`, async function () {
-					expect(
-						await contract.saleIsOpen()
-					).to.be.true
-				})
-			})
-		}
+			}
+		})
 	}
 // **************************************
 
@@ -296,3 +328,7 @@ describe( TEST_DATA.NAME, function () {
 		shouldBehaveLikeMock_IPausable( fixture, TEST_DATA, CONTRACT_INTERFACE )
 	}
 })
+
+module.exports = {
+	shouldBehaveLikeMock_IPausable,
+}

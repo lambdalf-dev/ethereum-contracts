@@ -150,7 +150,7 @@ abstract contract NFTBaseC is Consec_ERC721Batch, IOwnable, IPausable, ITradable
 		* 
 		* @param qty_ : the amount of tokens to be minted
 		*/
-		function mintSale( uint256 qty_ ) public payable saleOpen {
+		function mintPublic( uint256 qty_ ) public payable isOpen {
 			if ( qty_ == 0 ) {
 				revert NFT_INVALID_QTY();
 			}
@@ -267,7 +267,7 @@ abstract contract NFTBaseC is Consec_ERC721Batch, IOwnable, IPausable, ITradable
 		}
 
 		/**
-		* @dev See {IPausable-setSaleState}.
+		* @dev See {IPausable-setPauseState}.
 		* 
 		* @param newState_ : the new sale state
 		* 
@@ -275,8 +275,8 @@ abstract contract NFTBaseC is Consec_ERC721Batch, IOwnable, IPausable, ITradable
 		* 
 		* - Caller must be the contract owner.
 		*/
-		function setSaleState( uint8 newState_ ) external onlyOwner {
-			_setSaleState( newState_ );
+		function setPauseState( uint8 newState_ ) external onlyOwner {
+			_setPauseState( newState_ );
 		}
 
 		/**
