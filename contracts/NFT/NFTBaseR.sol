@@ -33,7 +33,7 @@ abstract contract NFTBaseR is Reg_ERC721Batch, IOwnable, IPausable, ITradable, E
 	uint256 public MAX_SUPPLY;
 	uint256 public MAX_BATCH;
 	uint256 public SALE_PRICE;
-	uint256 private _reserve;
+	uint256 internal _reserve;
 	uint256[] private _teamShares;
 	address[] private _teamAddresses;
 
@@ -159,9 +159,8 @@ abstract contract NFTBaseR is Reg_ERC721Batch, IOwnable, IPausable, ITradable, E
 				revert NFT_MAX_BATCH( qty_, MAX_BATCH );
 			}
 
-			uint256 _remainingSupply_ = MAX_SUPPLY - _reserve;
-			uint256 _endSupply_       = supplyMinted() + qty_;
-			if ( _endSupply_ > _remainingSupply_ ) {
+			uint256 _remainingSupply_ = MAX_SUPPLY - _reserve - supplyMinted();
+			if ( qty_ > _remainingSupply_ ) {
 				revert NFT_MAX_SUPPLY( qty_, _remainingSupply_ );
 			}
 
