@@ -22,14 +22,15 @@
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-promise": "^5.1.1",
     "ethereum-waffle": "^3.4.0",
+    "ethereumjs-utils": "^5.2.5",
     "ethers": "^5.5.1",
     "hardhat": "^2.6.8",
     "hardhat-gas-reporter": "^1.0.4",
+    "hardhat-watcher": "^2.1.1",
+    "merkletreejs": "^0.2.31",
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.13",
     "solhint": "^3.3.6",
-    "solidity-coverage": "^0.7.17",
-    "hardhat-watcher": "^2.1.1",
-    "merkletreejs": "^0.2.31"
+    "solidity-coverage": "^0.7.17"
   }
 }

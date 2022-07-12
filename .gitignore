@@ -26,3 +26,4 @@ typechain
 
 *.lock
 *_params.txt
+*-lock.json
