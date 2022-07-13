@@ -26,8 +26,6 @@
 	} = require( `../utils/behavior.ERC165` )
 
 	const {
-		HOLDER_ARTIFACT,
-		NON_HOLDER_ARTIFACT,
 		ERC721ReceiverError,
 		shouldEmitApprovalEvent,
 		shouldEmitApprovalForAllEvent,
@@ -71,6 +69,7 @@
 		shouldRevertWhenArrayLengthsDontMatch,
 		shouldRevertWhenIncorrectAmountPaid,
 		shouldRevertWhenInputAddressIsContract,
+		shouldRevertWhenQtyIsZero,
 		shouldRevertWhenMintedOut,
 		shouldRevertWhenReserveDepleted,
 		shouldRevertWhenSumOfSharesIncorrect,

@@ -822,6 +822,7 @@ module.exports = {
 	shouldRevertWhenArrayLengthsDontMatch,
 	shouldRevertWhenIncorrectAmountPaid,
 	shouldRevertWhenInputAddressIsContract,
+	shouldRevertWhenQtyIsZero,
 	shouldRevertWhenMintedOut,
 	shouldRevertWhenReserveDepleted,
 	shouldRevertWhenSumOfSharesIncorrect,
