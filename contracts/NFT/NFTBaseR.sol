@@ -37,6 +37,19 @@ abstract contract NFTBaseR is Reg_ERC721Batch, IOwnable, IPausable, ITradable, E
 	uint256[] private _teamShares;
 	address[] private _teamAddresses;
 
+	/**
+	* @dev Ensures that `qty_` is higher than 0
+	* 
+	* @param qty_ : the amount to validate 
+	*/
+	modifier validateAmount( uint256 qty_ ) {
+		if ( qty_ < 1 ) {
+			revert NFT_INVALID_QTY();
+		}
+
+		_;
+	}
+
 	// **************************************
 	// *****          INTERNAL          *****
 	// **************************************
@@ -150,11 +163,7 @@ abstract contract NFTBaseR is Reg_ERC721Batch, IOwnable, IPausable, ITradable, E
 		* 
 		* @param qty_ : the amount of tokens to be minted
 		*/
-		function mintPublic( uint256 qty_ ) public payable isOpen {
-			if ( qty_ == 0 ) {
-				revert NFT_INVALID_QTY();
-			}
-
+		function mintPublic( uint256 qty_ ) public payable validateAmount( qty_ ) isOpen {
 			if ( qty_ > MAX_BATCH ) {
 				revert NFT_MAX_BATCH( qty_, MAX_BATCH );
 			}
