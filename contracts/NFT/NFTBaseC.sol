@@ -92,7 +92,7 @@ abstract contract NFTBaseC is Consec_ERC721Batch, IOwnable, IPausable, ITradable
 				revert NFT_ARRAY_LENGTH_MISMATCH( _sharesLen_, _addressesLen_ );
 			}
 
-			uint256 _totalShares_ = 1000;
+			uint256 _totalShares_ = SHARE_BASE;
 			for ( uint256 i = _sharesLen_; i > 0; i -- ) {
 				if ( teamShares_[ i - 1 ] == 0 ) {
 					revert NFT_INVALID_SHARE();

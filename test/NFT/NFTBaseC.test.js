@@ -379,7 +379,7 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 			name_        : `NFT Token`,
 			symbol_      : `NFT`,
 			baseURI_     : INIT_BASE_URI,
-			teamShares_  : [ 600, 200, 150, 50 ],
+			teamShares_  : [ 6000, 2000, 1500, 500 ],
 		},
 		// MINT OUT
 		MINT_OUT : {
