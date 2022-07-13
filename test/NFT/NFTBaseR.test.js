@@ -1,5 +1,7 @@
-const ARTIFACT = require( `../../artifacts/contracts/mocks/NFT/Mock_NFTBaseR.sol/Mock_NFTBaseR.json` )
-const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRegistry.sol/Mock_ProxyRegistry.json` )
+const ARTIFACT            = require( `../../artifacts/contracts/mocks/NFT/Mock_NFTBaseR.sol/Mock_NFTBaseR.json` )
+const HOLDER_ARTIFACT     = require( `../../artifacts/contracts/mocks/external/Mock_ERC721Receiver.sol/Mock_ERC721Receiver.json` )
+const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/Mock_NonERC721Receiver.sol/Mock_NonERC721Receiver.json` )
+const PROXY               = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRegistry.sol/Mock_ProxyRegistry.json` )
 // **************************************
 // *****           IMPORT           *****
 // **************************************
@@ -304,6 +306,9 @@ const PROXY    = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRe
 				totalSupply         : true,
 			// **************************************
 		},
+		// ARTIFACTS
+		HOLDER_ARTIFACT             : HOLDER_ARTIFACT,
+		NON_HOLDER_ARTIFACT         : NON_HOLDER_ARTIFACT,
 		// SUPPLY
 		INIT_SUPPLY                 : INIT_SUPPLY,
 		MINTED_SUPPLY               : INIT_SUPPLY + TOKEN_OWNER_INIT_SUPPLY + TOKEN_OWNER_MORE_SUPPLY + OTHER_OWNER_SUPPLY,

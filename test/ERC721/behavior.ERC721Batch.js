@@ -1,5 +1,3 @@
-const HOLDER_ARTIFACT     = require( `../../artifacts/contracts/mocks/external/Mock_ERC721Receiver.sol/Mock_ERC721Receiver.json` )
-const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/Mock_NonERC721Receiver.sol/Mock_NonERC721Receiver.json` )
 // **************************************
 // *****           IMPORT           *****
 // **************************************
@@ -392,7 +390,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							})
 
 							it( `Should be reverted when transfering to non ERC721Receiver contract`, async function () {
-								const non_holder = await deployContract( users[ CONTRACT_DEPLOYER ], NON_HOLDER_ARTIFACT, [] )
+								const non_holder = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.NON_HOLDER_ARTIFACT, [] )
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = non_holder.address
 								const tokenId = TEST.TARGET_TOKEN
@@ -410,7 +408,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -430,7 +428,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -451,7 +449,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -472,7 +470,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -492,7 +490,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -513,7 +511,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const holder = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const holder = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = holder.address
@@ -670,7 +668,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							})
 
 							it( `Should be reverted when transfering to non ERC721Receiver contract`, async function () {
-								const non_holder = await deployContract( users[ CONTRACT_DEPLOYER ], NON_HOLDER_ARTIFACT, [] )
+								const non_holder = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.NON_HOLDER_ARTIFACT, [] )
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = non_holder.address
 								const tokenId = TEST.TARGET_TOKEN
@@ -689,7 +687,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -709,7 +707,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -730,7 +728,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -751,7 +749,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -771,7 +769,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -792,7 +790,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 									retval,
 									error
 								]
-								const holder = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const holder = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = holder.address
@@ -1003,7 +1001,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							})
 
 							describe( `To non ERC721Receiver contract should not be reverted`, async function () {
-								const non_holder = await deployContract( users[ CONTRACT_DEPLOYER ], NON_HOLDER_ARTIFACT, [] )
+								const non_holder = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.NON_HOLDER_ARTIFACT, [] )
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = non_holder.address
 								const tokenId = TEST.TARGET_TOKEN
@@ -1067,8 +1065,6 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 // **************************************
 module.exports = {
 	ERC721ReceiverError,
-	HOLDER_ARTIFACT,
-	NON_HOLDER_ARTIFACT,
 	shouldEmitApprovalEvent,
 	shouldEmitTransferEvent,
 	shouldEmitApprovalForAllEvent,
