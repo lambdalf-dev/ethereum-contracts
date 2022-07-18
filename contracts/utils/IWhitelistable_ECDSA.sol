@@ -26,7 +26,7 @@ abstract contract IWhitelistable_ECDSA {
 	mapping( uint8 => mapping ( address => uint256 ) ) private _consumed;
 
 	modifier isWhitelisted( address account_, uint8 whitelistType_, uint256 alloted_, Proof memory proof_, uint256 qty_ ) {
-		uint256 _allowed_ = _checkWhitelistAllowance( account_, whitelistType_, alloted_, proof_ );
+		uint256 _allowed_ = checkWhitelistAllowance( account_, whitelistType_, alloted_, proof_ );
 
 		if ( _allowed_ < qty_ ) {
 			revert IWhitelistable_FORBIDDEN( account_ );
@@ -49,7 +49,7 @@ abstract contract IWhitelistable_ECDSA {
 	* 
 	* - `_adminSigner` must be set.
 	*/
-	function _checkWhitelistAllowance( address account_, uint8 whitelistType_, uint256 alloted_, Proof memory proof_ ) internal view returns ( uint256 ) {
+	function checkWhitelistAllowance( address account_, uint8 whitelistType_, uint256 alloted_, Proof memory proof_ ) public view returns ( uint256 ) {
 		if ( _adminSigner == address( 0 ) ) {
 			revert IWhitelistable_NOT_SET();
 		}

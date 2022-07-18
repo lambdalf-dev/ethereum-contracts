@@ -1,4 +1,4 @@
-const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelistable_ECDSA_Extended.sol/Mock_IWhitelistable_ECDSA_Extended.json` )
+const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelistable_ECDSA.sol/Mock_IWhitelistable_ECDSA.json` )
 // **************************************
 // *****           IMPORT           *****
 // **************************************
@@ -45,11 +45,11 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 // **************************************
 	// For contract data
 	const CONTRACT = {
-		NAME : `Mock_IWhitelistable_ECDSA_Extended`,
+		NAME : `Mock_IWhitelistable_ECDSA`,
 		METHODS : {
 			checkWhitelistAllowance : {
 				SIGNATURE             : `checkWhitelistAllowance(address,uint8,uint256,tuple(bytes32,bytes32,uint8))`,
-				PARAMS                : [ `account_`, `alloted_`, `proof_` ],
+				PARAMS                : [ `account_`, `whitelistType_`, `alloted_`, `proof_` ],
 			},
 			consumeWhitelist        : {
 				SIGNATURE             : `consumeWhitelist(uint8,uint256,tuple(bytes32,bytes32,uint8),uint256)`,
@@ -66,7 +66,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 	const WHITELIST_AMOUNT_2 = 1
 
 	const TEST_DATA = {
-		NAME : `IWhitelistable_ECDSA_Extended`,
+		NAME : `IWhitelistable_ECDSA`,
 		METHODS : {
 			checkWhitelistAllowance : true,
 			consumeWhitelist        : true,
@@ -219,8 +219,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 		})
 	}
 
-	async function shouldBehaveLikeMock_IWhitelistable_ECDSA_ExtendedBeforeSettingWhitelist ( fixture, TEST, CONTRACT ) {
-		describe( `Should behave like Mock_IWhitelistable_ECDSA_Extended before setting whitelist`, function () {
+	async function shouldBehaveLikeMock_IWhitelistable_ECDSABeforeSettingWhitelist ( fixture, TEST, CONTRACT ) {
+		describe( `Should behave like Mock_IWhitelistable_ECDSA before setting whitelist`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
@@ -304,8 +304,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 		})
 	}
 
-	async function shouldBehaveLikeMock_IWhitelistable_ECDSA_ExtendedAfterSettingWhitelist ( fixture, TEST, CONTRACT ) {
-		describe( `Should behave like Mock_IWhitelistable_ECDSA_Extended after setting whitelist`, function () {
+	async function shouldBehaveLikeMock_IWhitelistable_ECDSAAfterSettingWhitelist ( fixture, TEST, CONTRACT ) {
+		describe( `Should behave like Mock_IWhitelistable_ECDSA after setting whitelist`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
@@ -596,7 +596,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
 		// testInvalidInputs( noAccessFixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_IWhitelistable_ECDSA_ExtendedBeforeSettingWhitelist( noAccessFixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_IWhitelistable_ECDSA_ExtendedAfterSettingWhitelist( accessFixture, TEST_DATA, CONTRACT )
+		shouldBehaveLikeMock_IWhitelistable_ECDSABeforeSettingWhitelist( noAccessFixture, TEST_DATA, CONTRACT )
+		shouldBehaveLikeMock_IWhitelistable_ECDSAAfterSettingWhitelist( accessFixture, TEST_DATA, CONTRACT )
 	}
 })

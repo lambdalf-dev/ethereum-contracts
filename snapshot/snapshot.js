@@ -58,9 +58,9 @@ task( 'snapshot', 'Takes a snapshot of the list of holders of a NFT token at the
 		if ( typeof holders !== 'undefined' ) {
 			for ( const holder in holders ) {
 				console.log( `${ holder },${ holders[ holder ] }` )
-				fs.appendFile( 'snapshot/snapshot.csv', holder + ',' + holders[ holder ] + '\n', function( err ) {
+				fs.appendFile( 'snapshot.csv', holder + ',' + holders[ holder ] + '\n', function( err ) {
 					if ( err ) {
-						return console.log( err )
+						return console.debug( err )
 					}
 				})
 			}
