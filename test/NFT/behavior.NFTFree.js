@@ -42,10 +42,6 @@
 	} = require( `../ERC721/behavior.ERC721Batch` )
 
 	const {
-		shouldEmitConsecutiveTransferEvent,
-	} = require( `../ERC721/behavior.ERC2309` )
-
-	const {
 		shouldBehaveLikeERC721BatchMetadata,
 	} = require( `../ERC721/behavior.ERC721BatchMetadata` )
 
@@ -70,6 +66,15 @@
 		shouldRevertWhenContractStateIsIncorrect,
 		shouldRevertWhenContractStateIsInvalid,
 	} = require( `../utils/behavior.IPausable` )
+
+	const {
+		shouldRevertWhenArrayLengthsDontMatch,
+		shouldRevertWhenInputAddressIsContract,
+		shouldRevertWhenQtyIsZero,
+		shouldRevertWhenQtyOverMaxBatch,
+		shouldRevertWhenMintedOut,
+		shouldRevertWhenReserveDepleted,
+	} = require( `../NFT/behavior.NFT` )
 // **************************************
 
 // **************************************
@@ -84,90 +89,14 @@
 // **************************************
 // *****        TEST  SUITES        *****
 // **************************************
-	async function shouldRevertWhenArrayLengthsDontMatch ( promise, len1, len2, error = `NFT_ARRAY_LENGTH_MISMATCH` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ len1 }, ${ len2 })`
-		)
-	}
-
-	async function shouldRevertWhenIncorrectAmountPaid ( promise, amountReceived, amountExpected, error = `NFT_INCORRECT_PRICE` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ amountReceived }, ${ amountExpected })`
-		)
-	}
-
-	async function shouldRevertWhenQtyIsZero ( promise, error = `NFT_INVALID_QTY` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }()`
-		)
-	}
-
-	async function shouldRevertWhenShareIsZero ( promise, error = `NFT_INVALID_SHARE` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }()`
-		)
-	}
-
-	async function shouldRevertWhenInputAddressIsContract ( promise, account, error = `NFT_INVALID_TEAM_MEMBER` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ account })`
-		)
-	}
-
-	async function shouldRevertWhenQtyOverMaxBatch ( promise, qtyRequested, maxBatch, error = `NFT_MAX_BATCH` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ qtyRequested }, ${ maxBatch })`
-		)
-	}
-
-	async function shouldRevertWhenMintedOut ( promise, qtyRequested, remainingSupply, error = `NFT_MAX_SUPPLY` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ qtyRequested }, ${ remainingSupply })`
-		)
-	}
-
-	async function shouldRevertWhenReserveDepleted ( promise, qtyRequested, reserveLeft, error = `NFT_MAX_RESERVE` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ qtyRequested }, ${ reserveLeft })`
-		)
-	}
-
-	async function shouldRevertWhenSumOfSharesIncorrect ( promise, missingShares, error = `NFT_ETHER_TRANSFER_FAIL` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ missingShares })`
-		)
-	}
-
-	async function shouldRevertWhenContractHasNoBalance ( promise, error = `NFT_NO_ETHER_BALANCE` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }()`
-		)
-	}
-
-	async function shouldRevertWhenEtherTransferFails ( promise, to, amount, error = `NFT_MISSING_SHARES` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ to }, ${ amount })`
-		)
-	}
-
-	async function shouldEmitPaymentReleasedEvent ( promise, contract, to, amount ) {
-		await expect( promise )
-			.to.emit( contract, `PaymentReleased` )
-			.withArgs( to, amount )
-	}
-
-	function shouldBehaveLikeNFTAtDeploy ( fixture, TEST, CONTRACT  ) {
+	function shouldBehaveLikeNFTFreeAtDeploy ( fixture, TEST, CONTRACT  ) {
 		shouldBehaveLikeERC721BatchBeforeMint( fixture, TEST, CONTRACT )
 		shouldBehaveLikeERC721BatchEnumerableBeforeMint( fixture, TEST, CONTRACT )
 
-		describe( `Should behave like NFT at deploy`, function () {
+		describe( `Should behave like NFTFree at deploy`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
-						test_team1,
-						test_team2,
-						test_team3,
-						test_team4,
 						test_user1,
 						test_user2,
 						test_contract,
@@ -180,10 +109,6 @@
 
 					contract       = test_contract
 					proxy_contract = test_proxy_contract
-					users[ `TEAM1`           ] = test_team1
-					users[ `TEAM2`           ] = test_team2
-					users[ `TEAM3`           ] = test_team3
-					users[ `TEAM4`           ] = test_team4
 					users[ USER1             ] = test_user1
 					users[ USER2             ] = test_user2
 					users[ PROXY_USER        ] = test_proxy_user
@@ -318,25 +243,6 @@
 							})
 						}
 					})
-
-					describe( CONTRACT.METHODS.withdraw.SIGNATURE, function () {
-						if ( TEST.METHODS.withdraw ) {
-							it( `Transaction initiated by a regular user should be reverted`, async function () {
-								await shouldRevertWhenCallerIsNotContractOwner(
-									contract.connect( users[ USER1 ] )
-													.withdraw(),
-									users[ USER1 ].address
-								)
-							})
-
-							it( `Withdraw with no funds in the contract should be reverted`, async function () {
-								await shouldRevertWhenContractHasNoBalance (
-									contract.connect( users[ CONTRACT_DEPLOYER ] )
-													.withdraw()
-								)
-							})
-						}
-					})
 				// **************************************
 
 				// **************************************
@@ -346,13 +252,9 @@
 						if ( TEST.METHODS.mintPublic ) {
 							it( `Transaction initiated with sale state CLOSED should be reverted`, async function() {
 								const qty       = TEST.TOKEN_OWNER_SUPPLY
-								const value     = TEST.PARAMS.salePrice_.mul( qty )
-								const tx_params = {
-									value : value
-								}
 								await shouldRevertWhenContractStateIsIncorrect(
 									contract.connect( users[ TOKEN_OWNER ] )
-													.mintPublic( qty, tx_params ),
+													.mintPublic( qty ),
 									CONTRACT_STATE.CLOSED
 								)
 							})
@@ -378,15 +280,11 @@
 		})
 	}
 
-	function shouldBehaveLikeNFTAfterSettingProxy ( fixture, TEST, CONTRACT ) {
-		describe( `Should behave like NFT after setting proxy`, function () {
+	function shouldBehaveLikeNFTFreeAfterSettingProxy ( fixture, TEST, CONTRACT ) {
+		describe( `Should behave like NFTFree after setting proxy`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
-						test_team1,
-						test_team2,
-						test_team3,
-						test_team4,
 						test_user1,
 						test_user2,
 						test_contract,
@@ -399,10 +297,6 @@
 
 					contract       = test_contract
 					proxy_contract = test_proxy_contract
-					users[ `TEAM1`           ] = test_team1
-					users[ `TEAM2`           ] = test_team2
-					users[ `TEAM3`           ] = test_team3
-					users[ `TEAM4`           ] = test_team4
 					users[ USER1             ] = test_user1
 					users[ USER2             ] = test_user2
 					users[ PROXY_USER        ] = test_proxy_user
@@ -461,15 +355,11 @@
 		})
 	}
 
-	function shouldBehaveLikeNFTAfterSettingStateToOpen ( fixture, TEST, CONTRACT ) {
-		describe( `Should behave like NFT after setting state to OPEN`, function () {
+	function shouldBehaveLikeNFTFreeAfterSettingStateToOpen ( fixture, TEST, CONTRACT ) {
+		describe( `Should behave like NFTFree after setting state to OPEN`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
-						test_team1,
-						test_team2,
-						test_team3,
-						test_team4,
 						test_user1,
 						test_user2,
 						test_contract,
@@ -482,10 +372,6 @@
 
 					contract       = test_contract
 					proxy_contract = test_proxy_contract
-					users[ `TEAM1`           ] = test_team1
-					users[ `TEAM2`           ] = test_team2
-					users[ `TEAM3`           ] = test_team3
-					users[ `TEAM4`           ] = test_team4
 					users[ USER1             ] = test_user1
 					users[ USER2             ] = test_user2
 					users[ PROXY_USER        ] = test_proxy_user
@@ -501,55 +387,19 @@
 						if ( TEST.METHODS.mintPublic ) {
 							it( `Should revert when trying to mint 0 token`, async function() {
 								const qty       = 0
-								const value     = TEST.PARAMS.salePrice_.mul( qty )
-								const tx_params = {
-									value : value
-								}
 								await shouldRevertWhenQtyIsZero(
 									contract.connect( users[ TOKEN_OWNER ] )
-													.mintPublic( qty, tx_params )
+													.mintPublic( qty )
 								)
 							})
 
 							it( `Should revert when trying to mint more than ${ TEST.PARAMS.maxBatch_ } tokens`, async function() {
 								const qty       = TEST.PARAMS.maxBatch_ + 1
-								const value     = TEST.PARAMS.salePrice_.mul( qty )
-								const tx_params = {
-									value : value
-								}
 								await shouldRevertWhenQtyOverMaxBatch(
 									contract.connect( users[ TOKEN_OWNER ] )
-													.mintPublic( qty, tx_params ),
+													.mintPublic( qty ),
 									qty,
 									TEST.PARAMS.maxBatch_
-								)
-							})
-
-							it( `Should revert when trying to mint without paying enough`, async function() {
-								const qty       = 1
-								const value     = TEST.PARAMS.salePrice_.mul( qty )
-								const tx_params = {
-									value : 0
-								}
-								await shouldRevertWhenIncorrectAmountPaid(
-									contract.connect( users[ TOKEN_OWNER ] )
-													.mintPublic( qty, tx_params ),
-									0,
-									value
-								)
-							})
-
-							it( `Should revert when trying to mint while paying too much`, async function() {
-								const qty       = 1
-								const value     = TEST.PARAMS.salePrice_.mul( qty )
-								const tx_params = {
-									value : value + 1
-								}
-								await shouldRevertWhenIncorrectAmountPaid(
-									contract.connect( users[ TOKEN_OWNER ] )
-													.mintPublic( qty, tx_params ),
-									value + 1,
-									value
 								)
 							})
 
@@ -559,13 +409,9 @@
 								const toAddr    = users[ TOKEN_OWNER ].address
 								const fromToken = TEST.FIRST_TOKEN
 								const toToken   = TEST.INIT_SUPPLY + qty
-								const value     = TEST.PARAMS.salePrice_.mul( qty )
-								const tx_params = {
-									value : value
-								}
 								await expect(
 									contract.connect( users[ TOKEN_OWNER ] )
-													.mintPublic( qty, tx_params )
+													.mintPublic( qty )
 								).to.be.fulfilled
 
 								expect(
@@ -587,13 +433,9 @@
 								const toAddr    = users[ TOKEN_OWNER ].address
 								const fromToken = TEST.FIRST_TOKEN
 								const toToken   = TEST.INIT_SUPPLY + qty
-								const value     = TEST.PARAMS.salePrice_.mul( qty )
-								const tx_params = {
-									value : value
-								}
 								await expect(
 									contract.connect( users[ TOKEN_OWNER ] )
-													.mintPublic( qty, tx_params )
+													.mintPublic( qty )
 								).to.be.fulfilled
 
 								expect(
@@ -615,13 +457,9 @@
 								const toAddr    = users[ TOKEN_OWNER ].address
 								const fromToken = TEST.FIRST_TOKEN
 								const toToken   = TEST.INIT_SUPPLY + qty
-								const value     = TEST.PARAMS.salePrice_.mul( qty )
-								const tx_params = {
-									value : value
-								}
 								await expect(
 									contract.connect( users[ TOKEN_OWNER ] )
-													.mintPublic( qty, tx_params )
+													.mintPublic( qty )
 								).to.be.fulfilled
 
 								expect(
@@ -643,20 +481,16 @@
 		})
 	}
 
-	function shouldBehaveLikeNFTAfterMint ( fixture, TEST, CONTRACT ) {
+	function shouldBehaveLikeNFTFreeAfterMint ( fixture, TEST, CONTRACT ) {
 		shouldBehaveLikeERC2981Base( fixture, TEST, CONTRACT )
 		shouldBehaveLikeERC721BatchAfterMint( fixture, TEST, CONTRACT )
 		shouldBehaveLikeERC721BatchMetadata( fixture, TEST, CONTRACT )
 		shouldBehaveLikeERC721BatchEnumerableAfterMint( fixture, TEST, CONTRACT )
 
-		describe( `Should behave like NFT after minting some tokens`, function () {
+		describe( `Should behave like NFTFree after minting some tokens`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
-						test_team1,
-						test_team2,
-						test_team3,
-						test_team4,
 						test_user1,
 						test_user2,
 						test_contract,
@@ -669,10 +503,6 @@
 
 					contract       = test_contract
 					proxy_contract = test_proxy_contract
-					users[ `TEAM1`           ] = test_team1
-					users[ `TEAM2`           ] = test_team2
-					users[ `TEAM3`           ] = test_team3
-					users[ `TEAM4`           ] = test_team4
 					users[ USER1             ] = test_user1
 					users[ USER2             ] = test_user2
 					users[ PROXY_USER        ] = test_proxy_user
@@ -698,36 +528,16 @@
 							})
 						}
 					})
-
-					describe( CONTRACT.METHODS.withdraw.SIGNATURE, function () {
-						if ( TEST.METHODS.withdraw ) {
-							it( `Withdrawal should be fulfilled`, async function () {
-								const recipient = users[ `TEAM1` ].address
-								const amount    = TEST.PARAMS.salePrice_.mul( TEST.MINTED_SUPPLY ).mul( TEST.PARAMS.teamShares_[ 0 ] ).div( TEST.SHARE_BASE )
-								await shouldEmitPaymentReleasedEvent(
-									contract.connect( users[ CONTRACT_DEPLOYER ] )
-													.withdraw(),
-									contract,
-									recipient,
-									amount
-								)
-							})
-						}
-					})
 				// **************************************
 			}
 		})
 	}
 
-	function shouldBehaveLikeNFTAfterMintingOut ( fixture, TEST, CONTRACT ) {
-		describe( `Should behave like NFT after minting out`, function () {
+	function shouldBehaveLikeNFTFreeAfterMintingOut ( fixture, TEST, CONTRACT ) {
+		describe( `Should behave like NFTFree after minting out`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
-						test_team1,
-						test_team2,
-						test_team3,
-						test_team4,
 						test_user1,
 						test_user2,
 						test_contract,
@@ -740,10 +550,6 @@
 
 					contract       = test_contract
 					proxy_contract = test_proxy_contract
-					users[ `TEAM1`           ] = test_team1
-					users[ `TEAM2`           ] = test_team2
-					users[ `TEAM3`           ] = test_team3
-					users[ `TEAM4`           ] = test_team4
 					users[ USER1             ] = test_user1
 					users[ USER2             ] = test_user2
 					users[ PROXY_USER        ] = test_proxy_user
@@ -766,7 +572,7 @@
 								}
 								await shouldRevertWhenMintedOut(
 									contract.connect( users[ USER1 ] )
-													.mintPublic( qty, tx_params ),
+													.mintPublic( qty ),
 									qty,
 									remaining
 								)
@@ -820,19 +626,14 @@
 // **************************************
 module.exports = {
 	shouldRevertWhenArrayLengthsDontMatch,
-	shouldRevertWhenIncorrectAmountPaid,
 	shouldRevertWhenInputAddressIsContract,
 	shouldRevertWhenQtyIsZero,
 	shouldRevertWhenQtyOverMaxBatch,
 	shouldRevertWhenMintedOut,
 	shouldRevertWhenReserveDepleted,
-	shouldRevertWhenSumOfSharesIncorrect,
-	shouldRevertWhenContractHasNoBalance,
-	shouldRevertWhenEtherTransferFails,
-	shouldEmitPaymentReleasedEvent,
-	shouldBehaveLikeNFTAtDeploy,
-	shouldBehaveLikeNFTAfterSettingProxy,
-	shouldBehaveLikeNFTAfterSettingStateToOpen,
-	shouldBehaveLikeNFTAfterMint,
-	shouldBehaveLikeNFTAfterMintingOut,
+	shouldBehaveLikeNFTFreeAtDeploy,
+	shouldBehaveLikeNFTFreeAfterSettingProxy,
+	shouldBehaveLikeNFTFreeAfterSettingStateToOpen,
+	shouldBehaveLikeNFTFreeAfterMint,
+	shouldBehaveLikeNFTFreeAfterMintingOut,
 }
