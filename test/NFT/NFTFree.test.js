@@ -243,9 +243,7 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 		EVENTS : {
 			Approval             : true,
 			ApprovalForAll       : true,
-			ConsecutiveTransfer  : true,
 			OwnershipTransferred : true,
-			PaymentReleased      : true,
 			ContractStateChanged : true,
 			Transfer             : true,
 		},
@@ -354,12 +352,10 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 			reserve_     : 50,
 			maxBatch_    : 10,
 			maxSupply_   : 8000,
-			salePrice_   : SALE_PRICE,
 			royaltyRate_ : 100,
 			name_        : `NFT Token`,
 			symbol_      : `NFT`,
 			baseURI_     : INIT_BASE_URI,
-			teamShares_  : [ 6000, 2000, 1500, 500 ],
 		},
 		// MINT OUT
 		MINT_OUT : {

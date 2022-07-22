@@ -9,6 +9,7 @@ const TEST_ACTIVATION = {
 	// **************************************
 	// *****            UTIL            *****
 	// **************************************
+		ContractMetadata              : true,
 		ERC2981Base                   : true,
 		IInitializable                : true,
 		IOwnable                      : true,
