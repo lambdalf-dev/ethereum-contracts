@@ -19,8 +19,8 @@ const PROXY = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRegis
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 
 	const {
 		getTestCasesByFunction,
@@ -32,7 +32,7 @@ const PROXY = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRegis
 // *****       TEST VARIABLES       *****
 // **************************************
 	// For contract data
-	const CONTRACT = {
+	const CONTRACT_INTERFACE = {
 		NAME : `Mock_ITradable`,
 		METHODS : {
 			isRegisteredProxy    : {
@@ -79,15 +79,20 @@ const PROXY = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRegis
 			...addrs
 		] = await ethers.getSigners()
 
-		test_proxy_contract_params = []
-		test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
+		const proxy_artifact = await ethers.getContractFactory( `Mock_ProxyRegistry` )
+		let test_proxy_contract = await proxy_artifact.deploy()
+		// test_proxy_contract_params = []
+		// test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
 		await test_proxy_contract.deployed()
 		await test_proxy_contract.setProxy( test_token_owner.address, test_proxy_user.address )
 
-		test_contract_params = [
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy(
 			test_proxy_contract.address
-		]
-		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
+		)
+		// test_contract_params = [
+		// ]
+		// test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
 		await test_contract.deployed()
 
 		return {
@@ -257,7 +262,7 @@ const PROXY = require( `../../artifacts/contracts/mocks/external/Mock_ProxyRegis
 // **************************************
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
-		testInvalidInputs( fixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_ITradable( fixture, TEST_DATA, CONTRACT )
+		testInvalidInputs( fixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeMock_ITradable( fixture, TEST_DATA, CONTRACT_INTERFACE )
 	}
 })

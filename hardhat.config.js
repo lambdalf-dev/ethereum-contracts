@@ -1,7 +1,7 @@
 require("dotenv").config()
 
 require("@nomiclabs/hardhat-etherscan")
-require("@nomiclabs/hardhat-waffle")
+require("@nomicfoundation/hardhat-chai-matchers")
 require("hardhat-gas-reporter")
 require("solidity-coverage")
 require("./snapshot/snapshot")

@@ -17,8 +17,8 @@
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 
 	const {
 		INTERFACE_ID,
@@ -84,70 +84,133 @@
 // **************************************
 // *****        TEST  SUITES        *****
 // **************************************
-	async function shouldRevertWhenArrayLengthsDontMatch ( promise, len1, len2, error = `NFT_ARRAY_LENGTH_MISMATCH` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ len1 }, ${ len2 })`
-		)
+	async function shouldRevertWhenArrayLengthsDontMatch ( promise, contract, len1, len2, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_ARRAY_LENGTH_MISMATCH` )
+				.withArgs( len1, len2 )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenIncorrectAmountPaid ( promise, amountReceived, amountExpected, error = `NFT_INCORRECT_PRICE` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ amountReceived }, ${ amountExpected })`
-		)
+	async function shouldRevertWhenIncorrectAmountPaid ( promise, contract, amountReceived, amountExpected, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_INCORRECT_PRICE` )
+				.withArgs( amountReceived, amountExpected )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenQtyIsZero ( promise, error = `NFT_INVALID_QTY` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }()`
-		)
+	async function shouldRevertWhenQtyIsZero ( promise, contract, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_INVALID_QTY` )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenShareIsZero ( promise, error = `NFT_INVALID_SHARE` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }()`
-		)
+	async function shouldRevertWhenShareIsZero ( promise, contract, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_INVALID_SHARE` )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenInputAddressIsContract ( promise, account, error = `NFT_INVALID_TEAM_MEMBER` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ account })`
-		)
+	async function shouldRevertWhenInputAddressIsContract ( promise, contract, account, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_INVALID_TEAM_MEMBER` )
+				.withArgs( account )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenQtyOverMaxBatch ( promise, qtyRequested, maxBatch, error = `NFT_MAX_BATCH` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ qtyRequested }, ${ maxBatch })`
-		)
+	async function shouldRevertWhenQtyOverMaxBatch ( promise, contract, qtyRequested, maxBatch, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_MAX_BATCH` )
+				.withArgs( qtyRequested, maxBatch )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenMintedOut ( promise, qtyRequested, remainingSupply, error = `NFT_MAX_SUPPLY` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ qtyRequested }, ${ remainingSupply })`
-		)
+	async function shouldRevertWhenMintedOut ( promise, contract, qtyRequested, remainingSupply, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_MAX_SUPPLY` )
+				.withArgs( qtyRequested, remainingSupply )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenReserveDepleted ( promise, qtyRequested, reserveLeft, error = `NFT_MAX_RESERVE` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ qtyRequested }, ${ reserveLeft })`
-		)
+	async function shouldRevertWhenReserveDepleted ( promise, contract, qtyRequested, reserveLeft, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_MAX_RESERVE` )
+				.withArgs( qtyRequested, reserveLeft )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenSumOfSharesIncorrect ( promise, missingShares, error = `NFT_ETHER_TRANSFER_FAIL` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ missingShares })`
-		)
+	async function shouldRevertWhenSumOfSharesIncorrect ( promise, contract, missingShares, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_ETHER_TRANSFER_FAIL` )
+				.withArgs( missingShares )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenContractHasNoBalance ( promise, error = `NFT_NO_ETHER_BALANCE` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }()`
-		)
+	async function shouldRevertWhenContractHasNoBalance ( promise, contract, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_NO_ETHER_BALANCE` )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenEtherTransferFails ( promise, to, amount, error = `NFT_MISSING_SHARES` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ to }, ${ amount })`
-		)
+	async function shouldRevertWhenEtherTransferFails ( promise, contract, to, amount, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `NFT_MISSING_SHARES` )
+				.withArgs( to, amount )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
 	async function shouldEmitPaymentReleasedEvent ( promise, contract, to, amount ) {
@@ -202,6 +265,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.addProxyRegistry( proxyRegistryAddress ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -222,6 +286,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.airdrop( accounts, amounts ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -237,6 +302,7 @@
 								await shouldRevertWhenArrayLengthsDontMatch(
 									contract.connect( users[ CONTRACT_DEPLOYER ] )
 													.airdrop( accounts, amounts ),
+									contract,
 									accounts.length,
 									amounts.length
 								)
@@ -286,6 +352,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.setBaseURI( baseURI ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -300,6 +367,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.setRoyaltyInfo( royaltyRecipient, royaltyRate ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -313,6 +381,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.setPauseState( newState ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -325,6 +394,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.withdraw(),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -332,7 +402,8 @@
 							it( `Withdraw with no funds in the contract should be reverted`, async function () {
 								await shouldRevertWhenContractHasNoBalance (
 									contract.connect( users[ CONTRACT_DEPLOYER ] )
-													.withdraw()
+													.withdraw(),
+									contract
 								)
 							})
 						}
@@ -353,6 +424,7 @@
 								await shouldRevertWhenContractStateIsIncorrect(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mintPublic( qty, tx_params ),
+									contract,
 									CONTRACT_STATE.CLOSED
 								)
 							})
@@ -437,6 +509,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.removeProxyRegistry( proxyRegistryAddress ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -507,7 +580,8 @@
 								}
 								await shouldRevertWhenQtyIsZero(
 									contract.connect( users[ TOKEN_OWNER ] )
-													.mintPublic( qty, tx_params )
+													.mintPublic( qty, tx_params ),
+									contract
 								)
 							})
 
@@ -520,6 +594,7 @@
 								await shouldRevertWhenQtyOverMaxBatch(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mintPublic( qty, tx_params ),
+									contract,
 									qty,
 									TEST.PARAMS.maxBatch_
 								)
@@ -534,6 +609,7 @@
 								await shouldRevertWhenIncorrectAmountPaid(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mintPublic( qty, tx_params ),
+									contract,
 									0,
 									value
 								)
@@ -548,6 +624,7 @@
 								await shouldRevertWhenIncorrectAmountPaid(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mintPublic( qty, tx_params ),
+									contract,
 									value + 1,
 									value
 								)
@@ -767,6 +844,7 @@
 								await shouldRevertWhenMintedOut(
 									contract.connect( users[ USER1 ] )
 													.mintPublic( qty, tx_params ),
+									contract,
 									qty,
 									remaining
 								)
@@ -802,6 +880,7 @@
 									await shouldRevertWhenReserveDepleted(
 										contract.connect( users[ CONTRACT_DEPLOYER ] )
 														.airdrop( accounts, amounts ),
+										contract,
 										qty,
 										reserve
 									)

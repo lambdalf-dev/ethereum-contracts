@@ -17,8 +17,8 @@
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 // **************************************
 
 // **************************************
@@ -31,16 +31,28 @@
 // **************************************
 // *****        TEST  SUITES        *****
 // **************************************
-	async function shouldRevertWhenIndexOutOfBounds ( promise, index, error = `IERC721Enumerable_INDEX_OUT_OF_BOUNDS` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ index })`
-		)
+	async function shouldRevertWhenIndexOutOfBounds ( promise, contract, index, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IERC721Enumerable_INDEX_OUT_OF_BOUNDS` )
+				.withArgs( index )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenOwnerIndexOutOfBounds ( promise, tokenOwner, index, error = `IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }("${ tokenOwner }", ${ index })`
-		)
+	async function shouldRevertWhenOwnerIndexOutOfBounds ( promise, contract, tokenOwner, index, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS` )
+				.withArgs( tokenOwner, index )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
 	const shouldBehaveLikeERC721BatchEnumerableBeforeMint = function( fixture, TEST, CONTRACT ) {
@@ -112,6 +124,7 @@
 							const index = TEST.OUT_OF_BOUNDS_INDEX
 							await shouldRevertWhenIndexOutOfBounds(
 								contract.tokenByIndex( index ),
+								contract,
 								index
 							)
 						})
@@ -132,6 +145,7 @@
 							const index = TEST.TARGET_INDEX
 							await shouldRevertWhenOwnerIndexOutOfBounds(
 								contract.tokenOfOwnerByIndex( tokenOwner, index ),
+								contract,
 								tokenOwner,
 								index
 							)
@@ -142,6 +156,7 @@
 							const index = TEST.OUT_OF_BOUNDS_INDEX
 							await shouldRevertWhenOwnerIndexOutOfBounds(
 								contract.tokenOfOwnerByIndex( tokenOwner, index ),
+								contract,
 								tokenOwner,
 								index
 							)
@@ -152,6 +167,7 @@
 							const index = TEST.TARGET_INDEX
 							await shouldRevertWhenOwnerIndexOutOfBounds(
 								contract.tokenOfOwnerByIndex( tokenOwner, index ),
+								contract,
 								tokenOwner,
 								index
 							)

@@ -17,8 +17,8 @@
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 // **************************************
 
 // **************************************
@@ -43,12 +43,28 @@
 													 .withArgs( previousState, newState )
 	}
 
-	async function shouldRevertWhenContractStateIsIncorrect ( promise, currentState, error = `IPausable_INCORRECT_STATE` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }(${ currentState })` )
+	async function shouldRevertWhenContractStateIsIncorrect ( promise, contract, currentState, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IPausable_INCORRECT_STATE` )
+				.withArgs( currentState )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenContractStateIsInvalid ( promise, currentState, error = `IPausable_INVALID_STATE` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }(${ currentState })` )
+	async function shouldRevertWhenContractStateIsInvalid ( promise, contract, currentState, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IPausable_INVALID_STATE` )
+				.withArgs( currentState )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
 	function shouldBehaveLikeIPausable ( fixture, TEST, CONTRACT ) {

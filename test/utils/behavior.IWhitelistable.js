@@ -26,8 +26,8 @@
 	} = require( `ethereumjs-utils` )
 	const crypto = require( `crypto` )
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 	
 	const { MerkleTree } = require( `merkletreejs` )
 // **************************************
@@ -126,16 +126,39 @@
 		}
 	// END Signature Whitelist
 
-	async function shouldRevertWhenWitelistIsNotSet ( promise, error = `IWhitelistable_NOT_SET` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }()` )
+	async function shouldRevertWhenWitelistIsNotSet ( promise, contract, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IWhitelistable_NOT_SET` )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	} 
 
-	async function shouldRevertWhenWhitelistIsConsumed ( promise, account, error = `IWhitelistable_CONSUMED` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }("${ account }")` )
+	async function shouldRevertWhenWhitelistIsConsumed ( promise, contract, account, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IWhitelistable_CONSUMED` )
+				.withArgs( account )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenNotWhitelisted ( promise, account, error = `IWhitelistable_FORBIDDEN` ) {
-		await expect( promise ).to.be.revertedWith( `${ error }("${ account }")` )
+	async function shouldRevertWhenNotWhitelisted ( promise, contract, account, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IWhitelistable_FORBIDDEN` )
+				.withArgs( account )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 // **************************************
 

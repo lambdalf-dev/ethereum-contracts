@@ -20,8 +20,8 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 
 	const {
 		getTestCasesByFunction,
@@ -55,7 +55,6 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 	const {
 		shouldEmitConsecutiveTransferEvent,
 	} = require( `../ERC721/behavior.ERC2309` )
-
 // **************************************
 
 // **************************************
@@ -299,25 +298,31 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 // **************************************
 	async function noMintFixture() {
 		[
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_contract_params = [
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy(
 			TEST_DATA.PARAMS.baseURI_,
 			TEST_DATA.PARAMS.symbol_,
-			TEST_DATA.PARAMS.name_,
-		]
-		let test_contract = await deployContract(
-			test_contract_deployer,
-			ARTIFACT,
-			test_contract_params
+			TEST_DATA.PARAMS.name_
 		)
+		// test_contract_params = [
+		// 	TEST_DATA.PARAMS.baseURI_,
+		// 	TEST_DATA.PARAMS.symbol_,
+		// 	TEST_DATA.PARAMS.name_,
+		// ]
+		// let test_contract = await deployContract(
+		// 	test_contract_deployer,
+		// 	ARTIFACT,
+		// 	test_contract_params
+		// )
 		await test_contract.deployed()
 
 		return {
@@ -333,25 +338,31 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 
 	async function mintFixture() {
 		[
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_contract_params = [
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy(
 			TEST_DATA.PARAMS.baseURI_,
 			TEST_DATA.PARAMS.symbol_,
-			TEST_DATA.PARAMS.name_,
-		]
-		let test_contract = await deployContract(
-			test_contract_deployer,
-			ARTIFACT,
-			test_contract_params
+			TEST_DATA.PARAMS.name_
 		)
+		// test_contract_params = [
+		// 	TEST_DATA.PARAMS.baseURI_,
+		// 	TEST_DATA.PARAMS.symbol_,
+		// 	TEST_DATA.PARAMS.name_,
+		// ]
+		// let test_contract = await deployContract(
+		// 	test_contract_deployer,
+		// 	ARTIFACT,
+		// 	test_contract_params
+		// )
 		await test_contract.deployed()
 
 		test_qty = TEST_DATA.TOKEN_OWNER_INIT_SUPPLY
@@ -588,12 +599,14 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 								await shouldRevertWhenTransferingToNullAddress(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mint( to, qty ),
+									contract,
 									to
 								)
 							})
 
 							it( `Should be reverted when minting to non ERC721Receiver contract`, async function () {
-								const non_holder = await deployContract( users[ CONTRACT_DEPLOYER ], NON_HOLDER_ARTIFACT, [] )
+								const non_holder_artifact = await ethers.getContractFactory( 'Mock_NonERC721Receiver' )
+								const non_holder = await non_holder_artifact.deploy()
 
 								const qty     = 1
 								const from    = ethers.constants.AddressZero
@@ -602,6 +615,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mint( to, qty ),
+									contract,
 									to
 								)
 							})
@@ -609,11 +623,8 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							it( `Should be reverted when minting to a receiver contract returning unexpected value`, async function () {
 								const retval = INTERFACE_ID.IERC165
 								const error  = ERC721ReceiverError.None
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const qty     = 1
 								const from    = ethers.constants.AddressZero
@@ -622,6 +633,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mint( to, qty ),
+									contract,
 									to
 								)
 							})
@@ -629,11 +641,8 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							it( `Should be reverted when minting to a receiver contract that reverts with custom error`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithERC721ReceiverError
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const qty     = 1
 								const from    = ethers.constants.AddressZero
@@ -642,6 +651,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mint( to, qty ),
+									contract,
 									to,
 									CONTRACT.ERRORS.ERC721Receiver_ERROR
 								)
@@ -650,11 +660,8 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							it( `Should be reverted when minting to a receiver contract that reverts with message`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithMessage
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const qty     = 1
 								const from    = ethers.constants.AddressZero
@@ -663,6 +670,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mint( to, qty ),
+									contract,
 									to,
 									CONTRACT.ERRORS.ERC721Receiver_MESSAGE
 								)
@@ -671,11 +679,8 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							it( `Should be reverted when minting to a receiver contract that reverts without message`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithoutMessage
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const qty     = 1
 								const from    = ethers.constants.AddressZero
@@ -684,6 +689,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mint( to, qty ),
+									contract,
 									to
 								)
 							})
@@ -691,11 +697,8 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							it( `Should be reverted when minting to a receiver contract that panics`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.Panic
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const qty     = 1
 								const from    = ethers.constants.AddressZero
@@ -704,6 +707,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mint( to, qty ),
+									contract,
 									to,
 									CONTRACT.ERRORS.ERC721Receiver_PANIC
 								)
@@ -712,11 +716,8 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 							it( `To a valid ERC721Receiver contract`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.None
-								const holder_params = [
-									retval,
-									error
-								]
-								const holder = await deployContract( users[ CONTRACT_DEPLOYER ], HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const holder = await holder_artifact.deploy( retval, error )
 
 								const qty         = 1
 								const to          = holder.address

@@ -17,8 +17,8 @@
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 // **************************************
 
 // **************************************
@@ -31,10 +31,16 @@
 // **************************************
 // *****        TEST  SUITES        *****
 // **************************************
-	async function shouldRevertWhenRoyaltyRateHigherThanRoyaltyBase ( promise, royaltyRate, royaltyBase, error = `IERC2981_INVALID_ROYALTIES` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ royaltyRate }, ${ royaltyBase })`
-		)
+	async function shouldRevertWhenRoyaltyRateHigherThanRoyaltyBase ( promise, contract, royaltyRate, royaltyBase, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IERC2981_INVALID_ROYALTIES` )
+				.withArgs( royaltyRate, royaltyBase )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
 	function shouldBehaveLikeERC2981Base ( fixture, TEST, CONTRACT ) {
@@ -112,6 +118,7 @@
 							await shouldRevertWhenRoyaltyRateHigherThanRoyaltyBase(
 								contract.connect( users[ CONTRACT_DEPLOYER ] )
 												.setRoyaltyInfo( royaltyRecipient, royaltyRate ),
+								contract,
 								royaltyRate,
 								TEST.ROYALTY_BASE
 							)

@@ -17,8 +17,8 @@
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 
 	const {
 		INTERFACE_ID,
@@ -127,6 +127,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.addProxyRegistry( proxyRegistryAddress ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -147,6 +148,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.airdrop( accounts, amounts ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -162,6 +164,7 @@
 								await shouldRevertWhenArrayLengthsDontMatch(
 									contract.connect( users[ CONTRACT_DEPLOYER ] )
 													.airdrop( accounts, amounts ),
+									contract,
 									accounts.length,
 									amounts.length
 								)
@@ -211,6 +214,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.setBaseURI( baseURI ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -225,6 +229,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.setRoyaltyInfo( royaltyRecipient, royaltyRate ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -238,6 +243,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.setPauseState( newState ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -255,6 +261,7 @@
 								await shouldRevertWhenContractStateIsIncorrect(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mintPublic( qty ),
+									contract,
 									CONTRACT_STATE.CLOSED
 								)
 							})
@@ -331,6 +338,7 @@
 								await shouldRevertWhenCallerIsNotContractOwner(
 									contract.connect( users[ USER1 ] )
 													.removeProxyRegistry( proxyRegistryAddress ),
+									contract,
 									users[ USER1 ].address
 								)
 							})
@@ -389,7 +397,8 @@
 								const qty       = 0
 								await shouldRevertWhenQtyIsZero(
 									contract.connect( users[ TOKEN_OWNER ] )
-													.mintPublic( qty )
+													.mintPublic( qty ),
+									contract
 								)
 							})
 
@@ -398,6 +407,7 @@
 								await shouldRevertWhenQtyOverMaxBatch(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mintPublic( qty ),
+									contract,
 									qty,
 									TEST.PARAMS.maxBatch_
 								)
@@ -573,6 +583,7 @@
 								await shouldRevertWhenMintedOut(
 									contract.connect( users[ USER1 ] )
 													.mintPublic( qty ),
+									contract,
 									qty,
 									remaining
 								)
@@ -608,6 +619,7 @@
 									await shouldRevertWhenReserveDepleted(
 										contract.connect( users[ CONTRACT_DEPLOYER ] )
 														.airdrop( accounts, amounts ),
+										contract,
 										qty,
 										reserve
 									)

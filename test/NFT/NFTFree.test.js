@@ -21,8 +21,8 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 
 	const {
 		getTestCasesByFunction,
@@ -382,21 +382,24 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 // **************************************
 	async function deployFixture() {
 		const [
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_proxy_contract_params = []
-		test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
+		const proxy_artifact = await ethers.getContractFactory( `Mock_ProxyRegistry` )
+		let test_proxy_contract = await proxy_artifact.deploy()
+		// test_proxy_contract_params = []
+		// test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
 		await test_proxy_contract.deployed()
 		await test_proxy_contract.setProxy( test_token_owner.address, test_proxy_user.address )
 
-		test_contract_params = [
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy(
 			TEST_DATA.PARAMS.reserve_,
 			TEST_DATA.PARAMS.maxBatch_,
 			TEST_DATA.PARAMS.maxSupply_,
@@ -404,12 +407,15 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 			TEST_DATA.PARAMS.name_,
 			TEST_DATA.PARAMS.symbol_,
 			TEST_DATA.PARAMS.baseURI_,
-		]
-		let test_contract = await deployContract(
-			test_contract_deployer,
-			ARTIFACT,
-			test_contract_params
 		)
+
+		// test_contract_params = [
+		// ]
+		// let test_contract = await deployContract(
+		// 	test_contract_deployer,
+		// 	ARTIFACT,
+		// 	test_contract_params
+		// )
 		await test_contract.deployed()
 
 		return {
@@ -426,30 +432,32 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 
 	async function proxyFixture () {
 		const [
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_proxy_contract_params = []
-		test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
+		const proxy_artifact = await ethers.getContractFactory( `Mock_ProxyRegistry` )
+		let test_proxy_contract = await proxy_artifact.deploy()
+		// test_proxy_contract_params = []
+		// test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
 		await test_proxy_contract.deployed()
 		await test_proxy_contract.setProxy( test_token_owner.address, test_proxy_user.address )
 
-		test_contract_params = [
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy(
 			TEST_DATA.PARAMS.reserve_,
 			TEST_DATA.PARAMS.maxBatch_,
 			TEST_DATA.PARAMS.maxSupply_,
 			TEST_DATA.PARAMS.royaltyRate_,
 			TEST_DATA.PARAMS.name_,
 			TEST_DATA.PARAMS.symbol_,
-			TEST_DATA.PARAMS.baseURI_,
-		]
-		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
+			TEST_DATA.PARAMS.baseURI_
+		)
 		await test_contract.deployed()
 
 		test_proxyRegistryAddress = test_proxy_contract.address
@@ -470,30 +478,32 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 
 	async function saleFixture () {
 		const [
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_proxy_contract_params = []
-		test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
+		const proxy_artifact = await ethers.getContractFactory( `Mock_ProxyRegistry` )
+		let test_proxy_contract = await proxy_artifact.deploy()
+		// test_proxy_contract_params = []
+		// test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
 		await test_proxy_contract.deployed()
 		await test_proxy_contract.setProxy( test_token_owner.address, test_proxy_user.address )
 
-		test_contract_params = [
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy(
 			TEST_DATA.PARAMS.reserve_,
 			TEST_DATA.PARAMS.maxBatch_,
 			TEST_DATA.PARAMS.maxSupply_,
 			TEST_DATA.PARAMS.royaltyRate_,
 			TEST_DATA.PARAMS.name_,
 			TEST_DATA.PARAMS.symbol_,
-			TEST_DATA.PARAMS.baseURI_,
-		]
-		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
+			TEST_DATA.PARAMS.baseURI_
+		)
 		await test_contract.deployed()
 
 		test_proxyRegistryAddress = test_proxy_contract.address
@@ -518,33 +528,31 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 
 	async function mintFixture() {
 		const [
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_proxy_contract_params = []
-		test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
+		const proxy_artifact = await ethers.getContractFactory( `Mock_ProxyRegistry` )
+		let test_proxy_contract = await proxy_artifact.deploy()
+		// test_proxy_contract_params = []
+		// test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
 		await test_proxy_contract.deployed()
 		await test_proxy_contract.setProxy( test_token_owner.address, test_proxy_user.address )
 
-		test_contract_params = [
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy(
 			TEST_DATA.PARAMS.reserve_,
 			TEST_DATA.PARAMS.maxBatch_,
 			TEST_DATA.PARAMS.maxSupply_,
 			TEST_DATA.PARAMS.royaltyRate_,
 			TEST_DATA.PARAMS.name_,
 			TEST_DATA.PARAMS.symbol_,
-			TEST_DATA.PARAMS.baseURI_,
-		]
-		let test_contract = await deployContract(
-			test_contract_deployer,
-			ARTIFACT,
-			test_contract_params
+			TEST_DATA.PARAMS.baseURI_
 		)
 		await test_contract.deployed()
 
@@ -578,21 +586,24 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 
 	async function mintOutFixture() {
 		const [
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_proxy_contract_params = []
-		test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
+		const proxy_artifact = await ethers.getContractFactory( `Mock_ProxyRegistry` )
+		let test_proxy_contract = await proxy_artifact.deploy()
+		// test_proxy_contract_params = []
+		// test_proxy_contract = await deployContract( test_contract_deployer, PROXY, test_proxy_contract_params )
 		await test_proxy_contract.deployed()
 		await test_proxy_contract.setProxy( test_token_owner.address, test_proxy_user.address )
 
-		test_contract_params = [
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy(
 			TEST_DATA.MINT_OUT.reserve_,
 			TEST_DATA.MINT_OUT.maxBatch_,
 			TEST_DATA.MINT_OUT.maxSupply_,
@@ -600,11 +611,6 @@ const PROXY               = require( `../../artifacts/contracts/mocks/external/M
 			TEST_DATA.PARAMS.name_,
 			TEST_DATA.PARAMS.symbol_,
 			TEST_DATA.PARAMS.baseURI_,
-		]
-		let test_contract = await deployContract(
-			test_contract_deployer,
-			ARTIFACT,
-			test_contract_params
 		)
 		await test_contract.deployed()
 

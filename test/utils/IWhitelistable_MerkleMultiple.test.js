@@ -18,8 +18,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 
 	const { MerkleTree } = require( `merkletreejs` )
 
@@ -42,7 +42,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 // *****       TEST VARIABLES       *****
 // **************************************
 	// For contract data
-	const CONTRACT = {
+	const CONTRACT_INTERFACE = {
 		NAME : `Mock_IWhitelistable_MerkleMultiple`,
 		METHODS : {
 			checkWhitelistAllowance : {
@@ -104,17 +104,19 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 // **************************************
 	async function noAccessFixture () {
 		const [
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_contract_params = []
-		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy()
+		// test_contract_params = []
+		// test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
 		await test_contract.deployed()
 
 		test_accesslist1 = JSON.parse( JSON.stringify( TEST_DATA.ACCESS_LIST_1 ) )
@@ -140,17 +142,19 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 
 	async function access1Fixture () {
 		const [
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_contract_params = []
-		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy()
+		// test_contract_params = []
+		// test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
 		await test_contract.deployed()
 
 		test_accesslist1 = JSON.parse( JSON.stringify( TEST_DATA.ACCESS_LIST_1 ) )
@@ -182,17 +186,19 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 
 	async function access2Fixture () {
 		const [
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_contract_params = []
-		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy()
+		// test_contract_params = []
+		// test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
 		await test_contract.deployed()
 
 		test_accesslist1 = JSON.parse( JSON.stringify( TEST_DATA.ACCESS_LIST_1 ) )
@@ -224,17 +230,19 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 
 	async function allAccessFixture () {
 		const [
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_contract_params = []
-		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy()
+		// test_contract_params = []
+		// test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
 		await test_contract.deployed()
 
 		test_accesslist1 = JSON.parse( JSON.stringify( TEST_DATA.ACCESS_LIST_1 ) )
@@ -382,14 +390,16 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							passMax = getProof ( merkleTree1.tree, users[ TOKEN_OWNER ].address, merkleProof1 )
 
 							await shouldRevertWhenWitelistIsNotSet(
-								contract.checkWhitelistAllowance( account, merkleProof1, TEST.WHITELIST_ID_1 )
+								contract.checkWhitelistAllowance( account, merkleProof1, TEST.WHITELIST_ID_1 ),
+								contract
 							)
 
 							let merkleTree2 = generateRoot( accesslist2 )
 							passMax = getProof ( merkleTree2.tree, users[ TOKEN_OWNER ].address, merkleProof2 )
 
 							await shouldRevertWhenWitelistIsNotSet(
-								contract.checkWhitelistAllowance( account, merkleProof2, TEST.WHITELIST_ID_2 )
+								contract.checkWhitelistAllowance( account, merkleProof2, TEST.WHITELIST_ID_2 ),
+								contract
 							)
 						})
 					}
@@ -407,7 +417,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 
 							await shouldRevertWhenWitelistIsNotSet(
 								contract.connect( users[ TOKEN_OWNER ] )
-												.consumeWhitelist( merkleProof1, TEST.WHITELIST_AMOUNT_1, TEST.WHITELIST_ID_1 )
+												.consumeWhitelist( merkleProof1, TEST.WHITELIST_AMOUNT_1, TEST.WHITELIST_ID_1 ),
+								contract
 							)
 
 							let merkleTree2 = generateRoot( accesslist2 )
@@ -415,7 +426,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 
 							await shouldRevertWhenWitelistIsNotSet(
 								contract.connect( users[ TOKEN_OWNER ] )
-												.consumeWhitelist( merkleProof2, TEST.WHITELIST_AMOUNT_2, TEST.WHITELIST_ID_2 )
+												.consumeWhitelist( merkleProof2, TEST.WHITELIST_AMOUNT_2, TEST.WHITELIST_ID_2 ),
+								contract
 							)
 						})
 					}
@@ -479,6 +491,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							const proof   = merkleProof
 							await shouldRevertWhenNotWhitelisted(
 								contract.checkWhitelistAllowance( account, proof, TEST.WHITELIST_ID_1 ),
+								contract,
 								account
 							)
 						})
@@ -492,6 +505,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							const proof   = merkleProof
 							await shouldRevertWhenNotWhitelisted(
 								contract.checkWhitelistAllowance( account, proof, TEST.WHITELIST_ID_1 ),
+								contract,
 								account
 							)
 						})
@@ -505,6 +519,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							const proof   = merkleProof
 							await shouldRevertWhenNotWhitelisted(
 								contract.checkWhitelistAllowance( account, proof, TEST.WHITELIST_ID_1 ),
+								contract,
 								account
 							)
 						})
@@ -536,6 +551,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							await shouldRevertWhenNotWhitelisted(
 								contract.connect( users[ OTHER_OWNER ] )
 												.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_1 ),
+								contract,
 								account
 							)
 						})
@@ -551,6 +567,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							await shouldRevertWhenNotWhitelisted(
 								contract.connect( users[ OTHER_OWNER ] )
 												.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_1 ),
+								contract,
 								account
 							)
 						})
@@ -566,6 +583,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							await shouldRevertWhenNotWhitelisted(
 								contract.connect( users[ OTHER_OWNER ] )
 												.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_1 ),
+								contract,
 								account
 							)
 						})
@@ -581,6 +599,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							await shouldRevertWhenNotWhitelisted(
 								contract.connect( users[ OTHER_OWNER ] )
 												.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_1 ),
+								contract,
 								account
 							)
 						})
@@ -609,6 +628,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 								await shouldRevertWhenNotWhitelisted(
 									contract.connect( users[ OTHER_OWNER ] )
 													.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_1 ),
+									contract,
 									account
 								)
 							})
@@ -638,6 +658,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 								await shouldRevertWhenWhitelistIsConsumed(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_1 ),
+									contract,
 									account
 								)
 							})
@@ -686,6 +707,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							const proof   = merkleProof
 							await shouldRevertWhenNotWhitelisted(
 								contract.checkWhitelistAllowance( account, proof, TEST.WHITELIST_ID_2 ),
+								contract,
 								account
 							)
 						})
@@ -699,6 +721,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							const proof   = merkleProof
 							await shouldRevertWhenNotWhitelisted(
 								contract.checkWhitelistAllowance( account, proof, TEST.WHITELIST_ID_2 ),
+								contract,
 								account
 							)
 						})
@@ -712,6 +735,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							const proof   = merkleProof
 							await shouldRevertWhenNotWhitelisted(
 								contract.checkWhitelistAllowance( account, proof, TEST.WHITELIST_ID_2 ),
+								contract,
 								account
 							)
 						})
@@ -743,6 +767,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							await shouldRevertWhenNotWhitelisted(
 								contract.connect( users[ OTHER_OWNER ] )
 												.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_2 ),
+								contract,
 								account
 							)
 						})
@@ -758,6 +783,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							await shouldRevertWhenNotWhitelisted(
 								contract.connect( users[ OTHER_OWNER ] )
 												.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_2 ),
+								contract,
 								account
 							)
 						})
@@ -773,6 +799,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							await shouldRevertWhenNotWhitelisted(
 								contract.connect( users[ OTHER_OWNER ] )
 												.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_2 ),
+								contract,
 								account
 							)
 						})
@@ -788,6 +815,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							await shouldRevertWhenNotWhitelisted(
 								contract.connect( users[ OTHER_OWNER ] )
 												.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_2 ),
+								contract,
 								account
 							)
 						})
@@ -816,6 +844,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 								await shouldRevertWhenWhitelistIsConsumed(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.consumeWhitelist( proof, qty, TEST.WHITELIST_ID_2 ),
+									contract,
 									account
 								)
 							})
@@ -861,6 +890,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 					let account = users[ USER1 ].address
 					await shouldRevertWhenNotWhitelisted(
 						contract.checkWhitelistAllowance( account, merkleProof1, TEST.WHITELIST_ID_2 ),
+						contract,
 						account
 					)
 
@@ -871,6 +901,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 					account = users[ USER2 ].address
 					await shouldRevertWhenNotWhitelisted(
 						contract.checkWhitelistAllowance( account, merkleProof2, TEST.WHITELIST_ID_1 ),
+						contract,
 						account
 					)
 				})
@@ -884,10 +915,10 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 // **************************************
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
-		testInvalidInputs( noAccessFixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_IWhitelistable_MerkleMultipleBeforeSettingWhitelist( noAccessFixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_IWhitelistable_MerkleMultipleAfterSettingWhitelist1( access1Fixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_IWhitelistable_MerkleMultipleAfterSettingWhitelist2( access2Fixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_IWhitelistable_MerkleMultipleAfterSetting2Whitelists( allAccessFixture, TEST_DATA, CONTRACT )
+		testInvalidInputs( noAccessFixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeMock_IWhitelistable_MerkleMultipleBeforeSettingWhitelist( noAccessFixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeMock_IWhitelistable_MerkleMultipleAfterSettingWhitelist1( access1Fixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeMock_IWhitelistable_MerkleMultipleAfterSettingWhitelist2( access2Fixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeMock_IWhitelistable_MerkleMultipleAfterSetting2Whitelists( allAccessFixture, TEST_DATA, CONTRACT_INTERFACE )
 	}
 })

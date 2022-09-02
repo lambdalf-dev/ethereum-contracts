@@ -18,8 +18,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 
 	const { MerkleTree } = require( `merkletreejs` )
 
@@ -42,7 +42,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 // *****       TEST VARIABLES       *****
 // **************************************
 	// For contract data
-	const CONTRACT = {
+	const CONTRACT_INTERFACE = {
 		NAME : `Mock_IWhitelistable_Merkle`,
 		METHODS : {
 			checkWhitelistAllowance : {
@@ -94,17 +94,19 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 // **************************************
 	async function fixture () {
 		const [
+			test_contract_deployer,
 			test_user1,
 			test_user2,
 			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
-		test_contract_params = []
-		test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
+		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
+		test_contract = await contract_artifact.deploy()
+		// test_contract_params = []
+		// test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
 		await test_contract.deployed()
 
 		test_accesslist = JSON.parse( JSON.stringify( TEST_DATA.ACCESS_LIST ) )
@@ -233,7 +235,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							const account = users[ TOKEN_OWNER ].address
 							const proof   = merkleProof
 							await shouldRevertWhenWitelistIsNotSet(
-								contract.checkWhitelistAllowance( account, proof )
+								contract.checkWhitelistAllowance( account, proof ),
+								contract
 							)
 						})
 					}
@@ -249,7 +252,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 							const account = users[ TOKEN_OWNER ].address
 							const proof   = merkleProof
 							await shouldRevertWhenWitelistIsNotSet(
-								contract.isAccountWhitelisted( account, proof )
+								contract.isAccountWhitelisted( account, proof ),
+								contract,
 							)
 						})
 					}
@@ -297,6 +301,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 										const proof   = merkleProof
 										await shouldRevertWhenNotWhitelisted(
 											contract.checkWhitelistAllowance( account, proof ),
+											contract,
 											account
 										)
 									})
@@ -334,11 +339,13 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 
 										await shouldRevertWhenWhitelistIsConsumed(
 											contract.checkWhitelistAllowance( account, proof ),
+											contract,
 											account
 										)
 
 										await shouldRevertWhenWhitelistIsConsumed(
 											contract.isAccountWhitelisted( account, proof ),
+											contract,
 											account
 										)
 									})
@@ -357,7 +364,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IWhitelist
 // **************************************
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
-		testInvalidInputs( fixture, TEST_DATA, CONTRACT )
-		shouldBehaveLikeMock_IWhitelistable_Merkle( fixture, TEST_DATA, CONTRACT )
+		testInvalidInputs( fixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeMock_IWhitelistable_Merkle( fixture, TEST_DATA, CONTRACT_INTERFACE )
 	}
 })

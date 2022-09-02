@@ -17,8 +17,8 @@
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 
 	const {
 		INTERFACE_ID,
@@ -59,41 +59,75 @@
 			.withArgs( from, to, tokenId )
 	}
 
-	async function shouldRevertWhenCallerIsNotApproved ( promise, tokenOwner, operator, tokenId, error = `IERC721_CALLER_NOT_APPROVED` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }("${ tokenOwner }", "${ operator }", ${ tokenId })`
-		)
-	}
-
-	async function shouldRevertWhenRequestedTokenDoesNotExist ( promise, tokenId, error = `IERC721_NONEXISTANT_TOKEN` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }(${ tokenId })`
-		)
-	}
-
-	async function shouldRevertWhenTransferingToNonERC721Receiver ( promise, receiver, error = `IERC721_NON_ERC721_RECEIVER` ) {
-		if ( error == `IERC721_NON_ERC721_RECEIVER` ) {
-			await expect( promise ).to.be.revertedWith(
-				`${ error }("${ receiver }")`
-			)
+	async function shouldRevertWhenCallerIsNotApproved ( promise, contract, tokenOwner, operator, tokenId, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IERC721_CALLER_NOT_APPROVED` )
+				.withArgs( tokenOwner, operator, tokenId )
 		}
 		else {
-			await expect( promise ).to.be.revertedWith(
-				`${ error }`
-			)
+			await expect( promise )
+				.to.be.revertedWith( error )
 		}
 	}
 
-	async function shouldRevertWhenApprovingTokenOwner ( promise, operator, error = `IERC721_INVALID_APPROVAL` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }("${ operator }")`
-		)
+	async function shouldRevertWhenRequestedTokenDoesNotExist ( promise, contract, tokenId, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IERC721_NONEXISTANT_TOKEN` )
+				.withArgs( tokenId )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
-	async function shouldRevertWhenTransferingToNullAddress ( promise, recipient, error = `IERC721_INVALID_TRANSFER` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }("${ recipient }")`
-		)
+	async function shouldRevertWhenTransferingToNonERC721Receiver ( promise, contract, receiver, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IERC721_NON_ERC721_RECEIVER` )
+				.withArgs( receiver )
+		}
+		else {
+			if ( error == 'custom error' ) {
+				const receiverContract = new ethers.Contract( receiver, '[{"inputs": [{"internalType": "bytes4","name": "retval","type": "bytes4"},{"internalType": "enum Mock_ERC721Receiver.Error","name": "error","type": "uint8"}],"stateMutability": "nonpayable","type": "constructor"},{"inputs": [],"name": "ERC721ReceiverError","type": "error"}]', contract.provider )
+				await expect( promise )
+					.to.be.revertedWithCustomError( receiverContract, `ERC721ReceiverError` )
+			}
+			else if ( error == 'panic code' ) {
+				await expect( promise )
+					.to.be.revertedWithPanic()
+			}
+			else {
+				await expect( promise )
+					.to.be.revertedWith( error )
+			}
+		}
+	}
+
+	async function shouldRevertWhenApprovingTokenOwner ( promise, contract, operator, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IERC721_INVALID_APPROVAL` )
+				.withArgs( operator )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
+	}
+
+	async function shouldRevertWhenTransferingToNullAddress ( promise, contract, recipient, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IERC721_INVALID_TRANSFER` )
+				.withArgs( recipient )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
 	function shouldBehaveLikeERC721BatchBeforeMint ( fixture, TEST, CONTRACT ) {
@@ -218,6 +252,7 @@
 							const tokenId = TEST.UNMINTED_TOKEN
 							await shouldRevertWhenRequestedTokenDoesNotExist(
 								contract.ownerOf( tokenId ),
+								contract,
 								tokenId
 							)
 						})
@@ -239,12 +274,14 @@
 							await shouldRevertWhenRequestedTokenDoesNotExist(
 								contract.connect( users[ TOKEN_OWNER ] )
 												.approve( to, tokenId ),
+								contract,
 								tokenId
 							)
 
 							await shouldRevertWhenRequestedTokenDoesNotExist(
 								contract.connect( users[ TOKEN_OWNER ] )
 												.approve( to, 0 ),
+								contract,
 								0
 							)
 						})
@@ -256,6 +293,7 @@
 							await shouldRevertWhenCallerIsNotApproved(
 								contract.connect( users[ USER1 ] )
 												.approve( to, tokenId ),
+								contract,
 								tokenOwner,
 								to,
 								tokenId
@@ -291,6 +329,7 @@
 									await shouldRevertWhenApprovingTokenOwner(
 										contract.connect( users[ USER1 ] )
 														.approve( to, tokenId ),
+										contract,
 										to
 									)
 								})
@@ -318,6 +357,7 @@
 							await shouldRevertWhenRequestedTokenDoesNotExist(
 								contract.connect( users[ TOKEN_OWNER ] )
 												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+								contract,
 								tokenId
 							)
 						})
@@ -329,6 +369,7 @@
 							await shouldRevertWhenCallerIsNotApproved(
 								contract.connect( users[ USER1 ] )
 												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+								contract,
 								from,
 								to,
 								tokenId
@@ -385,18 +426,22 @@
 								await shouldRevertWhenTransferingToNullAddress(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+									contract,
 									to
 								)
 							})
 
 							it( `Should be reverted when transfering to non ERC721Receiver contract`, async function () {
-								const non_holder = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.NON_HOLDER_ARTIFACT, [] )
+								const non_holder_artifact = await ethers.getContractFactory( 'Mock_NonERC721Receiver' )
+								const non_holder = await non_holder_artifact.deploy()
+
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = non_holder.address
 								const tokenId = TEST.TARGET_TOKEN
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+									contract,
 									to
 								)
 							})
@@ -404,11 +449,8 @@
 							it( `Should be reverted when transfering to a receiver contract returning unexpected value`, async function () {
 								const retval = INTERFACE_ID.IERC165
 								const error  = ERC721ReceiverError.None
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -417,6 +459,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+									contract,
 									to
 								)
 							})
@@ -424,11 +467,8 @@
 							it( `Should be reverted when transfering to a receiver contract that reverts with custom error`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithERC721ReceiverError
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -437,6 +477,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+									contract,
 									to,
 									CONTRACT.ERRORS.ERC721Receiver_ERROR
 								)
@@ -445,11 +486,8 @@
 							it( `Should be reverted when transfering to a receiver contract that reverts with message`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithMessage
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -458,6 +496,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+									contract,
 									to,
 									CONTRACT.ERRORS.ERC721Receiver_MESSAGE
 								)
@@ -466,11 +505,8 @@
 							it( `Should be reverted when transfering to a receiver contract that reverts without message`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithoutMessage
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -479,6 +515,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+									contract,
 									to
 								)
 							})
@@ -486,11 +523,8 @@
 							it( `Should be reverted when transfering to a receiver contract that panics`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.Panic
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -499,6 +533,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from, to, tokenId ),
+									contract,
 									to,
 									CONTRACT.ERRORS.ERC721Receiver_PANIC
 								)
@@ -507,11 +542,8 @@
 							it( `To a valid ERC721Receiver contract`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.None
-								const holder_params = [
-									retval,
-									error
-								]
-								const holder = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const holder = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = holder.address
@@ -591,6 +623,7 @@
 							await shouldRevertWhenRequestedTokenDoesNotExist(
 								contract.connect( users[ TOKEN_OWNER ] )
 												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+								contract,
 								tokenId
 							)
 						})
@@ -603,6 +636,7 @@
 							await shouldRevertWhenCallerIsNotApproved(
 								contract.connect( users[ USER1 ] )
 												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+								contract,
 								from,
 								to,
 								tokenId
@@ -663,12 +697,15 @@
 								await shouldRevertWhenTransferingToNullAddress(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+									contract,
 									to
 								)
 							})
 
 							it( `Should be reverted when transfering to non ERC721Receiver contract`, async function () {
-								const non_holder = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.NON_HOLDER_ARTIFACT, [] )
+								const non_holder_artifact = await ethers.getContractFactory( 'Mock_NonERC721Receiver' )
+								const non_holder = await non_holder_artifact.deploy()
+
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = non_holder.address
 								const tokenId = TEST.TARGET_TOKEN
@@ -676,6 +713,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+									contract,
 									to
 								)
 							})
@@ -683,11 +721,8 @@
 							it( `Should be reverted when transfering to a receiver contract returning unexpected value`, async function () {
 								const retval = INTERFACE_ID.IERC165
 								const error  = ERC721ReceiverError.None
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -696,6 +731,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+									contract,
 									to
 								)
 							})
@@ -703,11 +739,8 @@
 							it( `Should be reverted when transfering to a receiver contract that reverts with custom error`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithERC721ReceiverError
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -716,6 +749,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+									contract,
 									to,
 									CONTRACT.ERRORS.ERC721Receiver_ERROR
 								)
@@ -724,11 +758,8 @@
 							it( `Should be reverted when transfering to a receiver contract that reverts with message`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithMessage
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -737,6 +768,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+									contract,
 									to,
 									CONTRACT.ERRORS.ERC721Receiver_MESSAGE
 								)
@@ -745,11 +777,8 @@
 							it( `Should be reverted when transfering to a receiver contract that reverts without message`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.RevertWithoutMessage
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -758,6 +787,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+									contract,
 									to
 								)
 							})
@@ -765,11 +795,8 @@
 							it( `Should be reverted when transfering to a receiver contract that panics`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.Panic
-								const holder_params = [
-									retval,
-									error
-								]
-								const invalidReceiver = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = invalidReceiver.address
@@ -778,6 +805,7 @@
 								await shouldRevertWhenTransferingToNonERC721Receiver(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+									contract,
 									to,
 									CONTRACT.ERRORS.ERC721Receiver_PANIC
 								)
@@ -786,11 +814,8 @@
 							it( `To a valid ERC721Receiver contract`, async function () {
 								const retval = INTERFACE_ID.IERC721Receiver
 								const error  = ERC721ReceiverError.None
-								const holder_params = [
-									retval,
-									error
-								]
-								const holder = await deployContract( users[ CONTRACT_DEPLOYER ], TEST.HOLDER_ARTIFACT, holder_params )
+								const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+								const holder = await holder_artifact.deploy( retval, error )
 
 								const from    = users[ TOKEN_OWNER ].address
 								const to      = holder.address
@@ -820,10 +845,14 @@
 									const to      = users[ USER1       ].address
 									const tokenId = TEST.TARGET_TOKEN
 									const data    = `0x`
-									await expect(
+									await shouldEmitTransferEvent(
 										contract.connect( users[ TOKEN_OWNER ] )
-														.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data )
-									).to.emit( contract, CONTRACT.EVENTS.Transfer ).withArgs( users[ TOKEN_OWNER ].address, users[ USER1 ].address, TEST.TARGET_TOKEN )
+														.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from, to, tokenId, data ),
+										contract,
+										from,
+										to,
+										tokenId
+									)
 								})
 
 								it( `Token ${ TEST.TARGET_TOKEN } owner should now be ${ USER_NAMES[ USER1 ] }`, async function () {
@@ -866,6 +895,7 @@
 							await shouldRevertWhenApprovingTokenOwner(
 								contract.connect( users[ USER1 ] )
 												.setApprovalForAll( operator, approved ),
+								contract,
 								operator
 							)
 						})
@@ -929,6 +959,7 @@
 							await shouldRevertWhenRequestedTokenDoesNotExist(
 								contract.connect( users[ TOKEN_OWNER ] )
 												.transferFrom( from, to, tokenId ),
+								contract,
 								tokenId
 							)
 						})
@@ -940,6 +971,7 @@
 							await shouldRevertWhenCallerIsNotApproved(
 								contract.connect( users[ USER1 ] )
 												.transferFrom( from, to, tokenId ),
+								contract,
 								from,
 								to,
 								tokenId
@@ -996,6 +1028,7 @@
 								await shouldRevertWhenTransferingToNullAddress(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.transferFrom( from, to, tokenId ),
+									contract,
 									to
 								)
 							})
@@ -1018,10 +1051,14 @@
 									const from    = users[ TOKEN_OWNER ].address
 									const to      = users[ USER1       ].address
 									const tokenId = TEST.TARGET_TOKEN
-									await expect(
+									await shouldEmitTransferEvent(
 										contract.connect( users[ TOKEN_OWNER ] )
-														.transferFrom( from, to, tokenId )
-									).to.emit( contract, CONTRACT.EVENTS.Transfer ).withArgs( users[ TOKEN_OWNER ].address, users[ USER1 ].address, TEST.TARGET_TOKEN )
+														.transferFrom( from, to, tokenId ),
+										contract,
+										from,
+										to,
+										tokenId
+									)
 								})
 
 								it( `Token ${ TEST.TARGET_TOKEN } owner should now be ${ USER_NAMES[ USER1 ] }`, async function () {

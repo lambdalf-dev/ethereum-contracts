@@ -1,104 +1,118 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (token/ERC1155/IERC1155.sol)
+
+/**
+* Author: Lambdalf the White
+*/
 
 pragma solidity 0.8.10;
 
 import "./IERC165.sol";
 
 /**
-* @dev Required interface of an ERC1155 compliant contract, as defined in the
-* https://eips.ethereum.org/EIPS/eip-1155[EIP].
-*
-* _Available since v3.1._
+* @title ERC-1155 Multi Token Standard
+* @dev See https://eips.ethereum.org/EIPS/eip-1155
+* Note: The ERC-165 identifier for this interface is 0xd9b67a26.
 */
-interface IERC1155 is IERC165 {
+interface IERC1155 /* is IERC165 */ {
 	/**
-	* @dev Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
+	* @dev Either `TransferSingle` or `TransferBatch` MUST emit when tokens are transferred, including zero value transfers as well as minting or burning (see "Safe Transfer Rules" section of the standard).
+	* The `operator` argument MUST be the address of an account/contract that is approved to make the transfer (SHOULD be msg.sender).
+	* The `from` argument MUST be the address of the holder whose balance is decreased.
+	* The `to` argument MUST be the address of the recipient whose balance is increased.
+	* The `id` argument MUST be the token type being transferred.
+	* The `value` argument MUST be the number of tokens the holder balance is decreased by and match what the recipient balance is increased by.
+	* When minting/creating tokens, the `from` argument MUST be set to `0x0` (i.e. zero address).
+	* When burning/destroying tokens, the `to` argument MUST be set to `0x0` (i.e. zero address).        
 	*/
-	event TransferSingle( address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value );
+	event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value);
 
 	/**
-	* @dev Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all
-	* transfers.
+	* @dev Either `TransferSingle` or `TransferBatch` MUST emit when tokens are transferred, including zero value transfers as well as minting or burning (see "Safe Transfer Rules" section of the standard).      
+	* The `operator` argument MUST be the address of an account/contract that is approved to make the transfer (SHOULD be msg.sender).
+	* The `from` argument MUST be the address of the holder whose balance is decreased.
+	* The `to` argument MUST be the address of the recipient whose balance is increased.
+	* The `ids` argument MUST be the list of tokens being transferred.
+	* The `values` argument MUST be the list of number of tokens (matching the list and order of tokens specified in ids) the holder balance is decreased by and match what the recipient balance is increased by.
+	* When minting/creating tokens, the `from` argument MUST be set to `0x0` (i.e. zero address).
+	* When burning/destroying tokens, the `to` argument MUST be set to `0x0` (i.e. zero address).                
 	*/
-	event TransferBatch( address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values );
+	event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values);
 
 	/**
-	* @dev Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to
-	* `approved`.
+	* @dev MUST emit when approval for a second party/operator address to manage all tokens for an owner address is enabled or disabled (absence of an event assumes disabled).        
 	*/
-	event ApprovalForAll( address indexed account, address indexed operator, bool approved );
+	event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
 
 	/**
-	* @dev Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI.
-	*
-	* If an {URI} event was emitted for `id`, the standard
-	* https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[guarantees] that `value` will equal the value
-	* returned by {IERC1155MetadataURI-uri}.
+	* @dev MUST emit when the URI is updated for a token ID.
+	* URIs are defined in RFC 3986.
+	* The URI MUST point to a JSON file that conforms to the "ERC-1155 Metadata URI JSON Schema".
 	*/
-	event URI( string value, uint256 indexed id );
+	event URI(string value, uint256 indexed id);
 
 	/**
-	* @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {safeTransferFrom}.
-	*
-	* Emits a {TransferBatch} event.
-	*
-	* Requirements:
-	*
-	* - `ids` and `amounts` must have the same length.
-	* - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155BatchReceived} and return the
-	* acceptance magic value.
+	* @notice Transfers `value` amount of an `id` from the `from` address to the `to` address specified (with safety call).
+	* @dev Caller must be approved to manage the tokens being transferred out of the `from` account (see "Approval" section of the standard).
+	* MUST revert if `to` is the zero address.
+	* MUST revert if balance of holder for token `id` is lower than the `value` sent.
+	* MUST revert on any other error.
+	* MUST emit the `TransferSingle` event to reflect the balance change (see "Safe Transfer Rules" section of the standard).
+	* After the above conditions are met, this function MUST check if `to` is a smart contract (e.g. code size > 0). If so, it MUST call `onERC1155Received` on `to` and act appropriately (see "Safe Transfer Rules" section of the standard).        
+	* @param from    Source address
+	* @param to      Target address
+	* @param id      ID of the token type
+	* @param value   Transfer amount
+	* @param data    Additional data with no specified format, MUST be sent unaltered in call to `onERC1155Received` on `to`
 	*/
-	function safeBatchTransferFrom( address from, address to, uint256[] calldata ids, uint256[] calldata amounts, bytes calldata data ) external;
+	function safeTransferFrom(address from, address to, uint256 id, uint256 value, bytes calldata data) external;
 
 	/**
-	* @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
-	*
-	* Emits a {TransferSingle} event.
-	*
-	* Requirements:
-	*
-	* - `to` cannot be the zero address.
-	* - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}.
-	* - `from` must have a balance of tokens of type `id` of at least `amount`.
-	* - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
-	* acceptance magic value.
+	* @notice Transfers `values` amount(s) of `ids` from the `from` address to the `to` address specified (with safety call).
+	* @dev Caller must be approved to manage the tokens being transferred out of the `from` account (see "Approval" section of the standard).
+	* MUST revert if `to` is the zero address.
+	* MUST revert if length of `ids` is not the same as length of `values`.
+	* MUST revert if any of the balance(s) of the holder(s) for token(s) in `ids` is lower than the respective amount(s) in `values` sent to the recipient.
+	* MUST revert on any other error.        
+	* MUST emit `TransferSingle` or `TransferBatch` event(s) such that all the balance changes are reflected (see "Safe Transfer Rules" section of the standard).
+	* Balance changes and events MUST follow the ordering of the arrays (_ids[0]/_values[0] before ids[1]/_values[1], etc).
+	* After the above conditions for the transfer(s) in the batch are met, this function MUST check if `to` is a smart contract (e.g. code size > 0). If so, it MUST call the relevant `ERC1155TokenReceiver` hook(s) on `to` and act appropriately (see "Safe Transfer Rules" section of the standard).                      
+	* @param from    Source address
+	* @param to      Target address
+	* @param ids     IDs of each token type (order and length must match values array)
+	* @param values  Transfer amounts per token type (order and length must match ids array)
+	* @param data    Additional data with no specified format, MUST be sent unaltered in call to the `ERC1155TokenReceiver` hook(s) on `to`
 	*/
-	function safeTransferFrom( address from, address to, uint256 id, uint256 amount, bytes calldata data ) external;
+	function safeBatchTransferFrom(address from, address to, uint256[] calldata ids, uint256[] calldata values, bytes calldata data) external;
 
 	/**
-	* @dev Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`,
-	*
-	* Emits an {ApprovalForAll} event.
-	*
-	* Requirements:
-	*
-	* - `operator` cannot be the caller.
+	* @notice Get the balance of an account's tokens.
+	* @param owner  The address of the token holder
+	* @param id     ID of the token
+	* @return       The owner's balance of the token type requested
 	*/
-	function setApprovalForAll( address operator, bool approved ) external;
+	function balanceOf(address owner, uint256 id) external view returns (uint256);
 
 	/**
-	* @dev Returns the amount of tokens of token type `id` owned by `account`.
-	*
-	* Requirements:
-	*
-	* - `account` cannot be the zero address.
+	* @notice Get the balance of multiple account/token pairs
+	* @param owners The addresses of the token holders
+	* @param ids    ID of the tokens
+	* @return       The owner's balance of the token types requested (i.e. balance for each (owner, id) pair)
 	*/
-	function balanceOf( address account, uint256 id ) external view returns ( uint256 );
+	function balanceOfBatch(address[] calldata owners, uint256[] calldata ids) external view returns (uint256[] memory);
 
 	/**
-	* @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {balanceOf}.
-	*
-	* Requirements:
-	*
-	* - `accounts` and `ids` must have the same length.
+	* @notice Enable or disable approval for a third party ("operator") to manage all of the caller's tokens.
+	* @dev MUST emit the ApprovalForAll event on success.
+	* @param operator  Address to add to the set of authorized operators
+	* @param approved  True if the operator is approved, false to revoke approval
 	*/
-	function balanceOfBatch( address[] calldata accounts, uint256[] calldata ids ) external view returns ( uint256[] memory );
+	function setApprovalForAll(address operator, bool approved) external;
 
 	/**
-	* @dev Returns true if `operator` is approved to transfer ``account``'s tokens.
-	*
-	* See {setApprovalForAll}.
+	* @notice Queries the approval status of an operator for a given owner.
+	* @param owner     The owner of the tokens
+	* @param operator  Address of authorized operator
+	* @return          True if the operator is approved, false if not
 	*/
-	function isApprovedForAll( address account, address operator ) external view returns ( bool );
+	function isApprovedForAll(address owner, address operator) external view returns (bool);
 }

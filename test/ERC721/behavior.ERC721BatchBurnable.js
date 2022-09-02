@@ -17,8 +17,8 @@
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 
 	const {
 		shouldEmitTransferEvent,
@@ -69,6 +69,7 @@
 							await shouldRevertWhenRequestedTokenDoesNotExist(
 								contract.connect( users[ TOKEN_OWNER ] )
 												.burn( tokenId ),
+								contract,
 								tokenId
 							)
 						})
@@ -80,6 +81,7 @@
 							await shouldRevertWhenCallerIsNotApproved(
 								contract.connect( users[ USER1 ] )
 												.burn( tokenId ),
+								contract,
 								tokenOwner,
 								operator,
 								tokenId
@@ -134,6 +136,7 @@
 							const tokenId = TEST.TARGET_TOKEN
 							await shouldRevertWhenRequestedTokenDoesNotExist(
 								contract.ownerOf( tokenId ),
+								contract,
 								tokenId
 							)
 						})
@@ -181,6 +184,7 @@
 							await shouldRevertWhenRequestedTokenDoesNotExist(
 								contract.connect( users[ TOKEN_OWNER ] )
 												.transferFrom( from, to, tokenId ),
+								contract,
 								tokenId
 							)
 						})

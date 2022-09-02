@@ -17,8 +17,8 @@
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
 
-	const { ethers, waffle } = require( `hardhat` )
-	const { loadFixture, deployContract } = waffle
+	const { ethers } = require( `hardhat` )
+	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
 // **************************************
 
 // **************************************
@@ -36,10 +36,16 @@
 															.withArgs( previousOwner, newOwner )
 	}
 
-	async function shouldRevertWhenCallerIsNotContractOwner ( promise, operator, error = `IOwnable_NOT_OWNER` ) {
-		await expect( promise ).to.be.revertedWith(
-			`${ error }("${ operator }")`
-		)
+	async function shouldRevertWhenCallerIsNotContractOwner ( promise, contract, operator, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IOwnable_NOT_OWNER` )
+				.withArgs( operator )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
 	}
 
 	function shouldBehaveLikeIOwnable ( fixture, TEST, CONTRACT ) {
@@ -82,6 +88,7 @@
 							await shouldRevertWhenCallerIsNotContractOwner(
 								contract.connect( users[ USER1 ] )
 												.transferOwnership( newOwner ),
+								contract,
 								newOwner
 							)
 						})

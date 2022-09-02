@@ -21,6 +21,7 @@ abstract contract Reg_ERC721Batch is Context, IERC721Metadata, IERC721Enumerable
 	error IERC721_NON_ERC721_RECEIVER( address receiver );
 	error IERC721_INVALID_APPROVAL( address operator );
 	error IERC721_INVALID_TRANSFER( address recipient );
+  error IERC721_INVALID_TRANSFER_FROM();
 	error IERC721Enumerable_INDEX_OUT_OF_BOUNDS( uint256 index );
 	error IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS( address tokenOwner, uint256 index );
 
@@ -330,9 +331,12 @@ abstract contract Reg_ERC721Batch is Context, IERC721Metadata, IERC721Enumerable
 		* Note: We can ignore `from_` as we can compare everything to the actual token owner, 
 		* but we cannot remove this parameter to stay in conformity with IERC721
 		*/
-		function safeTransferFrom( address, address to_, uint256 tokenId_ ) public virtual exists( tokenId_ ) {
+		function safeTransferFrom( address from_, address to_, uint256 tokenId_ ) public virtual exists( tokenId_ ) {
 			address _operator_ = _msgSender();
 			address _tokenOwner_ = _ownerOf( tokenId_ );
+			if ( from_ != _tokenOwner_ ) {
+				revert IERC721_INVALID_TRANSFER_FROM();
+			}
 			bool _isApproved_ = _isApprovedOrOwner( _tokenOwner_, _operator_, tokenId_ );
 
 			if ( ! _isApproved_ ) {
@@ -356,9 +360,12 @@ abstract contract Reg_ERC721Batch is Context, IERC721Metadata, IERC721Enumerable
 		* Note: We can ignore `from_` as we can compare everything to the actual token owner, 
 		* but we cannot remove this parameter to stay in conformity with IERC721
 		*/
-		function safeTransferFrom( address, address to_, uint256 tokenId_, bytes calldata data_ ) public virtual exists( tokenId_ ) {
+		function safeTransferFrom( address from_, address to_, uint256 tokenId_, bytes calldata data_ ) public virtual exists( tokenId_ ) {
 			address _operator_ = _msgSender();
 			address _tokenOwner_ = _ownerOf( tokenId_ );
+      if ( from_ != _tokenOwner_ ) {
+        revert IERC721_INVALID_TRANSFER_FROM();
+      }
 			bool _isApproved_ = _isApprovedOrOwner( _tokenOwner_, _operator_, tokenId_ );
 
 			if ( ! _isApproved_ ) {
@@ -395,9 +402,12 @@ abstract contract Reg_ERC721Batch is Context, IERC721Metadata, IERC721Enumerable
 		* Note: We can ignore `from_` as we can compare everything to the actual token owner, 
 		* but we cannot remove this parameter to stay in conformity with IERC721
 		*/
-		function transferFrom( address, address to_, uint256 tokenId_ ) public virtual exists( tokenId_ ) {
+		function transferFrom( address from_, address to_, uint256 tokenId_ ) public virtual exists( tokenId_ ) {
 			address _operator_ = _msgSender();
 			address _tokenOwner_ = _ownerOf( tokenId_ );
+      if ( from_ != _tokenOwner_ ) {
+        revert IERC721_INVALID_TRANSFER_FROM();
+      }
 			bool _isApproved_ = _isApprovedOrOwner( _tokenOwner_, _operator_, tokenId_ );
 
 			if ( ! _isApproved_ ) {
