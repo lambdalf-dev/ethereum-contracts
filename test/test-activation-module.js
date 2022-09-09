@@ -27,6 +27,7 @@ const TEST_ACTIVATION = {
 		ERC721A                       : false,
 		ERC721B                       : false,
 		ERC721OZ                      : false,
+		Inter_ERC721Batch             : true,
 		Reg_ERC721Batch               : true,
 	// **************************************
 
