@@ -5,6 +5,8 @@ require("@nomicfoundation/hardhat-chai-matchers")
 require("hardhat-gas-reporter")
 require("solidity-coverage")
 require("./snapshot/snapshot")
+require("./generate-proofs/generate-proofs")
+require("./generate-proofs/generate-single-proof")
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
