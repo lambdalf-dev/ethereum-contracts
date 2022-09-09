@@ -13,6 +13,12 @@ import "@openzeppelin/contracts/utils/Context.sol";
 
 /**
 * @dev Required interface of an ERC721 compliant contract.
+* This contract features:
+* ~ Ultra Cheap batch minting
+* ~ Implementation of EIP2309 https://eips.ethereum.org/EIPS/eip-2309
+* 
+* Note: This implementation imposes a very expensive `balanceOf()` and `ownerOf()`.
+* It is not recommended to interract with those from another contract.
 */
 abstract contract Consec_ERC721Batch is Context, IERC721Metadata, IERC721Enumerable {
   /**

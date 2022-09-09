@@ -13,6 +13,12 @@ import "@openzeppelin/contracts/utils/Context.sol";
 
 /**
 * @dev Required interface of an ERC721 compliant contract.
+* This contract features:
+* ~ Very Cheap batch minting
+* ~ Token tracker support
+* 
+* Note: This implementation imposes a very expensive `balanceOf()` and `ownerOf()`.
+* It is not recommended to interract with those from another contract.
 */
 abstract contract Reg_ERC721Batch is Context, IERC721Metadata, IERC721Enumerable {
 	// Errors
