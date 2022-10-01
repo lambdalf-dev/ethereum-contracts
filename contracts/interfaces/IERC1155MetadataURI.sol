@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (token/ERC1155/extensions/IERC1155MetadataURI.sol)
 
-pragma solidity 0.8.10;
-
-import "./IERC1155.sol";
+pragma solidity 0.8.17;
 
 /**
 * @dev Interface of the optional ERC1155MetadataExtension interface, as defined
@@ -11,7 +9,7 @@ import "./IERC1155.sol";
 *
 * _Available since v3.1._
 */
-interface IERC1155MetadataURI is IERC1155 {
+interface IERC1155MetadataURI /* is IERC1155 */ {
 	/**
 	* @dev Returns the URI for token type `id`.
 	*

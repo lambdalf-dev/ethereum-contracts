@@ -1,29 +1,29 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (token/ERC721/extensions/IERC721Enumerable.sol)
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.17;
 
-import "./IERC721.sol";
-
-/**
- * @title ERC-721 Non-Fungible Token Standard, optional enumeration extension
- * @dev See https://eips.ethereum.org/EIPS/eip-721
- */
-interface IERC721Enumerable is IERC721 {
-    /**
-     * @dev Returns the total amount of tokens stored by the contract.
-     */
+/// @title ERC-721 Non-Fungible Token Standard, optional enumeration extension
+/// @dev See https://eips.ethereum.org/EIPS/eip-721
+///  Note: the ERC-165 identifier for this interface is 0x780e9d63.
+interface IERC721Enumerable /* is IERC721 */ {
+    /// @notice Count NFTs tracked by this contract
+    /// @return A count of valid NFTs tracked by this contract, where each one of
+    ///  them has an assigned and queryable owner not equal to the zero address
     function totalSupply() external view returns ( uint256 );
 
-    /**
-     * @dev Returns a token ID owned by `owner` at a given `index` of its token list.
-     * Use along with {balanceOf} to enumerate all of `owner`'s tokens.
-     */
-    function tokenOfOwnerByIndex( address owner_, uint256 index_ ) external view returns ( uint256 tokenId );
-
-    /**
-     * @dev Returns a token ID at a given `index` of all the tokens stored by the contract.
-     * Use along with {totalSupply} to enumerate all tokens.
-     */
+    /// @notice Enumerate valid NFTs
+    /// @dev Throws if `index_` >= `totalSupply()`.
+    /// @param index_ A counter less than `totalSupply()`
+    /// @return The token identifier for the `index_`th NFT,
+    ///  (sort order not specified)
     function tokenByIndex( uint256 index_ ) external view returns ( uint256 );
+
+    /// @notice Enumerate NFTs assigned to an owner
+    /// @dev Throws if `index_` >= `balanceOf(owner_)` or if
+    ///  `owner_` is the zero address, representing invalid NFTs.
+    /// @param owner_ An address where we are interested in NFTs owned by them
+    /// @param index_ A counter less than `balanceOf(owner_)`
+    /// @return The token identifier for the `index_`th NFT assigned to `owner_`,
+    ///   (sort order not specified)
+    function tokenOfOwnerByIndex( address owner_, uint256 index_ ) external view returns ( uint256 );
 }

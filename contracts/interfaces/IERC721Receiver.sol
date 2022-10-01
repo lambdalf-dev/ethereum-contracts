@@ -1,27 +1,20 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (token/ERC721/IERC721Receiver.sol)
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.17;
 
-/**
- * @title ERC721 token receiver interface
- * @dev Interface for any contract that wants to support safeTransfers
- * from ERC721 asset contracts.
- */
+/// @dev Note: the ERC-165 identifier for this interface is 0x150b7a02.
 interface IERC721Receiver {
-    /**
-     * @dev Whenever an {IERC721} `tokenId` token is transferred to this contract via {IERC721-safeTransferFrom}
-     * by `operator` from `from`, this function is called.
-     *
-     * It must return its Solidity selector to confirm the token transfer.
-     * If any other value is returned or the interface is not implemented by the recipient, the transfer will be reverted.
-     *
-     * The selector can be obtained in Solidity with `IERC721.onERC721Received.selector`.
-     */
-    function onERC721Received(
-        address operator,
-        address from,
-        uint256 tokenId,
-        bytes calldata data
-    ) external returns (bytes4);
+    /// @notice Handle the receipt of an NFT
+    /// @dev The ERC721 smart contract calls this function on the recipient
+    ///  after a `transfer`. This function MAY throw to revert and reject the
+    ///  transfer. Return of other than the magic value MUST result in the
+    ///  transaction being reverted.
+    ///  Note: the contract address is always the message sender.
+    /// @param operator_ The address which called `safeTransferFrom` function
+    /// @param from_ The address which previously owned the token
+    /// @param tokenId_ The NFT identifier which is being transferred
+    /// @param data_ Additional data with no specified format
+    /// @return `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`
+    ///  unless throwing
+    function onERC721Received( address operator_, address from_, uint256 tokenId_, bytes calldata data_ ) external returns( bytes4 );
 }

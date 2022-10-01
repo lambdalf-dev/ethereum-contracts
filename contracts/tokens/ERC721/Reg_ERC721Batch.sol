@@ -4,8 +4,10 @@
 * Author: Lambdalf the White
 */
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.17;
 
+import "../../interfaces/IERC165.sol";
+import "../../interfaces/IERC721.sol";
 import "../../interfaces/IERC721Enumerable.sol";
 import "../../interfaces/IERC721Metadata.sol";
 import "../../interfaces/IERC721Receiver.sol";

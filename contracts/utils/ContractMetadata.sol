@@ -4,7 +4,7 @@
 * Author: Lambdalf the White
 */
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.17;
 
 abstract contract ContractMetadata {
 	// The URI of the contract metadata for Open Sea

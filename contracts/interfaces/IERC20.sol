@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/IERC20.sol)
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.17;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
  */
-interface IERC20 {
+interface IERC20 /* is IERC165 */ {
     /**
      * @dev Returns the amount of tokens in existence.
      */
