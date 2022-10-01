@@ -33,6 +33,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 		shouldRevertWhenContractStateIsIncorrect,
 		shouldRevertWhenContractStateIsInvalid,
 	} = require( `../utils/behavior.IPausable` )
+	CONTRACT_STATE.PUBLIC_SALE = 1
 // **************************************
 
 // **************************************
@@ -151,7 +152,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 					defaultArgs [ CONTRACT.METHODS.setPauseState.SIGNATURE ] = {
 						err  : null,
 						args : [
-							CONTRACT_STATE.OPEN,
+							CONTRACT_STATE.PUBLIC_SALE,
 						],
 					}
 					defaultArgs [ CONTRACT.METHODS.getPauseState.SIGNATURE ] = {
@@ -204,30 +205,30 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
 				})
 
-				describe( `When contract state is CLOSED`, function () {
-					it( `${ CONTRACT.METHODS.stateIsClosed.SIGNATURE } should be fulfilled when contract state is CLOSED`, async function () {
+				describe( `When contract state is PAUSED`, function () {
+					it( `${ CONTRACT.METHODS.stateIsClosed.SIGNATURE } should be fulfilled when contract state is PAUSED`, async function () {
 						expect(
 							await contract.stateIsClosed()
 						).to.be.true
 					})
 
-					it( `${ CONTRACT.METHODS.stateIsNotClosed.SIGNATURE } should be reverted when contract state is CLOSED`, async function () {
+					it( `${ CONTRACT.METHODS.stateIsNotClosed.SIGNATURE } should be reverted when contract state is PAUSED`, async function () {
 						await shouldRevertWhenContractStateIsIncorrect(
 							contract.stateIsNotClosed(),
 							contract,
-							CONTRACT_STATE.CLOSED
+							CONTRACT_STATE.PAUSED
 						)
 					})
 
-					it( `${ CONTRACT.METHODS.stateIsOpen.SIGNATURE } should be reverted when contract state is CLOSED`, async function () {
+					it( `${ CONTRACT.METHODS.stateIsOpen.SIGNATURE } should be reverted when contract state is PAUSED`, async function () {
 						await shouldRevertWhenContractStateIsIncorrect(
 							contract.stateIsOpen(),
 							contract,
-							CONTRACT_STATE.CLOSED
+							CONTRACT_STATE.PAUSED
 						)
 					})
 
-					it( `${ CONTRACT.METHODS.stateIsNotOpen.SIGNATURE } should be fulfilled when contract state is CLOSED`, async function () {
+					it( `${ CONTRACT.METHODS.stateIsNotOpen.SIGNATURE } should be fulfilled when contract state is PAUSED`, async function () {
 						expect(
 							await contract.stateIsNotOpen()
 						).to.be.true
@@ -245,8 +246,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 							})
 
 							it( `Setting the sale state to OPEN`, async function () {
-								const previousState = CONTRACT_STATE.CLOSED
-								const newState      = CONTRACT_STATE.OPEN
+								const previousState = CONTRACT_STATE.PAUSED
+								const newState      = CONTRACT_STATE.PUBLIC_SALE
 								await shouldEmitContractStateChangedEvent(
 									contract.connect( users[ CONTRACT_DEPLOYER ] )
 													.setPauseState( newState ),
@@ -261,8 +262,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 							})
 
 							it( `Setting the sale state to OPEN`, async function () {
-								const previousState = CONTRACT_STATE.CLOSED
-								const newState      = CONTRACT_STATE.OPEN
+								const previousState = CONTRACT_STATE.PAUSED
+								const newState      = CONTRACT_STATE.PUBLIC_SALE
 								await shouldEmitContractStateChangedEvent(
 									contract.connect( users[ CONTRACT_DEPLOYER ] )
 													.setPauseState( newState ),
@@ -281,8 +282,8 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 
 				describe( `New state: OPEN`, function () {
 					beforeEach( async function () {
-						const previousState = CONTRACT_STATE.CLOSED
-						const newState      = CONTRACT_STATE.OPEN
+						const previousState = CONTRACT_STATE.PAUSED
+						const newState      = CONTRACT_STATE.PUBLIC_SALE
 						await shouldEmitContractStateChangedEvent(
 							contract.connect( users[ CONTRACT_DEPLOYER ] )
 											.setPauseState( newState ),
@@ -296,7 +297,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 						await shouldRevertWhenContractStateIsIncorrect(
 							contract.stateIsClosed(),
 							contract,
-							CONTRACT_STATE.OPEN
+							CONTRACT_STATE.PUBLIC_SALE
 						)
 					})
 
@@ -316,7 +317,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IPausable.
 						await shouldRevertWhenContractStateIsIncorrect(
 							contract.stateIsNotOpen(),
 							contract,
-							CONTRACT_STATE.OPEN
+							CONTRACT_STATE.PUBLIC_SALE
 						)
 					})
 				})

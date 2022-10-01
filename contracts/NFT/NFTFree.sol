@@ -20,6 +20,7 @@ abstract contract NFTFree is Reg_ERC721Batch, IOwnable, IPausable, ITradable, ER
 	error NFT_MAX_RESERVE( uint256 qtyRequested, uint256 reserveLeft );
 	error NFT_MAX_SUPPLY( uint256 qtyRequested, uint256 remainingSupply );
 
+	uint8 public constant PUBLIC_SALE = 1;
 	uint256 private constant SHARE_BASE = 10000;
 	uint256 public MAX_SUPPLY;
 	uint256 public MAX_BATCH;
@@ -120,7 +121,7 @@ abstract contract NFTFree is Reg_ERC721Batch, IOwnable, IPausable, ITradable, ER
 		* 
 		* @param qty_ : the amount of tokens to be minted
 		*/
-		function mintPublic( uint256 qty_ ) public validateAmount( qty_ ) isOpen {
+		function mintPublic( uint256 qty_ ) public validateAmount( qty_ ) isState( PUBLIC_SALE ) {
 			if ( qty_ > MAX_BATCH ) {
 				revert NFT_MAX_BATCH( qty_, MAX_BATCH );
 			}

@@ -66,6 +66,7 @@
 		shouldRevertWhenContractStateIsIncorrect,
 		shouldRevertWhenContractStateIsInvalid,
 	} = require( `../utils/behavior.IPausable` )
+	CONTRACT_STATE.OPEN = 1
 
 	const {
 		shouldRevertWhenArrayLengthsDontMatch,
@@ -262,7 +263,7 @@
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mintPublic( qty ),
 									contract,
-									CONTRACT_STATE.CLOSED
+									CONTRACT_STATE.PAUSED
 								)
 							})
 						}

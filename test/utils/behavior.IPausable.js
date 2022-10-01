@@ -26,8 +26,7 @@
 // **************************************
 	// SALE STATE
 	const CONTRACT_STATE = {
-		CLOSED : 0,
-		OPEN   : 1,
+		PAUSED : 0,
 	}
 	let contract
 	let users = {}
@@ -90,13 +89,13 @@
 					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
 				})
 
-				describe( `Default sale state is CLOSED`, function () {
+				describe( `Default sale state is PAUSED`, function () {
 					describe( CONTRACT.METHODS.getPauseState.SIGNATURE, function () {
 						if ( TEST.METHODS.getPauseState ) {
-							it( `Should be ${ CONTRACT_STATE.CLOSED }`, async function () {
+							it( `Should be ${ CONTRACT_STATE.PAUSED }`, async function () {
 								expect(
 									await contract.getPauseState()
-								).to.equal( CONTRACT_STATE.CLOSED )
+								).to.equal( CONTRACT_STATE.PAUSED )
 							})
 						}
 					})
@@ -111,8 +110,8 @@
 // **************************************
 module.exports = {
 	CONTRACT_STATE,
-	shouldBehaveLikeIPausable,
 	shouldEmitContractStateChangedEvent,
 	shouldRevertWhenContractStateIsIncorrect,
 	shouldRevertWhenContractStateIsInvalid,
+	shouldBehaveLikeIPausable,
 }

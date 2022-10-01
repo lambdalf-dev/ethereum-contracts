@@ -5,7 +5,7 @@
 * Edit  : Squeebo
 */
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.17;
 
 abstract contract IWhitelistable_ECDSA {
 	// A constant encoded into the proof. To allow expandability of uses for the whitelist, it is kept constant instead of implemented as enum.

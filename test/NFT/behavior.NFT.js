@@ -70,6 +70,7 @@
 		shouldRevertWhenContractStateIsIncorrect,
 		shouldRevertWhenContractStateIsInvalid,
 	} = require( `../utils/behavior.IPausable` )
+	CONTRACT_STATE.OPEN = 1
 // **************************************
 
 // **************************************
@@ -415,7 +416,7 @@
 				// **************************************
 					describe( CONTRACT.METHODS.mintPublic.SIGNATURE, function () {
 						if ( TEST.METHODS.mintPublic ) {
-							it( `Transaction initiated with sale state CLOSED should be reverted`, async function() {
+							it( `Transaction initiated with sale state PAUSED should be reverted`, async function() {
 								const qty       = TEST.TOKEN_OWNER_SUPPLY
 								const value     = TEST.PARAMS.salePrice_.mul( qty )
 								const tx_params = {
@@ -425,7 +426,7 @@
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mintPublic( qty, tx_params ),
 									contract,
-									CONTRACT_STATE.CLOSED
+									CONTRACT_STATE.PAUSED
 								)
 							})
 						}

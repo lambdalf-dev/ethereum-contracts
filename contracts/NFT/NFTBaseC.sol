@@ -29,6 +29,7 @@ abstract contract NFTBaseC is Consec_ERC721Batch, IOwnable, IPausable, ITradable
 	// Events
 	event PaymentReleased( address to, uint256 amount );
 
+	uint8 public constant PUBLIC_SALE = 1;
 	uint256 private constant SHARE_BASE = 10000;
 	uint256 public MAX_SUPPLY;
 	uint256 public MAX_BATCH;
@@ -163,7 +164,7 @@ abstract contract NFTBaseC is Consec_ERC721Batch, IOwnable, IPausable, ITradable
 		* 
 		* @param qty_ : the amount of tokens to be minted
 		*/
-		function mintPublic( uint256 qty_ ) public payable validateAmount( qty_ ) isOpen {
+		function mintPublic( uint256 qty_ ) public payable validateAmount( qty_ ) isState( PUBLIC_SALE ) {
 			if ( qty_ > MAX_BATCH ) {
 				revert NFT_MAX_BATCH( qty_, MAX_BATCH );
 			}

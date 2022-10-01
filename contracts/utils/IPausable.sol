@@ -4,16 +4,25 @@
 * Author: Lambdalf the White
 */
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.17;
 
 abstract contract IPausable {
-	// Enum to represent the sale state, defaults to ``CLOSED``.
-	uint8 constant CLOSED = 0;
-	uint8 constant OPEN   = 1;
+	// Enum to represent the sale state, defaults to ``PAUSED``.
+	uint8 public constant PAUSED = 0;
 
 	// Errors
+  /**
+  * @dev Thrown when a function is called with the wrong contract state.
+  * 
+  * @param currentState : the current state of the contract
+  */
 	error IPausable_INCORRECT_STATE( uint8 currentState );
-	error IPausable_INVALID_STATE( uint8 newState );
+  /**
+  * @dev Thrown when trying to set the contract state to an invalid value.
+  * 
+  * @param invalidState : the invalid contract state
+  */
+	error IPausable_INVALID_STATE( uint8 invalidState );
 
 	// The current state of the contract
 	uint8 private _contractState;
@@ -24,10 +33,34 @@ abstract contract IPausable {
 	event ContractStateChanged( uint8 indexed previousState, uint8 indexed newState );
 
 	/**
+	* @dev Ensures that contract state is `expectedState_`.
+	* 
+	* @param expectedState_ : the desirable contract state
+	*/
+	modifier isState( uint8 expectedState_ ) {
+		if ( _contractState != expectedState_ ) {
+			revert IPausable_INCORRECT_STATE( _contractState );
+		}
+		_;
+	}
+
+	/**
+	* @dev Ensures that contract state is not `unexpectedState_`.
+	* 
+	* @param unexpectedState_ : the undesirable contract state
+	*/
+	modifier isNotState( uint8 unexpectedState_ ) {
+		if ( _contractState == unexpectedState_ ) {
+			revert IPausable_INCORRECT_STATE( _contractState );
+		}
+		_;
+	}
+
+	/**
 	* @dev Internal function setting the contract state to `newState_`.
 	* 
-	* Note: Contract state can have one of 2 values by default, ``CLOSED`` or ``OPEN``.
-	* 			To maintain extendability, the 2 available states are kept as uint8 instead of enum.
+	* Note: Contract state defaults to ``PAUSED``.
+	* 			To maintain extendability, this value kept as uint8 instead of enum.
 	* 			As a result, it is possible to set the state to an incorrect value.
 	* 			To avoid issues, `newState_` should be validated before calling this function
 	*/
@@ -38,49 +71,11 @@ abstract contract IPausable {
 	}
 
 	/**
-	* @dev Internal function returning the contract state.
+	* @dev Returns the current contract state.
+	* 
+	* @return uint8 : the current contract state
 	*/
 	function getPauseState() public virtual view returns ( uint8 ) {
 		return _contractState;
-	}
-
-	/**
-	* @dev Throws if sale state is not ``CLOSED``.
-	*/
-	modifier isClosed {
-		if ( _contractState != CLOSED ) {
-			revert IPausable_INCORRECT_STATE( _contractState );
-		}
-		_;
-	}
-
-	/**
-	* @dev Throws if sale state is ``CLOSED``.
-	*/
-	modifier isNotClosed {
-		if ( _contractState == CLOSED ) {
-			revert IPausable_INCORRECT_STATE( _contractState );
-		}
-		_;
-	}
-
-	/**
-	* @dev Throws if sale state is not ``OPEN``.
-	*/
-	modifier isOpen {
-		if ( _contractState != OPEN ) {
-			revert IPausable_INCORRECT_STATE( _contractState );
-		}
-		_;
-	}
-
-	/**
-	* @dev Throws if sale state is ``OPEN``.
-	*/
-	modifier isNotOpen {
-		if ( _contractState == OPEN ) {
-			revert IPausable_INCORRECT_STATE( _contractState );
-		}
-		_;
 	}
 }
