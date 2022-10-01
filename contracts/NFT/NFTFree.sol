@@ -71,7 +71,7 @@ abstract contract NFTFree is Reg_ERC721Batch, IOwnable, IPausable, ITradable, ER
 		) internal {
 			_initERC721Metadata( name_, symbol_, baseURI_ );
 			_initIOwnable( _msgSender() );
-			_initERC2981Base( _msgSender(), royaltyRate_ );
+			_setRoyaltyInfo( _msgSender(), royaltyRate_ );
 			MAX_SUPPLY     = maxSupply_;
 			MAX_BATCH      = maxBatch_;
 			_reserve       = reserve_;
@@ -244,9 +244,9 @@ abstract contract NFTFree is Reg_ERC721Batch, IOwnable, IPausable, ITradable, ER
 	// **************************************
 	// *****            VIEW            *****
 	// **************************************
-		function supportsInterface( bytes4 interfaceId_ ) public view virtual override(Reg_ERC721Batch, ERC2981Base) returns ( bool ) {
-			return ERC2981Base.supportsInterface( interfaceId_ ) ||
-						 Reg_ERC721Batch.supportsInterface( interfaceId_ );
+		function supportsInterface( bytes4 interfaceId_ ) public view virtual override returns ( bool ) {
+			return interfaceId_ == type( IERC2981 ).interfaceId ||
+						 super.supportsInterface( interfaceId_ );
 		}
 	// **************************************
 }

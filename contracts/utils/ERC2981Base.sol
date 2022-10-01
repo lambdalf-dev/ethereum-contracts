@@ -29,16 +29,18 @@ abstract contract ERC2981Base is IERC2981 {
 	// Address of the recipient of the royalties.
 	address private _royaltyRecipient;
 
-	function _initERC2981Base( address royaltyRecipient_, uint256 royaltyRate_ ) internal {
-		_setRoyaltyInfo( royaltyRecipient_, royaltyRate_ );
-	}
-
 	/**
-	* @dev See {IERC2981-royaltyInfo}.
+	* @notice Called with the sale price to determine how much royalty is owed and to whom.
 	* 
 	* Note: This function should be overriden to revert on a query for non existent token.
+	* 
+  * @param tokenId_   : identifier of the NFT being referenced
+  * @param salePrice_ : the sale price of the token sold
+  * 
+  * @return address : the address receiving the royalties
+  * @return uint256 : the royalty payment amount
 	*/
-	function royaltyInfo( uint256, uint256 salePrice_ ) public view virtual override returns ( address, uint256 ) {
+	function royaltyInfo( uint256 tokenId_, uint256 salePrice_ ) public view virtual override returns ( address, uint256 ) {
 		if ( salePrice_ == 0 || _royaltyRate == 0 ) {
 			return ( _royaltyRecipient, 0 );
 		}
@@ -49,9 +51,12 @@ abstract contract ERC2981Base is IERC2981 {
 	/**
 	* @dev Sets the royalty rate to `royaltyRate_` and the royalty recipient to `royaltyRecipient_`.
 	* 
+	* @param royaltyRecipient_ : the address that will receive royalty payments
+	* @param royaltyRate_      : the percentage of the sale price that will be taken off as royalties, expressed in Basis Points (100 BP = 1%)
+	* 
 	* Requirements: 
 	* 
-	* - `royaltyRate_` cannot be higher than `ROYALTY_BASE`;
+	* - `royaltyRate_` cannot be higher than `10,000`;
 	*/
 	function _setRoyaltyInfo( address royaltyRecipient_, uint256 royaltyRate_ ) internal virtual {
 		if ( royaltyRate_ > ROYALTY_BASE ) {
@@ -59,14 +64,5 @@ abstract contract ERC2981Base is IERC2981 {
 		}
 		_royaltyRate      = royaltyRate_;
 		_royaltyRecipient = royaltyRecipient_;
-	}
-
-	/**
-	* @dev See {IERC165-supportsInterface}.
-	*/
-	function supportsInterface( bytes4 interfaceId_ ) public view virtual override returns ( bool ) {
-		return 
-			interfaceId_ == type( IERC2981 ).interfaceId ||
-			interfaceId_ == type( IERC165 ).interfaceId;
 	}
 }

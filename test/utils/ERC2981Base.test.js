@@ -61,10 +61,6 @@ const ARTIFACT = require( '../../artifacts/contracts/mocks/utils/Mock_ERC2981Bas
 					SIGNATURE          : 'royaltyInfo(uint256,uint256)',
 					PARAMS             : [ 'tokenId_', 'salePrice_' ],
 				},
-				supportsInterface    : {
-					SIGNATURE          : 'supportsInterface(bytes4)',
-					PARAMS             : [ 'interfaceId_' ],
-				},
 			// **************************************
 		},
 	}
@@ -217,12 +213,6 @@ const ARTIFACT = require( '../../artifacts/contracts/mocks/utils/Mock_ERC2981Bas
 							ethers.constants.WeiPerEther,
 						],
 					}
-					defaultArgs[ CONTRACT.METHODS.supportsInterface.SIGNATURE ] = {
-						err  : null,
-						args : [
-							INTERFACE_ID.IERC165,
-						]
-					}
 					defaultArgs [ CONTRACT.METHODS.setRoyaltyInfo.SIGNATURE ] = {
 						err  : null,
 						args : [
@@ -254,7 +244,6 @@ const ARTIFACT = require( '../../artifacts/contracts/mocks/utils/Mock_ERC2981Bas
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
 		testInvalidInputs( fixture, TEST_DATA, CONTRACT_INTERFACE )
-		shouldSupportInterface( fixture, TEST_DATA.INTERFACES, CONTRACT_INTERFACE )
 		shouldBehaveLikeERC2981Base( fixture, TEST_DATA, CONTRACT_INTERFACE )
 	}
 })

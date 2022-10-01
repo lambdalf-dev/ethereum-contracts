@@ -68,10 +68,10 @@
 
 				describe( CONTRACT.METHODS.royaltyInfo.SIGNATURE, function () {
 					if ( TEST.METHODS.royaltyInfo ) {
-						it( `Royalty info for sale price 1 ETH should be ${ USER_NAMES[ CONTRACT_DEPLOYER ] } and royalties amount ${ ethers.constants.WeiPerEther.mul( TEST.PARAMS.royaltyRate_ ).div( TEST.ROYALTY_BASE ) }`, async function () {
+						it( `Royalty info for sale price 1 ETH should be ${ USER_NAMES[ CONTRACT_DEPLOYER ] } and royalties amount ${ ethers.constants.WeiPerEther.mul( TEST.ROYALTY_RATE ).div( TEST.ROYALTY_BASE ) }`, async function () {
 							const tokenId      = TEST.TARGET_TOKEN
 							const salePrice    = ethers.constants.WeiPerEther
-							const expectedRate = salePrice.mul( TEST.PARAMS.royaltyRate_ ).div( TEST.ROYALTY_BASE )
+							const expectedRate = salePrice.mul( TEST.ROYALTY_RATE ).div( TEST.ROYALTY_BASE )
 
 							const royaltyInfo = await contract.royaltyInfo( tokenId, salePrice )
 							expect( royaltyInfo ).to.exist
@@ -94,10 +94,10 @@
 
 				describe( CONTRACT.METHODS.setRoyaltyInfo.SIGNATURE, function () {
 					if ( TEST.METHODS.setRoyaltyInfo ) {
-						describe( `Setting royalty rate to ${ ( TEST.PARAMS.royaltyRate_ * 2 ).toString() }`, function () {
-							it( `Royalty info for price 1 ETH should be ${ USER_NAMES[ USER1 ] } and ${ ethers.constants.WeiPerEther.mul( TEST.PARAMS.royaltyRate_ * 2 ).div( TEST.ROYALTY_BASE ) }`, async function () {
+						describe( `Setting royalty rate to ${ ( TEST.ROYALTY_RATE * 2 ).toString() }`, function () {
+							it( `Royalty info for price 1 ETH should be ${ USER_NAMES[ USER1 ] } and ${ ethers.constants.WeiPerEther.mul( TEST.ROYALTY_RATE * 2 ).div( TEST.ROYALTY_BASE ) }`, async function () {
 								const royaltyRecipient = users[ USER1 ].address
-								const royaltyRate      = TEST.PARAMS.royaltyRate_ + 1
+								const royaltyRate      = TEST.ROYALTY_RATE + 1
 								await contract.connect( users[ CONTRACT_DEPLOYER ] )
 															.setRoyaltyInfo( royaltyRecipient, royaltyRate )
 
@@ -125,7 +125,7 @@
 
 							const tokenId      = TEST.TARGET_TOKEN
 							const salePrice    = ethers.constants.WeiPerEther
-							const expectedRate = salePrice.mul( TEST.PARAMS.royaltyRate_ ).div( TEST.ROYALTY_BASE )
+							const expectedRate = salePrice.mul( TEST.ROYALTY_RATE ).div( TEST.ROYALTY_BASE )
 
 							const royaltyInfo = await contract.royaltyInfo( tokenId, salePrice )
 							expect( royaltyInfo ).to.exist
