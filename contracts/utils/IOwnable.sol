@@ -6,7 +6,7 @@
 
 pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts/utils/Context.sol";
+import "../interfaces/IERC173.sol";
 
 /**
 * @dev Contract module which provides a basic access control mechanism, where
@@ -20,20 +20,36 @@ import "@openzeppelin/contracts/utils/Context.sol";
 * `onlyOwner`, which can be applied to your functions to restrict their use to
 * the owner.
 */
-abstract contract IOwnable is Context {
+abstract contract IOwnable is IERC173 {
 	// Errors
-	error IOwnable_NOT_OWNER( address operator );
+  /**
+  * @dev Thrown when `operator` is not the contract owner.
+  * 
+  * @param operator : address trying to use a function reserved to contract owner without authorization
+  */
+  error IERC173_NOT_OWNER( address operator );
 
 	// The owner of the contract
 	address private _owner;
 
 	/**
-	* @dev Emitted when contract ownership changes.
+	* @dev Throws if called by any account other than the owner.
 	*/
-	event OwnershipTransferred( address indexed previousOwner, address indexed newOwner );
+	modifier onlyOwner() {
+		address _sender_ = msg.sender;
+		if ( owner() != _sender_ ) {
+			revert IERC173_NOT_OWNER( _sender_ );
+		}
+		_;
+	}
 
 	/**
-	* @dev Initializes the contract setting the deployer as the initial owner.
+	* @dev Initializes the contract setting `owner_` as the initial owner.
+	* 
+	* Note: This function needs to be called in the contract constructor to initialize the contract owner, 
+	* if it is not, then parts of the contract might be non functional
+	* 
+	* @param owner_ : address that owns the contract
 	*/
 	function _initIOwnable( address owner_ ) internal {
 		_owner = owner_;
@@ -41,25 +57,21 @@ abstract contract IOwnable is Context {
 
 	/**
 	* @dev Returns the address of the current owner.
+	* 
+	* @return address : the current contract owner
 	*/
 	function owner() public view virtual returns ( address ) {
 		return _owner;
 	}
 
 	/**
-	* @dev Throws if called by any account other than the owner.
-	*/
-	modifier onlyOwner() {
-		address _sender_ = _msgSender();
-		if ( owner() != _sender_ ) {
-			revert IOwnable_NOT_OWNER( _sender_ );
-		}
-		_;
-	}
-
-	/**
-	* @dev Transfers ownership of the contract to a new account (`newOwner`).
-	* Can only be called by the current owner.
+	* @dev Transfers ownership of the contract to `newOwner`.
+	* 
+	* @param newOwner_ : address of the new contract owner
+	* 
+	* Requirements:
+	* 
+  * - Caller must be the contract owner.
 	*/
 	function transferOwnership( address newOwner_ ) public virtual onlyOwner {
 		address _oldOwner_ = _owner;

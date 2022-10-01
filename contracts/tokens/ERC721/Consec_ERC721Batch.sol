@@ -22,21 +22,67 @@ import "@openzeppelin/contracts/utils/Context.sol";
 * Note: This implementation imposes a very expensive `balanceOf()` and `ownerOf()`.
 * It is not recommended to interract with those from another contract.
 */
-abstract contract Consec_ERC721Batch is Context, IERC721Metadata, IERC721Enumerable {
+abstract contract Consec_ERC721Batch is Context, IERC165, IERC721, IERC721Metadata, IERC721Enumerable {
   /**
   * @dev See EIP2309 https://eips.ethereum.org/EIPS/eip-2309
   */
   event ConsecutiveTransfer(uint256 indexed fromTokenId, uint256 toTokenId, address indexed fromAddress, address indexed toAddress);
 
-  // Errors
-  error IERC721_CALLER_NOT_APPROVED( address tokenOwner, address operator, uint256 tokenId );
-  error IERC721_NONEXISTANT_TOKEN( uint256 tokenId );
-  error IERC721_NON_ERC721_RECEIVER( address receiver );
-  error IERC721_INVALID_APPROVAL( address operator );
-  error IERC721_INVALID_TRANSFER( address recipient );
-  error IERC721_INVALID_TRANSFER_FROM();
-  error IERC721Enumerable_INDEX_OUT_OF_BOUNDS( uint256 index );
-  error IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS( address tokenOwner, uint256 index );
+  // **************************************
+  // *****           ERRORS           *****
+  // **************************************
+    /**
+    * @dev Thrown when `operator` has not been approved to manage `tokenId` on behalf of `tokenOwner`.
+    * 
+    * @param tokenOwner : address owning the token
+    * @param operator   : address trying to manage the token
+    * @param tokenId    : identifier of the NFT being referenced
+    */
+    error IERC721_CALLER_NOT_APPROVED( address tokenOwner, address operator, uint256 tokenId );
+    /**
+    * @dev Thrown when `operator` tries to approve themselves for managing a token they own.
+    * 
+    * @param operator : address that is trying to approve themselves
+    */
+    error IERC721_INVALID_APPROVAL( address operator );
+    /**
+    * @dev Thrown when a token is being transferred to the zero address.
+    */
+    error IERC721_INVALID_TRANSFER();
+    /**
+    * @dev Thrown when a token is being transferred from an address that doesn't own it.
+    * 
+    * @param tokenOwner : address owning the token
+    * @param from       : address that the NFT is being transferred from
+    * @param tokenId    : identifier of the NFT being referenced
+    */
+    error IERC721_INVALID_TRANSFER_FROM( address tokenOwner, address from, uint256 tokenId );
+    /**
+    * @dev Thrown when the requested token doesn't exist.
+    * 
+    * @param tokenId : identifier of the NFT being referenced
+    */
+    error IERC721_NONEXISTANT_TOKEN( uint256 tokenId );
+    /**
+    * @dev Thrown when a token is being safely transferred to a contract unable to handle it.
+    * 
+    * @param receiver : address unable to receive the token
+    */
+    error IERC721_NON_ERC721_RECEIVER( address receiver );
+    /**
+    * @dev Thrown when trying to get the token at an index that doesn't exist.
+    * 
+    * @param index : the inexistant index
+    */
+    error IERC721Enumerable_INDEX_OUT_OF_BOUNDS( uint256 index );
+    /**
+    * @dev Thrown when trying to get the token owned by `tokenOwner` at an index that doesn't exist.
+    * 
+    * @param tokenOwner : address owning the token
+    * @param index      : the inexistant index
+    */
+    error IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS( address tokenOwner, uint256 index );
+  // **************************************
 
   uint256 private _nextId = 1;
   string  public  name;
@@ -58,7 +104,7 @@ abstract contract Consec_ERC721Batch is Context, IERC721Metadata, IERC721Enumera
   * @dev Ensures the token exist. 
   * A token exists if it has been minted and is not owned by the null address.
   * 
-  * @param tokenId_ uint256 ID of the token to verify
+  * @param tokenId_ : identifier of the NFT being referenced
   */
   modifier exists( uint256 tokenId_ ) {
     if ( ! _exists( tokenId_ ) ) {
@@ -322,14 +368,13 @@ abstract contract Consec_ERC721Batch is Context, IERC721Metadata, IERC721Enumera
     function approve( address to_, uint256 tokenId_ ) public virtual exists( tokenId_ ) {
       address _operator_ = _msgSender();
       address _tokenOwner_ = _ownerOf( tokenId_ );
-      bool _isApproved_ = _isApprovedOrOwner( _tokenOwner_, _operator_, tokenId_ );
-
-      if ( ! _isApproved_ ) {
-        revert IERC721_CALLER_NOT_APPROVED( _tokenOwner_, _operator_, tokenId_ );
-      }
-
       if ( to_ == _tokenOwner_ ) {
         revert IERC721_INVALID_APPROVAL( to_ );
+      }
+
+      bool _isApproved_ = _isApprovedOrOwner( _tokenOwner_, _operator_, tokenId_ );
+      if ( ! _isApproved_ ) {
+        revert IERC721_CALLER_NOT_APPROVED( _tokenOwner_, _operator_, tokenId_ );
       }
 
       getApproved[ tokenId_ ] = to_;
@@ -342,27 +387,8 @@ abstract contract Consec_ERC721Batch is Context, IERC721Metadata, IERC721Enumera
     * Note: We can ignore `from_` as we can compare everything to the actual token owner, 
     * but we cannot remove this parameter to stay in conformity with IERC721
     */
-    function safeTransferFrom( address from_, address to_, uint256 tokenId_ ) public virtual exists( tokenId_ ) {
-      address _operator_ = _msgSender();
-      address _tokenOwner_ = _ownerOf( tokenId_ );
-      if ( from_ != _tokenOwner_ ) {
-        revert IERC721_INVALID_TRANSFER_FROM();
-      }
-      bool _isApproved_ = _isApprovedOrOwner( _tokenOwner_, _operator_, tokenId_ );
-
-      if ( ! _isApproved_ ) {
-        revert IERC721_CALLER_NOT_APPROVED( _tokenOwner_, _operator_, tokenId_ );
-      }
-
-      if ( to_ == address( 0 ) ) {
-        revert IERC721_INVALID_TRANSFER( to_ );
-      }
-
-      _transfer( _tokenOwner_, to_, tokenId_ );
-
-      if ( ! _checkOnERC721Received( _tokenOwner_, to_, tokenId_, "" ) ) {
-        revert IERC721_NON_ERC721_RECEIVER( to_ );
-      }
+    function safeTransferFrom( address from_, address to_, uint256 tokenId_ ) public virtual override {
+      safeTransferFrom( from_, to_, tokenId_, "" );
     }
 
     /**
@@ -371,25 +397,9 @@ abstract contract Consec_ERC721Batch is Context, IERC721Metadata, IERC721Enumera
     * Note: We can ignore `from_` as we can compare everything to the actual token owner, 
     * but we cannot remove this parameter to stay in conformity with IERC721
     */
-    function safeTransferFrom( address from_, address to_, uint256 tokenId_, bytes calldata data_ ) public virtual exists( tokenId_ ) {
-      address _operator_ = _msgSender();
-      address _tokenOwner_ = _ownerOf( tokenId_ );
-      if ( from_ != _tokenOwner_ ) {
-        revert IERC721_INVALID_TRANSFER_FROM();
-      }
-      bool _isApproved_ = _isApprovedOrOwner( _tokenOwner_, _operator_, tokenId_ );
-
-      if ( ! _isApproved_ ) {
-        revert IERC721_CALLER_NOT_APPROVED( _tokenOwner_, _operator_, tokenId_ );
-      }
-
-      if ( to_ == address( 0 ) ) {
-        revert IERC721_INVALID_TRANSFER( to_ );
-      }
-
-      _transfer( _tokenOwner_, to_, tokenId_ );
-
-      if ( ! _checkOnERC721Received( _tokenOwner_, to_, tokenId_, data_ ) ) {
+    function safeTransferFrom( address from_, address to_, uint256 tokenId_, bytes memory data_ ) public virtual override {
+      transferFrom( from_, to_, tokenId_ );
+      if ( ! _checkOnERC721Received( from_, to_, tokenId_, data_ ) ) {
         revert IERC721_NON_ERC721_RECEIVER( to_ );
       }
     }
@@ -414,19 +424,19 @@ abstract contract Consec_ERC721Batch is Context, IERC721Metadata, IERC721Enumera
     * but we cannot remove this parameter to stay in conformity with IERC721
     */
     function transferFrom( address from_, address to_, uint256 tokenId_ ) public virtual exists( tokenId_ ) {
+      if ( to_ == address( 0 ) ) {
+        revert IERC721_INVALID_TRANSFER();
+      }
+
       address _operator_ = _msgSender();
       address _tokenOwner_ = _ownerOf( tokenId_ );
       if ( from_ != _tokenOwner_ ) {
-        revert IERC721_INVALID_TRANSFER_FROM();
+        revert IERC721_INVALID_TRANSFER_FROM( _tokenOwner_, from_, tokenId_ );
       }
-      bool _isApproved_ = _isApprovedOrOwner( _tokenOwner_, _operator_, tokenId_ );
 
+      bool _isApproved_ = _isApprovedOrOwner( _tokenOwner_, _operator_, tokenId_ );
       if ( ! _isApproved_ ) {
         revert IERC721_CALLER_NOT_APPROVED( _tokenOwner_, _operator_, tokenId_ );
-      }
-
-      if ( to_ == address( 0 ) ) {
-        revert IERC721_INVALID_TRANSFER( to_ );
       }
 
       _transfer( _tokenOwner_, to_, tokenId_ );

@@ -27,7 +27,7 @@ contract Mock_Reg_ERC721Batch is Reg_ERC721Batch {
 
 	function mint( address to_, uint256 qty_ ) public {
 		if ( to_ == address( 0 ) ) {
-			revert IERC721_INVALID_TRANSFER( to_ );
+			revert IERC721_INVALID_TRANSFER();
 		}
 		if ( qty_ > 0 ) {
 			_mint( to_, qty_ );

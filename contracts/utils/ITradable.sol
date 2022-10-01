@@ -13,11 +13,13 @@ contract ProxyRegistry {
 }
 
 abstract contract ITradable {
-	// OpenSea proxy registry address
+	// list of accepted proxy registries
 	address[] public proxyRegistries;
 
 	/**
 	* @dev Internal function that adds a proxy registry to the list of accepted proxy registries.
+	* 
+	* @param proxyRegistryAddress_ : the address of the new proxy registry
 	*/
 	function _addProxyRegistry( address proxyRegistryAddress_ ) internal {
 		uint256 _index_ = proxyRegistries.length;
@@ -34,6 +36,8 @@ abstract contract ITradable {
 
 	/**
 	* @dev Internal function that removes a proxy registry from the list of accepted proxy registries.
+	* 
+	* @param proxyRegistryAddress_ : the address of the proxy registry to remove
 	*/
 	function _removeProxyRegistry( address proxyRegistryAddress_ ) internal {
 		uint256 _len_ = proxyRegistries.length;
@@ -53,9 +57,14 @@ abstract contract ITradable {
 	}
 
 	/**
-	* @dev Checks if `operator_` is a registered proxy for `tokenOwner_`.
+	* @dev Internal function that checks if `operator_` is a registered proxy for `tokenOwner_`.
 	* 
 	* Note: Use this function to allow whitelisting of registered proxy.
+	* 
+	* @param tokenOwner_ : the address the proxy operates on the behalf of
+	* @param operator_   : the proxy address that operates on behalf of the token owner
+	* 
+	* @return bool : whether `operator_` is allowed to operate on behalf of `tokenOwner_` or not
 	*/
 	function _isRegisteredProxy( address tokenOwner_, address operator_ ) internal view returns ( bool ) {
 		uint256 _index_ = proxyRegistries.length;

@@ -27,7 +27,7 @@ contract Mock_Consec_ERC721BatchBurnable is Consec_ERC721BatchBurnable {
 
 	function mint( address to_, uint256 qty_ ) public {
 		if ( to_ == address( 0 ) ) {
-			revert IERC721_INVALID_TRANSFER( to_ );
+			revert IERC721_INVALID_TRANSFER();
 		}
 		if ( qty_ > 0 ) {
 			_mint( to_, qty_ );

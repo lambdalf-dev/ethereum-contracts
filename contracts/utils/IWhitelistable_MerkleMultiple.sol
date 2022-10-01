@@ -11,13 +11,29 @@ import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 abstract contract IWhitelistable_MerkleMultiple {
 	// Errors
+  /**
+  * @dev Thrown when trying to query the whitelist while it's not set
+  */
 	error IWhitelistable_NOT_SET();
+  /**
+  * @dev Thrown when `account` has consumed their alloted access and tries to query more
+  * 
+  * @param account : address trying to access the whitelist
+  */
 	error IWhitelistable_CONSUMED( address account );
+  /**
+  * @dev Thrown when `account` does not have enough alloted access to fulfil their query
+  * 
+  * @param account : address trying to access the whitelist
+  */
 	error IWhitelistable_FORBIDDEN( address account );
 
+  /**
+  * @dev A structure representing a specific whitelist.
+  */
 	struct Whitelist {
 		bytes32 root;
-		uint256 passMax;
+		uint256 alloted;
 		mapping( address => uint256 ) consumed;
 	}
 
@@ -32,9 +48,9 @@ abstract contract IWhitelistable_MerkleMultiple {
 	* @param whitelistId_ ~ type = uint256   : the whitelist identifier
 	*/
 	modifier isWhitelisted( address account_, bytes32[] memory proof_, uint256 qty_, uint256 whitelistId_ ) {
-		uint256 _allowed_ = _checkWhitelistAllowance( account_, proof_, whitelistId_ );
+		uint256 _alloted_ = checkWhitelistAllowance( account_, proof_, whitelistId_ );
 
-		if ( _allowed_ < qty_ ) {
+		if ( _alloted_ < qty_ ) {
 			revert IWhitelistable_FORBIDDEN( account_ );
 		}
 
@@ -44,12 +60,12 @@ abstract contract IWhitelistable_MerkleMultiple {
 	/**
 	* @dev Internal function setting up a whitelist.
 	* 
-	* @param root_        ~ type = bytes32   : the whitelist's Merkle root
-	* @param passMax_     ~ type = uint256   : the max amount people can mint on whitelist
-	* @param whitelistId_ ~ type = uint256   : the whitelist identifier
+	* @param root_        ~ type = bytes32 : the whitelist's Merkle root
+	* @param alloted_     ~ type = uint256 : the max amount people can mint on whitelist
+	* @param whitelistId_ ~ type = uint256 : the whitelist identifier
 	*/
-	function _setWhitelist( bytes32 root_, uint256 passMax_, uint256 whitelistId_ ) internal virtual {
-		_whitelists[ whitelistId_ ].passMax = passMax_;
+	function _setWhitelist( bytes32 root_, uint256 alloted_, uint256 whitelistId_ ) internal virtual {
+		_whitelists[ whitelistId_ ].alloted = alloted_;
 		_whitelists[ whitelistId_ ].root    = root_;
 	}
 
@@ -63,13 +79,15 @@ abstract contract IWhitelistable_MerkleMultiple {
 	* @param account_     ~ type = address   : the address to verify
 	* @param proof_       ~ type = bytes32[] : the Merkle Proof for the whitelist
 	* @param whitelistId_ ~ type = uint256   : the whitelist identifier
+	* 
+	* @return uint256 : the total amount of whitelist allocation remaining for `account_`
 	*/
-	function _checkWhitelistAllowance( address account_, bytes32[] memory proof_, uint256 whitelistId_ ) internal view returns ( uint256 ) {
+	function checkWhitelistAllowance( address account_, bytes32[] memory proof_, uint256 whitelistId_ ) public view returns ( uint256 ) {
 		if ( _whitelists[ whitelistId_ ].root == 0 ) {
 			revert IWhitelistable_NOT_SET();
 		}
 
-		if ( _whitelists[ whitelistId_ ].consumed[ account_ ] >= _whitelists[ whitelistId_ ].passMax ) {
+		if ( _whitelists[ whitelistId_ ].consumed[ account_ ] >= _whitelists[ whitelistId_ ].alloted ) {
 			revert IWhitelistable_CONSUMED( account_ );
 		}
 
@@ -79,7 +97,7 @@ abstract contract IWhitelistable_MerkleMultiple {
 
 		uint256 _res_;
 		unchecked {
-			_res_ = _whitelists[ whitelistId_ ].passMax - _whitelists[ whitelistId_ ].consumed[ account_ ];
+			_res_ = _whitelists[ whitelistId_ ].alloted - _whitelists[ whitelistId_ ].consumed[ account_ ];
 		}
 
 		return _res_;
@@ -91,6 +109,8 @@ abstract contract IWhitelistable_MerkleMultiple {
 	* @param account_     ~ type = address   : the address to verify
 	* @param proof_       ~ type = bytes32[] : the Merkle Proof for the whitelist
 	* @param whitelistId_ ~ type = uint256   : the whitelist identifier
+	* 
+	* @return bool : whether `account_` is whitelisted or not
 	*/
 	function _computeProof( address account_, bytes32[] memory proof_, uint256 whitelistId_ ) private view returns ( bool ) {
 		bytes32 _leaf_ = keccak256( abi.encodePacked( account_ ) );
@@ -98,7 +118,7 @@ abstract contract IWhitelistable_MerkleMultiple {
 	}
 
 	/**
-	* @dev Consumes `amount_` pass passes from `account_`.
+	* @dev Internal function consuming `amount_` whitelist access from `account_`.
 	* 
 	* Note: Before calling this function, eligibility should be checked through {_checkWhitelistAllowance}
 	* 
