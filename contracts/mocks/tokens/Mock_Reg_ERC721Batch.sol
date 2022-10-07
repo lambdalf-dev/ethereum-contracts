@@ -22,7 +22,7 @@ import "../../tokens/ERC721/Reg_ERC721Batch.sol";
 */
 contract Mock_Reg_ERC721Batch is Reg_ERC721Batch {
 	constructor( string memory baseURI_, string memory symbol_, string memory name_ ) {
-		_initERC721Metadata( name_, symbol_, baseURI_ );
+		__init_ERC721Metadata( name_, symbol_, baseURI_ );
 	}
 
 	function mint( address to_, uint256 qty_ ) public {

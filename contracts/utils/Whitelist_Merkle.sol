@@ -9,24 +9,24 @@ pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-abstract contract IWhitelistable_Merkle {
+abstract contract Whitelist_Merkle {
 	// Errors
   /**
   * @dev Thrown when trying to query the whitelist while it's not set
   */
-	error IWhitelistable_NOT_SET();
+	error Whitelist_NOT_SET();
   /**
   * @dev Thrown when `account` has consumed their alloted access and tries to query more
   * 
   * @param account : address trying to access the whitelist
   */
-	error IWhitelistable_CONSUMED( address account );
+	error Whitelist_CONSUMED( address account );
   /**
   * @dev Thrown when `account` does not have enough alloted access to fulfil their query
   * 
   * @param account : address trying to access the whitelist
   */
-	error IWhitelistable_FORBIDDEN( address account );
+	error Whitelist_FORBIDDEN( address account );
 
 	bytes32 private _root;
 	mapping( address => uint256 ) private _consumed;
@@ -41,13 +41,13 @@ abstract contract IWhitelistable_Merkle {
 	*/
 	modifier isWhitelisted( address account_, bytes32[] memory proof_, uint256 alloted_, uint256 qty_ ) {
 		// if ( qty_ > alloted_ ) {
-		// 	revert IWhitelistable_FORBIDDEN( account_ );
+		// 	revert Whitelist_FORBIDDEN( account_ );
 		// }
 
 		uint256 _allowed_ = checkWhitelistAllowance( account_, proof_/*, alloted_*/ );
 
 		if ( _allowed_ < qty_ ) {
-			revert IWhitelistable_FORBIDDEN( account_ );
+			revert Whitelist_FORBIDDEN( account_ );
 		}
 
 		_;
@@ -76,15 +76,15 @@ abstract contract IWhitelistable_Merkle {
 	*/
 	function checkWhitelistAllowance( address account_, bytes32[] memory proof_/*, uint256 alloted_*/ ) public view returns ( uint256 ) {
 		if ( _root == 0 ) {
-			revert IWhitelistable_NOT_SET();
+			revert Whitelist_NOT_SET();
 		}
 
 		if ( _consumed[ account_ ] >= 1/*alloted_*/ ) {
-			revert IWhitelistable_CONSUMED( account_ );
+			revert Whitelist_CONSUMED( account_ );
 		}
 
 		if ( ! _computeProof( account_, proof_ ) ) {
-			revert IWhitelistable_FORBIDDEN( account_ );
+			revert Whitelist_FORBIDDEN( account_ );
 		}
 
 		// uint256 _res_;
@@ -113,7 +113,7 @@ abstract contract IWhitelistable_Merkle {
 	* 
 	* @param account_ : the address to consume access from
 	* 
-	* Note: Before calling this function, eligibility should be checked through {IWhitelistable-checkWhitelistAllowance}.
+	* Note: Before calling this function, eligibility should be checked through {Whitelistable-checkWhitelistAllowance}.
 	*/
 	function _consumeWhitelist( address account_/*, uint256 qty_*/ ) internal {
 		unchecked {

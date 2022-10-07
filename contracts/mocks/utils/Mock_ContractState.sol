@@ -6,15 +6,15 @@
 
 pragma solidity 0.8.17;
 
-import "../../utils/IPausable.sol";
+import "../../utils/ContractState.sol";
 
-contract Mock_IPausable is IPausable {
+contract Mock_ContractState is ContractState {
 	uint8 public constant PUBLIC_SALE = 1;
 	constructor() {}
 
 	function setPauseState( uint8 newState_ ) public {
 		if ( newState_ > PUBLIC_SALE ) {
-			revert IPausable_INVALID_STATE( newState_ );
+			revert ContractState_INVALID_STATE( newState_ );
 		}
 
 		_setPauseState( newState_ );

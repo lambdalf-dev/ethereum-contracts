@@ -16,15 +16,15 @@ import '../interfaces/IERC721Metadata.sol';
 import '../interfaces/IERC721Enumerable.sol';
 import '../interfaces/IERC721Receiver.sol';
 import '../interfaces/IERC2981.sol';
-import '../utils/IOwnable.sol';
-import '../utils/IPausable.sol';
-import '../utils/IWhitelistable_ECDSA.sol';
-import '../utils/ERC2981Base.sol';
+import '../utils/ERC173.sol';
+import '../utils/ContractState.sol';
+import '../utils/Whitelist_ECDSA.sol';
+import '../utils/ERC2981.sol';
 
 abstract contract NFT721 is 
   IArrayErrors, IEtherErrors, IERC721Errors, INFTSupplyErrors,
   IERC165, IERC721, IERC721Metadata, IERC721Enumerable,
-  ERC2981Base, IOwnable, IPausable, IWhitelistable_ECDSA {
+  ERC2981, ERC173, ContractState, Whitelist_ECDSA {
   /**
   * @dev A structure representing the deployment configuration of the contract.
   * It contains several pieces of information:
@@ -62,7 +62,7 @@ abstract contract NFT721 is
   // List of owner addresses
   mapping( uint256 => address ) private _owners;
 
-  function _init__NFT721(
+  function __init_NFT721(
     address treasury_,
     uint256 maxSupply_,
     uint256 reserve_,
@@ -599,7 +599,7 @@ abstract contract NFT721 is
     */
     function setPauseState( uint8 newState_ ) external onlyOwner {
       if ( newState_ > PUBLIC_SALE ) {
-        revert IPausable_INVALID_STATE( newState_ );
+        revert ContractState_INVALID_STATE( newState_ );
       }
       _setPauseState( newState_ );
     }
@@ -811,7 +811,7 @@ abstract contract NFT721 is
         if ( index_ >= supplyMinted() ) {
           revert IERC721Enumerable_INDEX_OUT_OF_BOUNDS( index_ );
         }
-        return index_;
+        return index_ + 1;
       }
 
       /**

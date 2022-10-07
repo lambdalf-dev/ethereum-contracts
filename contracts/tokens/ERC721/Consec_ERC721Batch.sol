@@ -6,12 +6,13 @@
 
 pragma solidity 0.8.17;
 
-import "../../interfaces/IERC165.sol";
-import "../../interfaces/IERC721.sol";
-import "../../interfaces/IERC721Enumerable.sol";
-import "../../interfaces/IERC721Metadata.sol";
-import "../../interfaces/IERC721Receiver.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
+import '../../interfaces/IERC721Errors.sol';
+import '../../interfaces/IERC2309.sol';
+import '../../interfaces/IERC165.sol';
+import '../../interfaces/IERC721.sol';
+import '../../interfaces/IERC721Enumerable.sol';
+import '../../interfaces/IERC721Metadata.sol';
+import '../../interfaces/IERC721Receiver.sol';
 
 /**
 * @dev Required interface of an ERC721 compliant contract.
@@ -22,68 +23,7 @@ import "@openzeppelin/contracts/utils/Context.sol";
 * Note: This implementation imposes a very expensive `balanceOf()` and `ownerOf()`.
 * It is not recommended to interract with those from another contract.
 */
-abstract contract Consec_ERC721Batch is Context, IERC165, IERC721, IERC721Metadata, IERC721Enumerable {
-  /**
-  * @dev See EIP2309 https://eips.ethereum.org/EIPS/eip-2309
-  */
-  event ConsecutiveTransfer(uint256 indexed fromTokenId, uint256 toTokenId, address indexed fromAddress, address indexed toAddress);
-
-  // **************************************
-  // *****           ERRORS           *****
-  // **************************************
-    /**
-    * @dev Thrown when `operator` has not been approved to manage `tokenId` on behalf of `tokenOwner`.
-    * 
-    * @param tokenOwner : address owning the token
-    * @param operator   : address trying to manage the token
-    * @param tokenId    : identifier of the NFT being referenced
-    */
-    error IERC721_CALLER_NOT_APPROVED( address tokenOwner, address operator, uint256 tokenId );
-    /**
-    * @dev Thrown when `operator` tries to approve themselves for managing a token they own.
-    * 
-    * @param operator : address that is trying to approve themselves
-    */
-    error IERC721_INVALID_APPROVAL( address operator );
-    /**
-    * @dev Thrown when a token is being transferred to the zero address.
-    */
-    error IERC721_INVALID_TRANSFER();
-    /**
-    * @dev Thrown when a token is being transferred from an address that doesn't own it.
-    * 
-    * @param tokenOwner : address owning the token
-    * @param from       : address that the NFT is being transferred from
-    * @param tokenId    : identifier of the NFT being referenced
-    */
-    error IERC721_INVALID_TRANSFER_FROM( address tokenOwner, address from, uint256 tokenId );
-    /**
-    * @dev Thrown when the requested token doesn't exist.
-    * 
-    * @param tokenId : identifier of the NFT being referenced
-    */
-    error IERC721_NONEXISTANT_TOKEN( uint256 tokenId );
-    /**
-    * @dev Thrown when a token is being safely transferred to a contract unable to handle it.
-    * 
-    * @param receiver : address unable to receive the token
-    */
-    error IERC721_NON_ERC721_RECEIVER( address receiver );
-    /**
-    * @dev Thrown when trying to get the token at an index that doesn't exist.
-    * 
-    * @param index : the inexistant index
-    */
-    error IERC721Enumerable_INDEX_OUT_OF_BOUNDS( uint256 index );
-    /**
-    * @dev Thrown when trying to get the token owned by `tokenOwner` at an index that doesn't exist.
-    * 
-    * @param tokenOwner : address owning the token
-    * @param index      : the inexistant index
-    */
-    error IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS( address tokenOwner, uint256 index );
-  // **************************************
-
+abstract contract Consec_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721Metadata, IERC721Enumerable {
   uint256 private _nextId = 1;
   string  public  name;
   string  public  symbol;
@@ -101,17 +41,30 @@ abstract contract Consec_ERC721Batch is Context, IERC165, IERC721, IERC721Metada
   string  private _baseURI;
 
   /**
-  * @dev Ensures the token exist. 
-  * A token exists if it has been minted and is not owned by the null address.
-  * 
-  * @param tokenId_ : identifier of the NFT being referenced
+  * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
   */
-  modifier exists( uint256 tokenId_ ) {
-    if ( ! _exists( tokenId_ ) ) {
-      revert IERC721_NONEXISTANT_TOKEN( tokenId_ );
-    }
-    _;
+  function __init_ERC721Metadata( string memory name_, string memory symbol_, string memory baseURI_ ) internal {
+    name     = name_;
+    symbol   = symbol_;
+    _baseURI = baseURI_;
   }
+
+  // **************************************
+  // *****          MODIFIER          *****
+  // **************************************
+    /**
+    * @dev Ensures the token exist. 
+    * A token exists if it has been minted and is not owned by the null address.
+    * 
+    * @param tokenId_ : identifier of the NFT being referenced
+    */
+    modifier exists( uint256 tokenId_ ) {
+      if ( ! _exists( tokenId_ ) ) {
+        revert IERC721_NONEXISTANT_TOKEN( tokenId_ );
+      }
+      _;
+    }
+  // **************************************
 
   // **************************************
   // *****          INTERNAL          *****
@@ -203,15 +156,6 @@ abstract contract Consec_ERC721Batch is Context, IERC165, IERC721, IERC721Metada
         return false;
       }
       return tokenId_ < _nextId;
-    }
-
-    /**
-    * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
-    */
-    function _initERC721Metadata( string memory name_, string memory symbol_, string memory baseURI_ ) internal {
-      name     = name_;
-      symbol   = symbol_;
-      _baseURI = baseURI_;
     }
 
     /**
@@ -500,7 +444,7 @@ abstract contract Consec_ERC721Batch is Context, IERC165, IERC721, IERC721Metada
       if ( index_ >= supplyMinted() ) {
         revert IERC721Enumerable_INDEX_OUT_OF_BOUNDS( index_ );
       }
-      return index_;
+      return index_ + 1;
     }
 
     /**

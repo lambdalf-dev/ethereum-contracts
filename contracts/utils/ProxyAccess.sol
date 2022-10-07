@@ -6,13 +6,11 @@
 
 pragma solidity 0.8.17;
 
-contract OwnableDelegateProxy {}
-
 contract ProxyRegistry {
-	mapping( address => OwnableDelegateProxy ) public proxies;
+	function proxies( address tokenOwner_ ) external view returns ( address ) {}
 }
 
-abstract contract ITradable {
+abstract contract ProxyAccess {
 	// list of accepted proxy registries
 	address[] public proxyRegistries;
 
@@ -51,8 +49,8 @@ abstract contract ITradable {
 					proxyRegistries[ _index_ ] = proxyRegistries[ _len_ - 1 ];
 				}
 				proxyRegistries.pop();
+				return;
 			}
-			return;
 		}
 	}
 

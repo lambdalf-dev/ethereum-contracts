@@ -22,7 +22,7 @@ import "../../tokens/ERC721/extensions/Reg_ERC721BatchBurnable.sol";
 */
 contract Mock_Reg_ERC721BatchBurnable is Reg_ERC721BatchBurnable {
 	constructor( string memory baseURI_, string memory symbol_, string memory name_ ) {
-		_initERC721Metadata( name_, symbol_, baseURI_ );
+		__init_ERC721Metadata( name_, symbol_, baseURI_ );
 	}
 
 	function mint( address to_, uint256 qty_ ) public {

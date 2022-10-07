@@ -20,7 +20,7 @@ import "../interfaces/IERC173.sol";
 * `onlyOwner`, which can be applied to your functions to restrict their use to
 * the owner.
 */
-abstract contract IOwnable is IERC173 {
+abstract contract ERC173 is IERC173 {
 	// Errors
   /**
   * @dev Thrown when `operator` is not the contract owner.
@@ -44,19 +44,19 @@ abstract contract IOwnable is IERC173 {
 	}
 
 	/**
-	* @dev Initializes the contract setting `owner_` as the initial owner.
+	* @dev Sets the contract owner.
 	* 
 	* Note: This function needs to be called in the contract constructor to initialize the contract owner, 
 	* if it is not, then parts of the contract might be non functional
 	* 
 	* @param owner_ : address that owns the contract
 	*/
-	function _initIOwnable( address owner_ ) internal {
+	function _setOwner( address owner_ ) internal {
 		_owner = owner_;
 	}
 
 	/**
-	* @dev Returns the address of the current owner.
+	* @dev Returns the address of the current contract owner.
 	* 
 	* @return address : the current contract owner
 	*/
@@ -65,7 +65,7 @@ abstract contract IOwnable is IERC173 {
 	}
 
 	/**
-	* @dev Transfers ownership of the contract to `newOwner`.
+	* @dev Transfers ownership of the contract to `newOwner_`.
 	* 
 	* @param newOwner_ : address of the new contract owner
 	* 

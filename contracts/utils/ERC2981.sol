@@ -8,7 +8,7 @@ pragma solidity 0.8.17;
 
 import "../interfaces/IERC2981.sol";
 
-abstract contract ERC2981Base is IERC2981 {
+abstract contract ERC2981 is IERC2981 {
 	// Errors
   /**
   * @dev Thrown when the desired royalty rate is higher than 10,000

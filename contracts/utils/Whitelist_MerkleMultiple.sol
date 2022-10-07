@@ -9,24 +9,24 @@ pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-abstract contract IWhitelistable_MerkleMultiple {
+abstract contract Whitelist_MerkleMultiple {
 	// Errors
   /**
   * @dev Thrown when trying to query the whitelist while it's not set
   */
-	error IWhitelistable_NOT_SET();
+	error Whitelist_NOT_SET();
   /**
   * @dev Thrown when `account` has consumed their alloted access and tries to query more
   * 
   * @param account : address trying to access the whitelist
   */
-	error IWhitelistable_CONSUMED( address account );
+	error Whitelist_CONSUMED( address account );
   /**
   * @dev Thrown when `account` does not have enough alloted access to fulfil their query
   * 
   * @param account : address trying to access the whitelist
   */
-	error IWhitelistable_FORBIDDEN( address account );
+	error Whitelist_FORBIDDEN( address account );
 
   /**
   * @dev A structure representing a specific whitelist.
@@ -51,7 +51,7 @@ abstract contract IWhitelistable_MerkleMultiple {
 		uint256 _alloted_ = checkWhitelistAllowance( account_, proof_, whitelistId_ );
 
 		if ( _alloted_ < qty_ ) {
-			revert IWhitelistable_FORBIDDEN( account_ );
+			revert Whitelist_FORBIDDEN( account_ );
 		}
 
 		_;
@@ -84,15 +84,15 @@ abstract contract IWhitelistable_MerkleMultiple {
 	*/
 	function checkWhitelistAllowance( address account_, bytes32[] memory proof_, uint256 whitelistId_ ) public view returns ( uint256 ) {
 		if ( _whitelists[ whitelistId_ ].root == 0 ) {
-			revert IWhitelistable_NOT_SET();
+			revert Whitelist_NOT_SET();
 		}
 
 		if ( _whitelists[ whitelistId_ ].consumed[ account_ ] >= _whitelists[ whitelistId_ ].alloted ) {
-			revert IWhitelistable_CONSUMED( account_ );
+			revert Whitelist_CONSUMED( account_ );
 		}
 
 		if ( ! _computeProof( account_, proof_, whitelistId_ ) ) {
-			revert IWhitelistable_FORBIDDEN( account_ );
+			revert Whitelist_FORBIDDEN( account_ );
 		}
 
 		uint256 _res_;

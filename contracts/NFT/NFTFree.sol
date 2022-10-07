@@ -7,12 +7,12 @@
 pragma solidity 0.8.17;
 
 import '../tokens/ERC721/Reg_ERC721Batch.sol';
-import '../utils/IOwnable.sol';
-import '../utils/IPausable.sol';
-import '../utils/ITradable.sol';
-import '../utils/ERC2981Base.sol';
+import '../utils/ERC173.sol';
+import '../utils/ContractState.sol';
+import '../utils/ProxyAccess.sol';
+import '../utils/ERC2981.sol';
 
-abstract contract NFTFree is Reg_ERC721Batch, IOwnable, IPausable, ITradable, ERC2981Base {
+abstract contract NFTFree is Reg_ERC721Batch, ERC173, ContractState, ProxyAccess, ERC2981 {
 	// Errors 
 	error NFT_ARRAY_LENGTH_MISMATCH( uint256 len1, uint256 len2 );
 	error NFT_INVALID_QTY();
@@ -27,56 +27,60 @@ abstract contract NFTFree is Reg_ERC721Batch, IOwnable, IPausable, ITradable, ER
 	uint256 internal _reserve;
 
 	/**
-	* @dev Ensures that `qty_` is higher than 0
+	* @dev Internal function to initialize the NFT contract.
 	* 
-	* @param qty_ : the amount to validate 
+	* @param reserve_       : total amount of reserved tokens for airdrops
+	* @param maxBatch_      : maximum quantity of token that can be minted in one transaction
+	* @param maxSupply_     : maximum number of tokens that can exist
+	* @param royaltyRate_   : portion of the secondary sale that will be paid out to the collection, out of 10,000 total shares
+	* @param name_          : name of the token
+	* @param symbol_        : symbol representing the token
+	* @param baseURI_       : baseURI for the tokens
+	* 
+	* Requirements:
+	* 
+	* - `teamShares_` and `teamAddresses_` must have the same length
+	* - no element of `teamShares_` can be 0
+	* - no element of `teamAddresses_` can be a contract address
+	* - the sum of `teamShares_` must be 1,000
 	*/
-	modifier validateAmount( uint256 qty_ ) {
-		if ( qty_ == 0 ) {
-			revert NFT_INVALID_QTY();
-		}
-
-		_;
+	function __init_NFTFree (
+		uint256 reserve_,
+		uint256 maxBatch_,
+		uint256 maxSupply_,
+		uint256 royaltyRate_,
+		string memory name_,
+		string memory symbol_,
+		string memory baseURI_
+	) internal {
+		_initERC721Metadata( name_, symbol_, baseURI_ );
+		_setOwner( _msgSender() );
+		_setRoyaltyInfo( _msgSender(), royaltyRate_ );
+		MAX_SUPPLY     = maxSupply_;
+		MAX_BATCH      = maxBatch_;
+		_reserve       = reserve_;
 	}
+
+  // **************************************
+  // *****          MODIFIER          *****
+  // **************************************
+		/**
+		* @dev Ensures that `qty_` is higher than 0
+		* 
+		* @param qty_ : the amount to validate 
+		*/
+		modifier validateAmount( uint256 qty_ ) {
+			if ( qty_ == 0 ) {
+				revert NFT_INVALID_QTY();
+			}
+
+			_;
+		}
+  // **************************************
 
 	// **************************************
 	// *****          INTERNAL          *****
 	// **************************************
-		/**
-		* @dev Internal function to initialize the NFT contract.
-		* 
-		* @param reserve_       : total amount of reserved tokens for airdrops
-		* @param maxBatch_      : maximum quantity of token that can be minted in one transaction
-		* @param maxSupply_     : maximum number of tokens that can exist
-		* @param royaltyRate_   : portion of the secondary sale that will be paid out to the collection, out of 10,000 total shares
-		* @param name_          : name of the token
-		* @param symbol_        : symbol representing the token
-		* @param baseURI_       : baseURI for the tokens
-		* 
-		* Requirements:
-		* 
-		* - `teamShares_` and `teamAddresses_` must have the same length
-		* - no element of `teamShares_` can be 0
-		* - no element of `teamAddresses_` can be a contract address
-		* - the sum of `teamShares_` must be 1,000
-		*/
-		function _initNFTFree (
-			uint256 reserve_,
-			uint256 maxBatch_,
-			uint256 maxSupply_,
-			uint256 royaltyRate_,
-			string memory name_,
-			string memory symbol_,
-			string memory baseURI_
-		) internal {
-			_initERC721Metadata( name_, symbol_, baseURI_ );
-			_initIOwnable( _msgSender() );
-			_setRoyaltyInfo( _msgSender(), royaltyRate_ );
-			MAX_SUPPLY     = maxSupply_;
-			MAX_BATCH      = maxBatch_;
-			_reserve       = reserve_;
-		}
-
 		/**
 		* @dev Internal function returning whether `operator_` is allowed to manage tokens on behalf of `tokenOwner_`.
 		* 
@@ -139,7 +143,7 @@ abstract contract NFTFree is Reg_ERC721Batch, IOwnable, IPausable, ITradable, ER
 	// *****       CONTRACT_OWNER       *****
 	// **************************************
 		/**
-		* @dev See {ITradable-addProxyRegistry}.
+		* @dev See {ProxyAccess-addProxyRegistry}.
 		* 
 		* @param proxyRegistryAddress_ : the address of the proxy registry to be added
 		* 
@@ -152,7 +156,7 @@ abstract contract NFTFree is Reg_ERC721Batch, IOwnable, IPausable, ITradable, ER
 		}
 
 		/**
-		* @dev See {ITradable-removeProxyRegistry}.
+		* @dev See {ProxyAccess-removeProxyRegistry}.
 		* 
 		* @param proxyRegistryAddress_ : the address of the proxy registry to be removed
 		* 
@@ -228,7 +232,7 @@ abstract contract NFTFree is Reg_ERC721Batch, IOwnable, IPausable, ITradable, ER
 		}
 
 		/**
-		* @dev See {IPausable-setPauseState}.
+		* @dev See {ContractState-setPauseState}.
 		* 
 		* @param newState_ : the new sale state
 		* 

@@ -18,7 +18,7 @@ contract Mock_NFTFree is NFTFree {
 		string memory symbol_,
 		string memory baseURI_
 	) {
-		_initNFTFree (
+		__init_NFTFree (
 			reserve_,
 			maxBatch_,
 			maxSupply_,

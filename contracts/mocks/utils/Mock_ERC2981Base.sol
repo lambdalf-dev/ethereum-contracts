@@ -6,9 +6,9 @@
 
 pragma solidity 0.8.17;
 
-import "../../utils/ERC2981Base.sol";
+import "../../utils/ERC2981.sol";
 
-contract Mock_ERC2981Base is ERC2981Base {
+contract Mock_ERC2981 is ERC2981 {
 	constructor( address recipient_, uint256 royaltyRate_ ) {
 		_setRoyaltyInfo( recipient_, royaltyRate_ );
 	}

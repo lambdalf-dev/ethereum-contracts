@@ -21,7 +21,7 @@ contract Mock_NFTBaseC is NFTBaseC {
 		uint256[] memory teamShares_,
 		address[] memory teamAddresses_
 	) {
-		_initNFTBaseC (
+		__init_NFTBaseC (
 			reserve_,
 			maxBatch_,
 			maxSupply_,

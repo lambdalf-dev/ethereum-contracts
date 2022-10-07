@@ -6,12 +6,10 @@
 
 pragma solidity 0.8.17;
 
-import "../../utils/ITradable.sol";
+import "../../utils/ProxyAccess.sol";
 
-contract Mock_ITradable is ITradable {
-	constructor( address proxyRegistryAddress_ ) {
-		_addProxyRegistry( proxyRegistryAddress_ );
-	}
+contract Mock_ProxyAccess is ProxyAccess {
+	constructor() {}
 
 	function isRegisteredProxy( address tokenOwner_, address operator_ ) public view returns ( bool ) {
 		return _isRegisteredProxy( tokenOwner_, operator_ );

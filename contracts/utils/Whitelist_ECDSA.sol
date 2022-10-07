@@ -7,24 +7,24 @@
 
 pragma solidity 0.8.17;
 
-abstract contract IWhitelistable_ECDSA {
+abstract contract Whitelist_ECDSA {
 	// Errors
   /**
   * @dev Thrown when trying to query the whitelist while it's not set
   */
-	error IWhitelistable_NOT_SET();
+	error Whitelist_NOT_SET();
   /**
   * @dev Thrown when `account` has consumed their alloted access and tries to query more
   * 
   * @param account : address trying to access the whitelist
   */
-	error IWhitelistable_CONSUMED( address account );
+	error Whitelist_CONSUMED( address account );
   /**
   * @dev Thrown when `account` does not have enough alloted access to fulfil their query
   * 
   * @param account : address trying to access the whitelist
   */
-	error IWhitelistable_FORBIDDEN( address account );
+	error Whitelist_FORBIDDEN( address account );
 
 	/**
   * @dev A structure representing a signature proof to be decoded by the contract
@@ -51,7 +51,7 @@ abstract contract IWhitelistable_ECDSA {
 		uint256 _allowed_ = checkWhitelistAllowance( account_, whitelistId_, alloted_, proof_ );
 
 		if ( _allowed_ < qty_ ) {
-			revert IWhitelistable_FORBIDDEN( account_ );
+			revert Whitelist_FORBIDDEN( account_ );
 		}
 
 		_;
@@ -82,15 +82,15 @@ abstract contract IWhitelistable_ECDSA {
 	*/
 	function checkWhitelistAllowance( address account_, uint8 whitelistId_, uint256 alloted_, Proof memory proof_ ) public view returns ( uint256 ) {
 		if ( _adminSigner == address( 0 ) ) {
-			revert IWhitelistable_NOT_SET();
+			revert Whitelist_NOT_SET();
 		}
 
 		if ( _consumed[ whitelistId_ ][ account_ ] >= alloted_ ) {
-			revert IWhitelistable_CONSUMED( account_ );
+			revert Whitelist_CONSUMED( account_ );
 		}
 
 		if ( ! _validateProof( account_, whitelistId_, alloted_, proof_ ) ) {
-			revert IWhitelistable_FORBIDDEN( account_ );
+			revert Whitelist_FORBIDDEN( account_ );
 		}
 
 		return alloted_ - _consumed[ whitelistId_ ][ account_ ];
@@ -119,7 +119,7 @@ abstract contract IWhitelistable_ECDSA {
 	* @param whitelistId_ : the identifier of the whitelist being queried
 	* @param qty_         : the amount of whitelist access consumed
 	* 
-	* Note: Before calling this function, eligibility should be checked through {IWhitelistable-checkWhitelistAllowance}.
+	* Note: Before calling this function, eligibility should be checked through {Whitelistable-checkWhitelistAllowance}.
 	*/
 	function _consumeWhitelist( address account_, uint8 whitelistId_, uint256 qty_ ) internal {
 		unchecked {

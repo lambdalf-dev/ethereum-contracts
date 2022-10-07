@@ -21,7 +21,7 @@ contract Mock_NFTBaseR is NFTBaseR {
 		uint256[] memory teamShares_,
 		address[] memory teamAddresses_
 	) {
-		_initNFTBaseR (
+		__init_NFTBaseR (
 			reserve_,
 			maxBatch_,
 			maxSupply_,

@@ -23,7 +23,8 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 contract Mock_ERC721OZ is ERC721 {
 	uint256 private _count;
 
-	constructor( string memory name_, string memory symbol_ ) ERC721( name_, symbol_ ) {}
+	constructor( string memory name_, string memory symbol_ )
+		ERC721( name_, symbol_ ) {}
 
 	function mint( uint256 qty_ ) public {
 		uint256 _index_ = _count;

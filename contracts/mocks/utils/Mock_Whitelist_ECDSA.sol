@@ -6,9 +6,9 @@
 
 pragma solidity 0.8.17;
 
-import "../../utils/IWhitelistable_ECDSA.sol";
+import "../../utils/Whitelist_ECDSA.sol";
 
-contract Mock_IWhitelistable_ECDSA is IWhitelistable_ECDSA {
+contract Mock_Whitelist_ECDSA is Whitelist_ECDSA {
 	uint8 public constant WHITELIST_TYPE_2 = 2;
 
 	constructor() {}

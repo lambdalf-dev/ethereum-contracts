@@ -27,7 +27,7 @@ contract Mock_NFT721 is NFT721 {
       name_,
       symbol_
     );
-  	_init__NFT721( treasury_, maxSupply_, reserve_, royaltyRate_, _config )
-    _initIOwnable( msg.sender );
+  	__init_NFT721( treasury_, maxSupply_, reserve_, royaltyRate_, _config )
+    _setOwner( msg.sender );
   }
 }

@@ -6,9 +6,9 @@
 
 pragma solidity 0.8.17;
 
-import "../../utils/IWhitelistable_Merkle.sol";
+import "../../utils/Whitelist_Merkle.sol";
 
-contract Mock_IWhitelistable_Merkle is IWhitelistable_Merkle {
+contract Mock_Whitelist_Merkle is Whitelist_Merkle {
 	constructor() {}
 
 	function consumeWhitelist( bytes32[] memory proof_ ) public isWhitelisted( msg.sender, proof_, 1, 1 ) {
