@@ -15,7 +15,6 @@ import '../interfaces/IERC721.sol';
 import '../interfaces/IERC721Metadata.sol';
 import '../interfaces/IERC721Enumerable.sol';
 import '../interfaces/IERC721Receiver.sol';
-import '../interfaces/IERC2981.sol';
 import '../utils/ERC173.sol';
 import '../utils/ContractState.sol';
 import '../utils/Whitelist_ECDSA.sol';
@@ -67,7 +66,7 @@ abstract contract NFT721 is
     uint256 maxSupply_,
     uint256 reserve_,
     uint256 royaltyRate_,
-    Config  config_
+    Config memory config_
   ) internal {
     _treasury = treasury_;
     _maxSupply = maxSupply_;
@@ -265,25 +264,25 @@ abstract contract NFT721 is
     /**
     * @dev Converts a `uint256` to its ASCII `string` decimal representation.
     */
-    function _toString( uint256 value ) internal pure returns ( string memory ) {
+    function _toString( uint256 value_ ) internal pure returns ( string memory ) {
       // Inspired by OraclizeAPI's implementation - MIT licence
       // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol
-      if ( value == 0 ) {
+      if ( value_ == 0 ) {
         return "0";
       }
-      uint256 temp = value;
-      uint256 digits;
-      while ( temp != 0 ) {
-        digits ++;
-        temp /= 10;
+      uint256 _temp_ = value_;
+      uint256 _digits_;
+      while ( _temp_ != 0 ) {
+        _digits_ ++;
+        _temp_ /= 10;
       }
-      bytes memory buffer = new bytes( digits );
-      while ( value != 0 ) {
-        digits -= 1;
-        buffer[ digits ] = bytes1( uint8( 48 + uint256( value % 10 ) ) );
-        value /= 10;
+      bytes memory _buffer_ = new bytes( _digits_ );
+      while ( value_ != 0 ) {
+        _digits_ -= 1;
+        _buffer_[ _digits_ ] = bytes1( uint8( 48 + uint256( value_ % 10 ) ) );
+        value_ /= 10;
       }
-      return string( buffer );
+      return string( _buffer_ );
     }
 
     /**
@@ -338,7 +337,7 @@ abstract contract NFT721 is
     * - Caller must send enough ether to pay for `qty_` tokens at private sale price.
     */
     function mintPrivate( uint256 qty_, uint256 alloted_, Proof memory proof_ ) public payable validateAmount( qty_ ) isState( PRIVATE_SALE ) isWhitelisted( msg.sender, PRIVATE_SALE, alloted_, proof_, qty_ ) {
-      uint256 _remainingSupply_ = _maxSupply - _config.reserve - supplyMinted();
+      uint256 _remainingSupply_ = _maxSupply - _reserve - supplyMinted();
       if ( qty_ > _remainingSupply_ ) {
         revert NFT_MAX_SUPPLY( qty_, _remainingSupply_ );
       }
@@ -368,7 +367,7 @@ abstract contract NFT721 is
         revert NFT_MAX_BATCH( qty_, _config.maxBatch );
       }
 
-      uint256 _remainingSupply_ = _maxSupply - _config.reserve - supplyMinted();
+      uint256 _remainingSupply_ = _maxSupply - _reserve - supplyMinted();
       if ( qty_ > _remainingSupply_ ) {
         revert NFT_MAX_SUPPLY( qty_, _remainingSupply_ );
       }
@@ -540,11 +539,11 @@ abstract contract NFT721 is
       for ( uint256 i = _amountsLen_; i > 0; i -- ) {
         _totalQty_ += amounts_[ i - 1 ];
       }
-      if ( _totalQty_ > _config.reserve ) {
-        revert NFT_MAX_RESERVE( _totalQty_, _config.reserve );
+      if ( _totalQty_ > _reserve ) {
+        revert NFT_MAX_RESERVE( _totalQty_, _reserve );
       }
       unchecked {
-        _config.reserve -= _totalQty_;
+        _reserve -= _totalQty_;
       }
 
       uint256 _count_ = _amountsLen_;
@@ -601,7 +600,7 @@ abstract contract NFT721 is
       if ( newState_ > PUBLIC_SALE ) {
         revert ContractState_INVALID_STATE( newState_ );
       }
-      _setPauseState( newState_ );
+      _setContractState( newState_ );
     }
 
     /**

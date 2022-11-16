@@ -123,7 +123,7 @@ abstract contract Reg_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721Met
 
 			// If address is a contract, check that it is aware of how to handle ERC721 tokens
 			if ( _size_ > 0 ) {
-				try IERC721Receiver( to_ ).onERC721Received( _msgSender(), from_, tokenId_, data_ ) returns ( bytes4 retval ) {
+				try IERC721Receiver( to_ ).onERC721Received( msg.sender, from_, tokenId_, data_ ) returns ( bytes4 retval ) {
 					return retval == IERC721Receiver.onERC721Received.selector;
 				}
 				catch ( bytes memory reason ) {
@@ -311,7 +311,7 @@ abstract contract Reg_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721Met
 		* @dev See {IERC721-approve}.
 		*/
 		function approve( address to_, uint256 tokenId_ ) public virtual exists( tokenId_ ) {
-			address _operator_ = _msgSender();
+			address _operator_ = msg.sender;
 			address _tokenOwner_ = _ownerOf( tokenId_ );
 			if ( to_ == _tokenOwner_ ) {
 				revert IERC721_INVALID_APPROVAL( to_ );
@@ -353,7 +353,7 @@ abstract contract Reg_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721Met
 		* @dev See {IERC721-setApprovalForAll}.
 		*/
 		function setApprovalForAll( address operator_, bool approved_ ) public virtual override {
-			address _account_ = _msgSender();
+			address _account_ = msg.sender;
 			if ( operator_ == _account_ ) {
 				revert IERC721_INVALID_APPROVAL( operator_ );
 			}
@@ -373,7 +373,7 @@ abstract contract Reg_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721Met
         revert IERC721_INVALID_TRANSFER();
       }
 
-      address _operator_ = _msgSender();
+      address _operator_ = msg.sender;
       address _tokenOwner_ = _ownerOf( tokenId_ );
       if ( from_ != _tokenOwner_ ) {
         revert IERC721_INVALID_TRANSFER_FROM( _tokenOwner_, from_, tokenId_ );

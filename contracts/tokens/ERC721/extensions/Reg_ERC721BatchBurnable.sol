@@ -21,7 +21,7 @@ abstract contract Reg_ERC721BatchBurnable is Reg_ERC721Batch {
 	* - The caller must own `tokenId_` or be an approved operator
 	*/
 	function burn( uint256 tokenId_ ) public exists( tokenId_ ) {
-    address _operator_ = _msgSender();
+    address _operator_ = msg.sender;
     address _tokenOwner_ = _ownerOf( tokenId_ );
     bool _isApproved_ = _isApprovedOrOwner( _tokenOwner_, _operator_, tokenId_ );
 

@@ -29,11 +29,17 @@ module.exports = {
   solidity: {
     version: "0.8.17",
     settings: {
+      viaIR: true,
       optimizer: {
         enabled: true,
         runs: 10000,
-      }
-    }
+      },
+      outputSelection: {
+        "*": {
+          "*": ["evm.assembly", "irOptimized"],
+        },
+      },
+    },
   },
   networks: {
     hardhat: {
@@ -55,6 +61,6 @@ module.exports = {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
   mocha: {
-    timeout: 200000
-  }
+    timeout: 200000,
+  },
 }

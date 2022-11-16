@@ -68,6 +68,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 			IERC721_CALLER_NOT_APPROVED                 : `IERC721_CALLER_NOT_APPROVED`,
 			IERC721_INVALID_APPROVAL_FOR_ALL            : `IERC721_INVALID_APPROVAL_FOR_ALL`,
 			IERC721_INVALID_TRANSFER                    : `IERC721_INVALID_TRANSFER`,
+			IERC721_INVALID_TRANSFER_FROM               : `IERC721_INVALID_TRANSFER_FROM`,
 			IERC721_NONEXISTANT_TOKEN                   : `IERC721_NONEXISTANT_TOKEN`,
 			IERC721_NON_ERC721_RECEIVER                 : `IERC721_NON_ERC721_RECEIVER`,
 			IERC721Enumerable_INDEX_OUT_OF_BOUNDS       : `IERC721Enumerable_INDEX_OUT_OF_BOUNDS`,
@@ -599,8 +600,7 @@ const NON_HOLDER_ARTIFACT = require( `../../artifacts/contracts/mocks/external/M
 								await shouldRevertWhenTransferingToNullAddress(
 									contract.connect( users[ TOKEN_OWNER ] )
 													.mint( to, qty ),
-									contract,
-									to
+									contract
 								)
 							})
 

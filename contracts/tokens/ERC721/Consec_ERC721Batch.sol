@@ -23,7 +23,7 @@ import '../../interfaces/IERC721Receiver.sol';
 * Note: This implementation imposes a very expensive `balanceOf()` and `ownerOf()`.
 * It is not recommended to interract with those from another contract.
 */
-abstract contract Consec_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721Metadata, IERC721Enumerable {
+abstract contract Consec_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
   uint256 private _nextId = 1;
   string  public  name;
   string  public  symbol;
@@ -124,7 +124,7 @@ abstract contract Consec_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721
 
       // If address is a contract, check that it is aware of how to handle ERC721 tokens
       if ( _size_ > 0 ) {
-        try IERC721Receiver( to_ ).onERC721Received( _msgSender(), from_, tokenId_, data_ ) returns ( bytes4 retval ) {
+        try IERC721Receiver( to_ ).onERC721Received( msg.sender, from_, tokenId_, data_ ) returns ( bytes4 retval ) {
           return retval == IERC721Receiver.onERC721Received.selector;
         }
         catch ( bytes memory reason ) {
@@ -310,7 +310,7 @@ abstract contract Consec_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721
     * @dev See {IERC721-approve}.
     */
     function approve( address to_, uint256 tokenId_ ) public virtual exists( tokenId_ ) {
-      address _operator_ = _msgSender();
+      address _operator_ = msg.sender;
       address _tokenOwner_ = _ownerOf( tokenId_ );
       if ( to_ == _tokenOwner_ ) {
         revert IERC721_INVALID_APPROVAL( to_ );
@@ -352,7 +352,7 @@ abstract contract Consec_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721
     * @dev See {IERC721-setApprovalForAll}.
     */
     function setApprovalForAll( address operator_, bool approved_ ) public virtual override {
-      address _account_ = _msgSender();
+      address _account_ = msg.sender;
       if ( operator_ == _account_ ) {
         revert IERC721_INVALID_APPROVAL( operator_ );
       }
@@ -372,7 +372,7 @@ abstract contract Consec_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC721
         revert IERC721_INVALID_TRANSFER();
       }
 
-      address _operator_ = _msgSender();
+      address _operator_ = msg.sender;
       address _tokenOwner_ = _ownerOf( tokenId_ );
       if ( from_ != _tokenOwner_ ) {
         revert IERC721_INVALID_TRANSFER_FROM( _tokenOwner_, from_, tokenId_ );

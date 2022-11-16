@@ -93,9 +93,9 @@ abstract contract NFTBaseC is Consec_ERC721Batch, ERC173, ContractState, ProxyAc
 			revert NFT_MISSING_SHARES( _totalShares_ );
 		}
 
-		_initERC721Metadata( name_, symbol_, baseURI_ );
-		_setOwner( _msgSender() );
-		_setRoyaltyInfo( _msgSender(), royaltyRate_ );
+		__init_ERC721Metadata( name_, symbol_, baseURI_ );
+		_setOwner( msg.sender );
+		_setRoyaltyInfo( msg.sender, royaltyRate_ );
 		MAX_SUPPLY     = maxSupply_;
 		MAX_BATCH      = maxBatch_;
 		SALE_PRICE     = salePrice_;
@@ -183,7 +183,7 @@ abstract contract NFTBaseC is Consec_ERC721Batch, ERC173, ContractState, ProxyAc
 				revert NFT_INCORRECT_PRICE( msg.value, _expected_ );
 			}
 
-			_mint( _msgSender(), qty_ );
+			_mint( msg.sender, qty_ );
 		}
 	// **************************************
 
@@ -289,7 +289,7 @@ abstract contract NFTBaseC is Consec_ERC721Batch, ERC173, ContractState, ProxyAc
 		* - Caller must be the contract owner.
 		*/
 		function setPauseState( uint8 newState_ ) external onlyOwner {
-			_setPauseState( newState_ );
+			_setContractState( newState_ );
 		}
 
 		/**

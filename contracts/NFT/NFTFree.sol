@@ -53,9 +53,9 @@ abstract contract NFTFree is Reg_ERC721Batch, ERC173, ContractState, ProxyAccess
 		string memory symbol_,
 		string memory baseURI_
 	) internal {
-		_initERC721Metadata( name_, symbol_, baseURI_ );
-		_setOwner( _msgSender() );
-		_setRoyaltyInfo( _msgSender(), royaltyRate_ );
+		__init_ERC721Metadata( name_, symbol_, baseURI_ );
+		_setOwner( msg.sender );
+		_setRoyaltyInfo( msg.sender, royaltyRate_ );
 		MAX_SUPPLY     = maxSupply_;
 		MAX_BATCH      = maxBatch_;
 		_reserve       = reserve_;
@@ -135,7 +135,7 @@ abstract contract NFTFree is Reg_ERC721Batch, ERC173, ContractState, ProxyAccess
 				revert NFT_MAX_SUPPLY( qty_, _remainingSupply_ );
 			}
 
-			_mint( _msgSender(), qty_ );
+			_mint( msg.sender, qty_ );
 		}
 	// **************************************
 
@@ -241,7 +241,7 @@ abstract contract NFTFree is Reg_ERC721Batch, ERC173, ContractState, ProxyAccess
 		* - Caller must be the contract owner.
 		*/
 		function setPauseState( uint8 newState_ ) external onlyOwner {
-			_setPauseState( newState_ );
+			_setContractState( newState_ );
 		}
 	// **************************************
 

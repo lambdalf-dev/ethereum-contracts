@@ -17,7 +17,7 @@ contract Mock_ContractState is ContractState {
 			revert ContractState_INVALID_STATE( newState_ );
 		}
 
-		_setPauseState( newState_ );
+		_setContractState( newState_ );
 	}
 
 	function stateIsClosed() public view isState( PAUSED ) returns ( bool ) {

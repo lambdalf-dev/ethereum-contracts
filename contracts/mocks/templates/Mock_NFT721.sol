@@ -20,14 +20,14 @@ contract Mock_NFT721 is NFT721 {
     string memory name_,
     string memory symbol_
   ) {
-    _config = Config(
+    Config memory _config_ = Config(
       maxBatch_,
       publicSalePrice_,
       privateSalePrice_,
       name_,
       symbol_
     );
-  	__init_NFT721( treasury_, maxSupply_, reserve_, royaltyRate_, _config )
+    __init_NFT721( treasury_, maxSupply_, reserve_, royaltyRate_, _config_ );
     _setOwner( msg.sender );
   }
 }
