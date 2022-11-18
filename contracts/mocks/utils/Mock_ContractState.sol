@@ -12,7 +12,7 @@ contract Mock_ContractState is ContractState {
 	uint8 public constant PUBLIC_SALE = 1;
 	constructor() {}
 
-	function setPauseState( uint8 newState_ ) public {
+	function setContractState( uint8 newState_ ) public {
 		if ( newState_ > PUBLIC_SALE ) {
 			revert ContractState_INVALID_STATE( newState_ );
 		}
