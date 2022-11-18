@@ -1,4 +1,3 @@
-const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_ERC173.sol/Mock_ERC173.json` )
 // **************************************
 // *****           IMPORT           *****
 // **************************************
@@ -55,13 +54,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_ERC173.sol
 
 	const TEST_DATA = {
 		NAME : `ERC173`,
-		EVENTS : {
-			OwnershipTransferred : true,
-		},
-		METHODS : {
-			owner             : true,
-			transferOwnership : true,
-		},
 	}
 
 	let test_contract_params
@@ -86,8 +78,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_ERC173.sol
 
 		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
 		test_contract = await contract_artifact.deploy()
-		// test_contract_params = []
-		// let test_contract = await deployContract( test_contract_deployer, ARTIFACT, test_contract_params )
 		await test_contract.deployed()
 
 		return {

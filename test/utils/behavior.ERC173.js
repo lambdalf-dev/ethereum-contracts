@@ -72,61 +72,57 @@
 				})
 
 				describe( CONTRACT.METHODS.owner.SIGNATURE, function () {
-					if ( TEST.METHODS.owner ) {
-						it( `Contract owner should be ${ USER_NAMES[ CONTRACT_DEPLOYER ] }`, async function () {
-							expect(
-								await contract.owner()
-							).to.equal( users[ CONTRACT_DEPLOYER ].address )
-						})
-					}
+					it( `Contract owner should be ${ USER_NAMES[ CONTRACT_DEPLOYER ] }`, async function () {
+						expect(
+							await contract.owner()
+						).to.equal( users[ CONTRACT_DEPLOYER ].address )
+					})
 				})
 
 				describe( CONTRACT.METHODS.transferOwnership.SIGNATURE, function () {
-					if ( TEST.METHODS.transferOwnership ) {
-						it( `Should be reverted when called by regular user`, async function () {
-							const newOwner = users[ USER1 ].address
-							await shouldRevertWhenCallerIsNotContractOwner(
-								contract.connect( users[ USER1 ] )
+					it( `Should be reverted when called by regular user`, async function () {
+						const newOwner = users[ USER1 ].address
+						await shouldRevertWhenCallerIsNotContractOwner(
+							contract.connect( users[ USER1 ] )
+											.transferOwnership( newOwner ),
+							contract,
+							newOwner
+						)
+					})
+
+					describe( `Contract owner transfering ownership`, function () {
+						it( `Contract owner should now be User1`, async function () {
+							const previousOwner = users[ CONTRACT_DEPLOYER ].address
+							const newOwner      = users[ USER1 ].address
+							await shouldEmitOwnershipTransferredEvent(
+								contract.connect( users[ CONTRACT_DEPLOYER ] )
 												.transferOwnership( newOwner ),
 								contract,
+								previousOwner,
 								newOwner
 							)
+
+							expect(
+								await contract.owner()
+							).to.equal( newOwner )
 						})
 
-						describe( `Contract owner transfering ownership`, function () {
-							it( `Contract owner should now be User1`, async function () {
-								const previousOwner = users[ CONTRACT_DEPLOYER ].address
-								const newOwner      = users[ USER1 ].address
-								await shouldEmitOwnershipTransferredEvent(
-									contract.connect( users[ CONTRACT_DEPLOYER ] )
-													.transferOwnership( newOwner ),
-									contract,
-									previousOwner,
-									newOwner
-								)
+						it( `Contract owner should now be the NULL address`, async function () {
+							const previousOwner = users[ CONTRACT_DEPLOYER ].address
+							const newOwner      = ethers.constants.AddressZero
+							await shouldEmitOwnershipTransferredEvent(
+								contract.connect( users[ CONTRACT_DEPLOYER ] )
+												.transferOwnership( newOwner ),
+								contract,
+								previousOwner,
+								newOwner
+							)
 
-								expect(
-									await contract.owner()
-								).to.equal( newOwner )
-							})
-
-							it( `Contract owner should now be the NULL address`, async function () {
-								const previousOwner = users[ CONTRACT_DEPLOYER ].address
-								const newOwner      = ethers.constants.AddressZero
-								await shouldEmitOwnershipTransferredEvent(
-									contract.connect( users[ CONTRACT_DEPLOYER ] )
-													.transferOwnership( newOwner ),
-									contract,
-									previousOwner,
-									newOwner
-								)
-
-								expect(
-									await contract.owner()
-								).to.equal( ethers.constants.AddressZero )
-							})
+							expect(
+								await contract.owner()
+							).to.equal( ethers.constants.AddressZero )
 						})
-					}
+					})
 				})
 			}
 		})
