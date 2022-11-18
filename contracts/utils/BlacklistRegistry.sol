@@ -9,6 +9,8 @@ pragma solidity 0.8.17;
 abstract contract BlacklistRegistry {
   /**
   * @dev Thrown when a blacklisted operator tries to operate.
+  * 
+  * @param operator : address that is trying to approve themselves
   */
 	error BlacklistRegistry_NOT_ALLOWED( address operator );
 
@@ -60,7 +62,6 @@ abstract contract BlacklistRegistry {
 	* 
 	* Note: Use this function to allow whitelisting of registered proxy.
 	* 
-	* @param tokenOwner_ : the address the proxy operates on the behalf of
 	* @param operator_   : the proxy address that operates on behalf of the token owner
 	* 
 	* @return bool : whether `operator_` is allowed to operate on behalf of `tokenOwner_` or not

@@ -39,7 +39,7 @@
 	async function shouldRevertWhenCallerIsNotContractOwner ( promise, contract, operator, error ) {
 		if ( typeof error === 'undefined' ) {
 			await expect( promise )
-				.to.be.revertedWithCustomError( contract, `IOwnable_NOT_OWNER` )
+				.to.be.revertedWithCustomError( contract, `IERC173_NOT_OWNER` )
 				.withArgs( operator )
 		}
 		else {
@@ -48,8 +48,8 @@
 		}
 	}
 
-	function shouldBehaveLikeIOwnable ( fixture, TEST, CONTRACT ) {
-		describe( `Should behave like IOwnable`, function () {
+	function shouldBehaveLikeERC173 ( fixture, TEST, CONTRACT ) {
+		describe( `Should behave like ERC173`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
@@ -137,7 +137,7 @@
 // *****           EXPORT           *****
 // **************************************
 module.exports = {
-	shouldBehaveLikeIOwnable,
 	shouldEmitOwnershipTransferredEvent,
 	shouldRevertWhenCallerIsNotContractOwner,
+	shouldBehaveLikeERC173,
 }

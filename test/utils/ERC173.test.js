@@ -1,4 +1,4 @@
-const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IOwnable.sol/Mock_IOwnable.json` )
+const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_ERC173.sol/Mock_ERC173.json` )
 // **************************************
 // *****           IMPORT           *****
 // **************************************
@@ -27,9 +27,9 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IOwnable.s
 	} = require( `../fail-test-module` )
 
 	const {
-		shouldBehaveLikeIOwnable,
+		shouldBehaveLikeERC173,
 		shouldRevertWhenCallerIsNotContractOwner,
-	} = require( `../utils/behavior.IOwnable` )
+	} = require( `../utils/behavior.ERC173` )
 // **************************************
 
 // **************************************
@@ -37,7 +37,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IOwnable.s
 // **************************************
 	// For contract data
 	const CONTRACT_INTERFACE = {
-		NAME : `Mock_IOwnable`,
+		NAME : `Mock_ERC173`,
 		EVENTS : {
 			OwnershipTransferred : `OwnershipTransferred`,
 		},
@@ -54,7 +54,7 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IOwnable.s
 	}
 
 	const TEST_DATA = {
-		NAME : `IOwnable`,
+		NAME : `ERC173`,
 		EVENTS : {
 			OwnershipTransferred : true,
 		},
@@ -162,6 +162,6 @@ const ARTIFACT = require( `../../artifacts/contracts/mocks/utils/Mock_IOwnable.s
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
 		testInvalidInputs( fixture, TEST_DATA, CONTRACT_INTERFACE )
-		shouldBehaveLikeIOwnable( fixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeERC173( fixture, TEST_DATA, CONTRACT_INTERFACE )
 	}
 })

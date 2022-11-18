@@ -10,8 +10,8 @@ interface IERC1155Errors {
   /**
   * @dev Thrown when `operator` has not been approved to manage `tokenId` on behalf of `tokenOwner`.
   * 
-  * @param tokenOwner : address owning the token
-  * @param operator   : address trying to manage the token
+  * @param from     : address owning the token
+  * @param operator : address trying to manage the token
   */
   error IERC1155_CALLER_NOT_APPROVED( address from, address operator );
   /**
@@ -23,11 +23,9 @@ interface IERC1155Errors {
   */
   error IERC1155_INSUFFICIENT_BALANCE( address from, uint256 id, uint256 balance );
   /**
-  * @dev Thrown when `operator` tries to approve themselves for managing a token they own.
-  * 
-  * @param operator : address that is trying to approve themselves
+  * @dev Thrown when operator tries to approve themselves for managing a token they own.
   */
-  error IERC1155_INVALID_APPROVAL( address operator );
+  error IERC1155_INVALID_CALLER_APPROVAL();
   /**
   * @dev Thrown when a token is being transferred to the zero address.
   */
