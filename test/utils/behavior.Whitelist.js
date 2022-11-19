@@ -129,7 +129,7 @@
 	async function shouldRevertWhenWitelistIsNotSet ( promise, contract, error ) {
 		if ( typeof error === 'undefined' ) {
 			await expect( promise )
-				.to.be.revertedWithCustomError( contract, `IWhitelistable_NOT_SET` )
+				.to.be.revertedWithCustomError( contract, `Whitelist_NOT_SET` )
 		}
 		else {
 			await expect( promise )
@@ -140,7 +140,7 @@
 	async function shouldRevertWhenWhitelistIsConsumed ( promise, contract, account, error ) {
 		if ( typeof error === 'undefined' ) {
 			await expect( promise )
-				.to.be.revertedWithCustomError( contract, `IWhitelistable_CONSUMED` )
+				.to.be.revertedWithCustomError( contract, `Whitelist_CONSUMED` )
 				.withArgs( account )
 		}
 		else {
@@ -152,7 +152,7 @@
 	async function shouldRevertWhenNotWhitelisted ( promise, contract, account, error ) {
 		if ( typeof error === 'undefined' ) {
 			await expect( promise )
-				.to.be.revertedWithCustomError( contract, `IWhitelistable_FORBIDDEN` )
+				.to.be.revertedWithCustomError( contract, `Whitelist_FORBIDDEN` )
 				.withArgs( account )
 		}
 		else {
