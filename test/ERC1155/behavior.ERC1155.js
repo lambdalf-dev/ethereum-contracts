@@ -162,6 +162,16 @@
 				.to.be.revertedWith( error )
 		}
 	}
+	async function shouldRevertWhenTransferingToNullAddress( promise, contract, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IERC1155_INVALID_TRANSFER` )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
+	}
 // **************************************
 
 // **************************************
@@ -180,4 +190,5 @@ module.exports = {
 	shouldRevertWhenRequestedTokenDoesNotExist,
 	shouldRevertWhenTokenOwnerDoesNotOwnEnoughTokens,
 	shouldRevertWhenTransferingToNonERC1155ReceiverContract,
+	shouldRevertWhenTransferingToNullAddress,
 }
