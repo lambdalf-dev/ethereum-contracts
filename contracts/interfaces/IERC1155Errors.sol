@@ -15,6 +15,12 @@ interface IERC1155Errors {
   */
   error IERC1155_CALLER_NOT_APPROVED( address from, address operator );
   /**
+  * @dev Thrown when trying to create series `id` that already exists.
+  * 
+  * @param id : identifier of the NFT being referenced
+  */
+  error IERC1155_EXISTANT_TOKEN( uint256 id );
+  /**
   * @dev Thrown when `from` tries to transfer more than they own.
   * 
   * @param from    : address that the NFT are being transferred from

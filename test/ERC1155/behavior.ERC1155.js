@@ -119,6 +119,17 @@
 			}
 		}
 	}
+	async function shouldRevertWhenNewSeriesAlreadyExist( promise, contract, id, error ) {
+		if ( typeof error === 'undefined' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, `IERC1155_EXISTANT_TOKEN` )
+				.withArgs( id )
+		}
+		else {
+			await expect( promise )
+				.to.be.revertedWith( error )
+		}
+	}
 	async function shouldRevertWhenRequestedTokenDoesNotExist( promise, contract, id, error ) {
 		if ( typeof error === 'undefined' ) {
 			await expect( promise )
@@ -165,6 +176,7 @@ module.exports = {
 	shouldRevertWhenArrayLengthsDontMatch,
 	shouldRevertWhenCallerIsNotApproved,
 	shouldRevertWhenERC1155ReceiverRejectsTransfer,
+	shouldRevertWhenNewSeriesAlreadyExist,
 	shouldRevertWhenRequestedTokenDoesNotExist,
 	shouldRevertWhenTokenOwnerDoesNotOwnEnoughTokens,
 	shouldRevertWhenTransferingToNonERC1155ReceiverContract,
