@@ -10,40 +10,50 @@ const TEST_ACTIVATION = {
 	// *****            UTIL            *****
 	// **************************************
 		ContractMetadata              : true,
-		ERC2981Base                   : true,
-		IOwnable                      : true,
-		IPausable                     : true,
-		IPausable_Extended            : true,
-		ITradable                     : true,
-		IWhitelistable_ECDSA          : true,
-		IWhitelistable_Merkle         : true,
-		IWhitelistable_MerkleMultiple : true,
+		ContractState                 : true,
+		ERC173                        : true,
+		ERC2981                       : true,
+		ProxyAccess                   : true,
+		Whitelist_ECDSA               : true,
+		Whitelist_Merkle              : true,
+		Whitelist_MerkleMultiple      : true,
 	// **************************************
 
 	// **************************************
 	// *****           ERC721           *****
 	// **************************************
-		Consec_ERC721Batch            : true,
+		Consec_ERC721Batch            : false,
 		ERC721A                       : false,
 		ERC721B                       : false,
 		ERC721OZ                      : false,
-		Inter_ERC721Batch             : true,
-		Reg_ERC721Batch               : true,
+		Reg_ERC721Batch               : false,
 	// **************************************
 
 	// **************************************
 	// *****     ERC721  EXTENSIONS     *****
 	// **************************************
-		Consec_ERC721BatchBurnable    : true,
-		Reg_ERC721BatchBurnable       : true,
+		Consec_ERC721BatchBurnable    : false,
+		Reg_ERC721BatchBurnable       : false,
+	// **************************************
+
+	// **************************************
+	// *****          ERC1155           *****
+	// **************************************
+		ERC1155                       : false,
 	// **************************************
 
 	// **************************************
 	// *****          NFT BASE          *****
 	// **************************************
-		NFTBaseC                      : true,
-		NFTBaseR                      : true,
-		NFTFree                       : true,
+		NFTBaseC                      : false,
+		NFTBaseR                      : false,
+		NFTFree                       : false,
+	// **************************************
+
+	// **************************************
+	// *****          TEMPLATE          *****
+	// **************************************
+		NFT721                        : false,
 	// **************************************
 
 	// **************************************

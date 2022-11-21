@@ -33,6 +33,7 @@
 		IERC1155SingleReceiver : '0xf23a6e61',
 		IERC1155BatchReceiver  : '0xbc197c81',
 		IERC165                : '0x01ffc9a7',
+		IERC173                : '0x7f5828d0',
 		IERC2981               : '0x2a55205a',
 		IERC721                : '0x80ac58cd',
 		IERC721Metadata        : '0x5b5e139f',
