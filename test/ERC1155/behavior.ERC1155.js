@@ -19,6 +19,7 @@
 
 	const { ethers } = require( `hardhat` )
 	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
+	const { PANIC_CODES } = require("@nomicfoundation/hardhat-chai-matchers/panic")
 
 	const {
 		INTERFACE_ID,
@@ -105,13 +106,17 @@
 				.to.be.revertedWithCustomError( contract, `IERC1155_REJECTED_TRANSFER` )
 		}
 		else {
-			if ( error == 'custom error' ) {
+			if ( error == ERC1155ReceiverError.RevertWithError ) {
 				await expect( promise )
 					.to.be.revertedWithCustomError( receiverContract, `ERC1155ReceiverError` )
 			}
-			else if ( error == 'panic code' ) {
+			else if ( error == ERC1155ReceiverError.Panic ) {
 				await expect( promise )
-					.to.be.revertedWithPanic()
+					.to.be.revertedWithPanic( PANIC_CODES.DIVISION_BY_ZERO )
+			}
+			else if ( error == ERC1155ReceiverError.RevertWithMessage ) {
+				await expect( promise )
+					.to.be.revertedWith( 'Mock_ERC1155Receiver: reverting' )
 			}
 			else {
 				await expect( promise )
