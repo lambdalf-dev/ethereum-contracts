@@ -19,7 +19,6 @@
 
 	const { ethers } = require( `hardhat` )
 	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
-	const { PANIC_CODES } = require("@nomicfoundation/hardhat-chai-matchers/panic")
 
 	const {
 		INTERFACE_ID,
@@ -112,7 +111,7 @@
 			}
 			else if ( error == ERC1155ReceiverError.Panic ) {
 				await expect( promise )
-					.to.be.revertedWithPanic( PANIC_CODES.DIVISION_BY_ZERO )
+					.to.be.reverted
 			}
 			else if ( error == ERC1155ReceiverError.RevertWithMessage ) {
 				await expect( promise )
