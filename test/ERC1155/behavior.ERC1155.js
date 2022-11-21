@@ -178,6 +178,7 @@
 // *****           EXPORT           *****
 // **************************************
 module.exports = {
+	ERC1155ReceiverError,
 	shouldEmitTransferSingleEvent,
 	shouldEmitTransferBatchEvent,
 	shouldEmitApprovalForAllEvent,
