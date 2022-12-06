@@ -59,50 +59,42 @@
 				})
 
 				describe( CONTRACT.METHODS.name.SIGNATURE, function () {
-					if ( TEST.METHODS.name ) {
-						it( `Name should be "${ TEST.PARAMS.name_ }"`, async function () {
-							expect(
-								await contract.name()
-							).to.equal( TEST.PARAMS.name_ )
-						})
-					}
+					it( `Name should be "${ TEST.PARAMS.name_ }"`, async function () {
+						expect(
+							await contract.name()
+						).to.equal( TEST.PARAMS.name_ )
+					})
 				})
 
 				describe( CONTRACT.METHODS.symbol.SIGNATURE, function () {
-					if ( TEST.METHODS.symbol ) {
-						it( `Symbol should be "${ TEST.PARAMS.symbol_ }"`, async function () {
-							expect(
-								await contract.symbol()
-							).to.equal( TEST.PARAMS.symbol_ )
-						})
-					}
+					it( `Symbol should be "${ TEST.PARAMS.symbol_ }"`, async function () {
+						expect(
+							await contract.symbol()
+						).to.equal( TEST.PARAMS.symbol_ )
+					})
 				})
 
 				describe( CONTRACT.METHODS.tokenURI.SIGNATURE, function () {
-					if ( TEST.METHODS.tokenURI ) {
-						it( `Should be reverted when requesting an unminted token`, async function () {
-							const tokenId = TEST.UNMINTED_TOKEN
-							await shouldRevertWhenRequestedTokenDoesNotExist(
-								contract.tokenURI( tokenId ),
-								contract,
-								tokenId
-							)
-						})
-
-						it( `First token URI should be "${ TEST.FIRST_TOKEN }"`, async function () {
-							const tokenId = TEST.FIRST_TOKEN
-							expect(
-								await contract.tokenURI( tokenId )
-							).to.equal( `${ TEST.INIT_BASE_URI }${ tokenId }` )
-						})
-
-						it( `Second token URI should be "${ TEST.SECOND_TOKEN }"`, async function () {
-							const tokenId = TEST.SECOND_TOKEN
-							expect(
-								await contract.tokenURI( tokenId )
-							).to.equal( `${ TEST.INIT_BASE_URI }${ tokenId }` )
-						})
-					}
+					it( `Should be reverted when requesting an unminted token`, async function () {
+						const tokenId = TEST.UNMINTED_TOKEN
+						await shouldRevertWhenRequestedTokenDoesNotExist(
+							contract.tokenURI( tokenId ),
+							contract,
+							tokenId
+						)
+					})
+					it( `First token URI should be "${ TEST.FIRST_TOKEN }"`, async function () {
+						const tokenId = TEST.FIRST_TOKEN
+						expect(
+							await contract.tokenURI( tokenId )
+						).to.equal( `${ TEST.INIT_BASE_URI }${ tokenId }` )
+					})
+					it( `Second token URI should be "${ TEST.SECOND_TOKEN }"`, async function () {
+						const tokenId = TEST.SECOND_TOKEN
+						expect(
+							await contract.tokenURI( tokenId )
+						).to.equal( `${ TEST.INIT_BASE_URI }${ tokenId }` )
+					})
 				})
 			}
 		})

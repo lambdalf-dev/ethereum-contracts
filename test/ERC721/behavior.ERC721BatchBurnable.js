@@ -63,45 +63,41 @@
 				})
 
 				describe( CONTRACT.METHODS.burn.SIGNATURE, function() {
-					if ( TEST.METHODS.burn ) {
-						it( `Should be reverted when trying to burn a token not minted`, async function() {
-							const tokenId = TEST.UNMINTED_TOKEN
-							await shouldRevertWhenRequestedTokenDoesNotExist(
-								contract.connect( users[ TOKEN_OWNER ] )
-												.burn( tokenId ),
-								contract,
-								tokenId
-							)
-						})
-
-						it( `Should be reverted when trying to burn a token not owned`, async function() {
-							const tokenId    = TEST.TARGET_TOKEN
-							const tokenOwner = users[ TOKEN_OWNER ].address
-							const operator   = users[ USER1 ].address
-							await shouldRevertWhenCallerIsNotApproved(
-								contract.connect( users[ USER1 ] )
-												.burn( tokenId ),
-								contract,
-								tokenOwner,
-								operator,
-								tokenId
-							)
-						})
-
-						it( `Contract should emit a ${ CONTRACT.EVENTS.Transfer } event mentioning token ${ TEST.TARGET_TOKEN } was transfered from ${ USER_NAMES[ TOKEN_OWNER ] } to the NULL address`, async function() {
-							const tokenId = TEST.TARGET_TOKEN
-							const from    = users[ TOKEN_OWNER ].address
-							const to      = ethers.constants.AddressZero
-							await shouldEmitTransferEvent(
-								contract.connect( users[ TOKEN_OWNER ] )
-												.burn( tokenId ),
-								contract,
-								from,
-								to,
-								tokenId
-							)
-						})
-					}
+					it( `Should be reverted when trying to burn a token not minted`, async function() {
+						const tokenId = TEST.UNMINTED_TOKEN
+						await shouldRevertWhenRequestedTokenDoesNotExist(
+							contract.connect( users[ TOKEN_OWNER ] )
+											.burn( tokenId ),
+							contract,
+							tokenId
+						)
+					})
+					it( `Should be reverted when trying to burn a token not owned`, async function() {
+						const tokenId    = TEST.TARGET_TOKEN
+						const tokenOwner = users[ TOKEN_OWNER ].address
+						const operator   = users[ USER1 ].address
+						await shouldRevertWhenCallerIsNotApproved(
+							contract.connect( users[ USER1 ] )
+											.burn( tokenId ),
+							contract,
+							tokenOwner,
+							operator,
+							tokenId
+						)
+					})
+					it( `Contract should emit a ${ CONTRACT.EVENTS.Transfer } event mentioning token ${ TEST.TARGET_TOKEN } was transfered from ${ USER_NAMES[ TOKEN_OWNER ] } to the NULL address`, async function() {
+						const tokenId = TEST.TARGET_TOKEN
+						const from    = users[ TOKEN_OWNER ].address
+						const to      = ethers.constants.AddressZero
+						await shouldEmitTransferEvent(
+							contract.connect( users[ TOKEN_OWNER ] )
+											.burn( tokenId ),
+							contract,
+							from,
+							to,
+							tokenId
+						)
+					})
 				})
 			}
 		})
@@ -131,64 +127,54 @@
 				})
 
 				describe( CONTRACT.METHODS.ownerOf.SIGNATURE, function () {
-					if ( TEST.METHODS.ownerOf ) {
-						it( `Owner of burnt token should be reverted`, async function() {
-							const tokenId = TEST.TARGET_TOKEN
-							await shouldRevertWhenRequestedTokenDoesNotExist(
-								contract.ownerOf( tokenId ),
-								contract,
-								tokenId
-							)
-						})
-					}
+					it( `Owner of burnt token should be reverted`, async function() {
+						const tokenId = TEST.TARGET_TOKEN
+						await shouldRevertWhenRequestedTokenDoesNotExist(
+							contract.ownerOf( tokenId ),
+							contract,
+							tokenId
+						)
+					})
 				})
 
 				describe( CONTRACT.METHODS.balanceOf.SIGNATURE, function () {
-					if ( TEST.METHODS.balanceOf ) {
-						it( `Balance of ${ USER_NAMES[ TOKEN_OWNER ] } should now be ${ ( TEST.TOKEN_OWNER_SUPPLY - 1 ).toString() }`, async function() {
-							const tokenOwner = users[ TOKEN_OWNER ].address
-							expect(
-								await contract.balanceOf( tokenOwner )
-							).to.equal( TEST.TOKEN_OWNER_SUPPLY - 1 )
-						})
-					}
+					it( `Balance of ${ USER_NAMES[ TOKEN_OWNER ] } should now be ${ ( TEST.TOKEN_OWNER_SUPPLY - 1 ).toString() }`, async function() {
+						const tokenOwner = users[ TOKEN_OWNER ].address
+						expect(
+							await contract.balanceOf( tokenOwner )
+						).to.equal( TEST.TOKEN_OWNER_SUPPLY - 1 )
+					})
 				})
 
 				describe( CONTRACT.METHODS.totalSupply.SIGNATURE, function () {
-					if ( TEST.METHODS.totalSupply ) {
-						it( `Total supply should now be ${ TEST.MINTED_SUPPLY - 1 }`, async function () {
-							expect(
-								await contract.totalSupply()
-							).to.equal( TEST.MINTED_SUPPLY - 1 )
-						})
-					}
+					it( `Total supply should now be ${ TEST.MINTED_SUPPLY - 1 }`, async function () {
+						expect(
+							await contract.totalSupply()
+						).to.equal( TEST.MINTED_SUPPLY - 1 )
+					})
 				})
 
 				describe( CONTRACT.METHODS.getApproved.SIGNATURE, function () {
-					if ( TEST.METHODS.getApproved ) {
-						it( `Approved addresses for burnt token should be the NULL address`, async function() {
-							const tokenId = TEST.TARGET_TOKEN
-							expect(
-								await contract.getApproved( tokenId )
-							).to.equal( ethers.constants.AddressZero )
-						})
-					}
+					it( `Approved addresses for burnt token should be the NULL address`, async function() {
+						const tokenId = TEST.TARGET_TOKEN
+						expect(
+							await contract.getApproved( tokenId )
+						).to.equal( ethers.constants.AddressZero )
+					})
 				})
 
 				describe( CONTRACT.METHODS.transferFrom.SIGNATURE, function () {
-					if ( TEST.METHODS.transferFrom ) {
-						it( `Trying to transfer burnt token should be reverted`, async function() {
-							const from    = users[ TOKEN_OWNER ].address
-							const to      = users[ TOKEN_OWNER ].address
-							const tokenId = TEST.TARGET_TOKEN
-							await shouldRevertWhenRequestedTokenDoesNotExist(
-								contract.connect( users[ TOKEN_OWNER ] )
-												.transferFrom( from, to, tokenId ),
-								contract,
-								tokenId
-							)
-						})
-					}
+					it( `Trying to transfer burnt token should be reverted`, async function() {
+						const from    = users[ TOKEN_OWNER ].address
+						const to      = users[ TOKEN_OWNER ].address
+						const tokenId = TEST.TARGET_TOKEN
+						await shouldRevertWhenRequestedTokenDoesNotExist(
+							contract.connect( users[ TOKEN_OWNER ] )
+											.transferFrom( from, to, tokenId ),
+							contract,
+							tokenId
+						)
+					})
 				})
 			}
 		})
