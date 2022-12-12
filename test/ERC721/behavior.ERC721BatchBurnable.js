@@ -85,7 +85,7 @@
 							tokenId
 						)
 					})
-					it( `Contract should emit a ${ CONTRACT.EVENTS.Transfer } event mentioning token ${ TEST.TARGET_TOKEN } was transfered from ${ USER_NAMES[ TOKEN_OWNER ] } to the NULL address`, async function() {
+					it( `Contract should emit a Transfer event mentioning token ${ TEST.TARGET_TOKEN } was transfered from ${ USER_NAMES[ TOKEN_OWNER ] } to the NULL address`, async function() {
 						const tokenId = TEST.TARGET_TOKEN
 						const from    = users[ TOKEN_OWNER ].address
 						const to      = ethers.constants.AddressZero
@@ -102,7 +102,6 @@
 			}
 		})
 	}
-
 	function shouldBehaveLikeERC721BatchBurnableAfterBurn ( fixture, TEST, CONTRACT ) {
 		describe( `Should behave like ERC721BatchBurnable after burning a token`, function() {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
@@ -126,56 +125,56 @@
 					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
 				})
 
-				describe( CONTRACT.METHODS.ownerOf.SIGNATURE, function () {
-					it( `Owner of burnt token should be reverted`, async function() {
-						const tokenId = TEST.TARGET_TOKEN
-						await shouldRevertWhenRequestedTokenDoesNotExist(
-							contract.ownerOf( tokenId ),
-							contract,
-							tokenId
-						)
+				// **************************************
+				// *****            VIEW            *****
+				// **************************************
+					describe( CONTRACT.METHODS.ownerOf.SIGNATURE, function () {
+						it( `Owner of burnt token should be reverted`, async function() {
+							const tokenId = TEST.TARGET_TOKEN
+							await shouldRevertWhenRequestedTokenDoesNotExist(
+								contract.ownerOf( tokenId ),
+								contract,
+								tokenId
+							)
+						})
 					})
-				})
+					describe( CONTRACT.METHODS.balanceOf.SIGNATURE, function () {
+						it( `Balance of ${ USER_NAMES[ TOKEN_OWNER ] } should now be ${ ( TEST.TOKEN_OWNER_SUPPLY - 1 ).toString() }`, async function() {
+							const tokenOwner = users[ TOKEN_OWNER ].address
+							expect(
+								await contract.balanceOf( tokenOwner )
+							).to.equal( TEST.TOKEN_OWNER_SUPPLY - 1 )
+						})
+					})
+					describe( CONTRACT.METHODS.getApproved.SIGNATURE, function () {
+						it( `Should be reverted when querying approval for burnt token`, async function() {
+							const tokenId = TEST.TARGET_TOKEN
+							await shouldRevertWhenRequestedTokenDoesNotExist(
+								contract.getApproved( tokenId ),
+								contract,
+								tokenId
+							)
+						})
+					})
+				// **************************************
 
-				describe( CONTRACT.METHODS.balanceOf.SIGNATURE, function () {
-					it( `Balance of ${ USER_NAMES[ TOKEN_OWNER ] } should now be ${ ( TEST.TOKEN_OWNER_SUPPLY - 1 ).toString() }`, async function() {
-						const tokenOwner = users[ TOKEN_OWNER ].address
-						expect(
-							await contract.balanceOf( tokenOwner )
-						).to.equal( TEST.TOKEN_OWNER_SUPPLY - 1 )
+				// **************************************
+				// *****           PUBLIC           *****
+				// **************************************
+					describe( CONTRACT.METHODS.transferFrom.SIGNATURE, function () {
+						it( `Trying to transfer burnt token should be reverted`, async function() {
+							const from    = users[ TOKEN_OWNER ].address
+							const to      = users[ TOKEN_OWNER ].address
+							const tokenId = TEST.TARGET_TOKEN
+							await shouldRevertWhenRequestedTokenDoesNotExist(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.transferFrom( from, to, tokenId ),
+								contract,
+								tokenId
+							)
+						})
 					})
-				})
-
-				describe( CONTRACT.METHODS.totalSupply.SIGNATURE, function () {
-					it( `Total supply should now be ${ TEST.MINTED_SUPPLY - 1 }`, async function () {
-						expect(
-							await contract.totalSupply()
-						).to.equal( TEST.MINTED_SUPPLY - 1 )
-					})
-				})
-
-				describe( CONTRACT.METHODS.getApproved.SIGNATURE, function () {
-					it( `Approved addresses for burnt token should be the NULL address`, async function() {
-						const tokenId = TEST.TARGET_TOKEN
-						expect(
-							await contract.getApproved( tokenId )
-						).to.equal( ethers.constants.AddressZero )
-					})
-				})
-
-				describe( CONTRACT.METHODS.transferFrom.SIGNATURE, function () {
-					it( `Trying to transfer burnt token should be reverted`, async function() {
-						const from    = users[ TOKEN_OWNER ].address
-						const to      = users[ TOKEN_OWNER ].address
-						const tokenId = TEST.TARGET_TOKEN
-						await shouldRevertWhenRequestedTokenDoesNotExist(
-							contract.connect( users[ TOKEN_OWNER ] )
-											.transferFrom( from, to, tokenId ),
-							contract,
-							tokenId
-						)
-					})
-				})
+				// **************************************
 			}
 		})
 	}
