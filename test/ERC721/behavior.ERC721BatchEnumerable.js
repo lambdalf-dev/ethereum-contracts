@@ -125,11 +125,11 @@
 							index
 						)
 					})
-					it( `Token at index ${ TEST.TARGET_INDEX } should be token ${ TEST.TARGET_INDEX }`, async function() {
+					it( `Token at index ${ TEST.TARGET_INDEX } should be token ${ TEST.TARGET_INDEX + 1 }`, async function() {
 						const index = TEST.TARGET_INDEX
 						expect(
 							await contract.tokenByIndex( index )
-						).to.equal( TEST.TARGET_INDEX )
+						).to.equal( TEST.TARGET_INDEX + 1 )
 					})
 				})
 
