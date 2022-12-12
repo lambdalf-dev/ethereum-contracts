@@ -59,18 +59,18 @@
 				})
 
 				describe( CONTRACT.METHODS.name.SIGNATURE, function () {
-					it( `Name should be "${ TEST.PARAMS.name_ }"`, async function () {
+					it( `Name should be "${ TEST.TOKEN_NAME }"`, async function () {
 						expect(
 							await contract.name()
-						).to.equal( TEST.PARAMS.name_ )
+						).to.equal( TEST.TOKEN_NAME )
 					})
 				})
 
 				describe( CONTRACT.METHODS.symbol.SIGNATURE, function () {
-					it( `Symbol should be "${ TEST.PARAMS.symbol_ }"`, async function () {
+					it( `Symbol should be "${ TEST.TOKEN_SYMBOL }"`, async function () {
 						expect(
 							await contract.symbol()
-						).to.equal( TEST.PARAMS.symbol_ )
+						).to.equal( TEST.TOKEN_SYMBOL )
 					})
 				})
 
