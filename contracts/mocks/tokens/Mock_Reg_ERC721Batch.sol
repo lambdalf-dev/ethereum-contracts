@@ -21,8 +21,8 @@ import "../../tokens/ERC721/Reg_ERC721Batch.sol";
 * those functions should be avoided inside non-view functions.
 */
 contract Mock_Reg_ERC721Batch is Reg_ERC721Batch {
-	constructor( string memory baseURI_, string memory symbol_, string memory name_ ) {
-		__init_ERC721Metadata( name_, symbol_, baseURI_ );
+	constructor( /*string memory baseURI_, string memory symbol_, string memory name_*/ ) {
+		// __init_ERC721Metadata( name_, symbol_, baseURI_ );
 	}
 
 	function mint( address to_, uint256 qty_ ) public {
@@ -34,7 +34,7 @@ contract Mock_Reg_ERC721Batch is Reg_ERC721Batch {
 		}
 	}
 
-	function setBaseURI( string memory baseURI_ ) public {
-		_setBaseURI( baseURI_ );
-	}
+	// function setBaseURI( string memory baseURI_ ) public {
+	// 	_setBaseURI( baseURI_ );
+	// }
 }
