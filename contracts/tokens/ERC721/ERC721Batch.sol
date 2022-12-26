@@ -21,7 +21,7 @@ import '../../interfaces/IERC721Receiver.sol';
 * Note: This implementation imposes a very expensive `balanceOf()` and `ownerOf()`.
 * It is not recommended to interract with those from another contract.
 */
-abstract contract Consec_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC2309 {
+abstract contract ERC721Batch is IERC721Errors, IERC165, IERC721, IERC2309 {
   uint256 private _nextId = 1;
 
   // Mapping from token ID to approved address
@@ -196,7 +196,7 @@ abstract contract Consec_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC230
     * @param toAddress_ : address receiving the NFTs
     * @param qty_       : number of NFTs being minted
     */
-    function _mint( address toAddress_, uint256 qty_ ) internal virtual {
+    function _mint2309( address toAddress_, uint256 qty_ ) internal virtual {
       uint256 _firstToken_ = _nextId;
       uint256 _nextStart_ = _firstToken_ + qty_;
       uint256 _lastToken_ = _nextStart_ - 1;
@@ -212,6 +212,39 @@ abstract contract Consec_ERC721Batch is IERC721Errors, IERC165, IERC721, IERC230
       }
 
       emit ConsecutiveTransfer( _firstToken_, _lastToken_, address( 0 ), toAddress_ );
+    }
+
+    /**
+    * @dev Mints `qty_` tokens and transfers them to `toAddress_`.
+    * 
+    * This internal function can be used to perform token minting.
+    * 
+    * Emits one or more {Transfer} event.
+    * 
+    * @param toAddress_ : address receiving the NFTs
+    * @param qty_       : number of NFTs being minted
+    */
+    function _mint( address toAddress_, uint256 qty_ ) internal virtual {
+      uint256 _firstToken_ = _nextId;
+      uint256 _nextStart_ = _firstToken_ + qty_;
+      uint256 _lastToken_ = _nextStart_ - 1;
+
+      _owners[ _firstToken_ ] = toAddress_;
+      if ( _lastToken_ > _firstToken_ ) {
+        _owners[ _lastToken_ ] = toAddress_;
+      }
+      _nextId = _nextStart_;
+
+      if ( ! _checkOnERC721Received( address( 0 ), toAddress_, _firstToken_, "" ) ) {
+        revert IERC721_NON_ERC721_RECEIVER( toAddress_ );
+      }
+
+      while ( _firstToken_ < _nextStart_ ) {
+        emit Transfer( address( 0 ), toAddress_, _firstToken_ );
+        unchecked {
+          _firstToken_ ++;
+        }
+      }
     }
 
     /**

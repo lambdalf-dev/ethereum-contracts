@@ -6,9 +6,9 @@
 
 pragma solidity 0.8.17;
 
-import "../Consec_ERC721Batch.sol";
+import "../ERC721Batch.sol";
 
-abstract contract Consec_ERC721BatchBurnable is Consec_ERC721Batch {
+abstract contract ERC721BatchBurnable is ERC721Batch {
   // List of burned tokens
   mapping( uint256 => bool ) private _burned;
 

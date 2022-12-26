@@ -46,8 +46,9 @@
 	} = require( `../ERC721/behavior.ERC721Batch` )
 
 	const {
-		shouldBehaveLikeERC721BatchMetadata,
-	} = require( `../ERC721/behavior.ERC721BatchMetadata` )
+		shouldBehaveLikeERC721BatchBurnableBeforeBurn,
+		shouldBehaveLikeERC721BatchBurnableAfterBurn,
+	} = require( `../ERC721/behavior.ERC721BatchBurnable` )
 
 	const {
 		shouldEmitConsecutiveTransferEvent,
@@ -59,7 +60,7 @@
 // **************************************
 	// For contract interface
 	const CONTRACT_INTERFACE = {
-		NAME : `Mock_Reg_ERC721BatchMetadata`,
+		NAME : `Mock_ERC721BatchBurnable`,
 		METHODS : {
 			// **************************************
 			// *****           PUBLIC           *****
@@ -67,6 +68,14 @@
 				mint : {
 					SIGNATURE : `mint(address,uint256)`,
 					PARAMS    : [ `to_`, `qty_` ],
+				},
+				mint2309 : {
+					SIGNATURE : `mint2309(address,uint256)`,
+					PARAMS    : [ `to_`, `qty_` ],
+				},
+				burn : {
+					SIGNATURE : `burn(uint256)`,
+					PARAMS    : [ `tokenId_` ],
 				},
 				// IERC721
 				approve : {
@@ -115,19 +124,6 @@
 					SIGNATURE : `ownerOf(uint256)`,
 					PARAMS    : [ `tokenId_` ],
 				},
-				// IERC721Metadata
-				name : {
-					SIGNATURE : `name()`,
-					PARAMS    : [],
-				},
-				symbol : {
-					SIGNATURE : `symbol()`,
-					PARAMS    : [],
-				},
-				tokenURI : {
-					SIGNATURE : `tokenURI(uint256)`,
-					PARAMS    : [ `index_` ],
-				},
 				// IERC165
 				supportsInterface : {
 					SIGNATURE : `supportsInterface(bytes4)`,
@@ -159,7 +155,7 @@
 
 	const TEST_DATA = {
 		// TEST NAME
-		NAME : `Reg_ERC721BatchMetadata`,
+		NAME : `ERC721BatchBurnable`,
 		// SUPPLY
 		INIT_SUPPLY                 : INIT_SUPPLY,
 		MINTED_SUPPLY               : INIT_SUPPLY + TOKEN_OWNER_SUPPLY + OTHER_OWNER_SUPPLY,
@@ -181,16 +177,10 @@
 		OTHER_OWNER_SUPPLY          : OTHER_OWNER_SUPPLY,
 		OTHER_OWNER_FIRST           : INIT_SUPPLY + OTHER_OWNER_FIRST,
 		OTHER_OWNER_LAST            : INIT_SUPPLY + OTHER_OWNER_LAST,
-		// METADATA
-		TOKEN_NAME                  : `NFT Collection`,
-		TOKEN_SYMBOL                : `NFT`,
-		INIT_BASE_URI               : `https://api.exemple.com/`,
-		NEW_BASE_URI                : `https://exemple.com/api/`,
 		// INTERFACES
 		INTERFACES : [
 			`IERC165`,
 			`IERC721`,
-			`IERC721Metadata`,
 		],
 	}
 
@@ -262,6 +252,29 @@
 			test_contract_deployer,
 		}
 	}
+	async function burnFixture() {
+		const {
+			test_user1,
+			test_user2,
+			test_contract,
+			test_token_owner,
+			test_other_owner,
+			test_contract_deployer,
+		} = await loadFixture( mintFixture )
+
+		test_tokenId = TEST_DATA.TARGET_TOKEN
+		await test_contract.connect( test_token_owner )
+											 .burn( test_tokenId )
+
+		return {
+			test_user1,
+			test_user2,
+			test_contract,
+			test_token_owner,
+			test_other_owner,
+			test_contract_deployer,
+		}
+	}
 // **************************************
 
 // **************************************
@@ -291,7 +304,20 @@
 					// **************************************
 					// *****           PUBLIC           *****
 					// **************************************
+						defaultArgs [ CONTRACT.METHODS.burn.SIGNATURE ] = {
+							err  : null,
+							args : [
+								TEST.TARGET_TOKEN,
+							],
+						}
 						defaultArgs [ CONTRACT.METHODS.mint.SIGNATURE ] = {
+							err  : null,
+							args : [
+								users[ USER1 ].address,
+								5,
+							],
+						}
+						defaultArgs [ CONTRACT.METHODS.mint2309.SIGNATURE ] = {
 							err  : null,
 							args : [
 								users[ USER1 ].address,
@@ -373,21 +399,6 @@
 								TEST.FIRST_TOKEN,
 							],
 						}
-						// IERC721Metadata
-						defaultArgs[ CONTRACT.METHODS.name.SIGNATURE ] = {
-							err  : null,
-							args : [],
-						}
-						defaultArgs[ CONTRACT.METHODS.symbol.SIGNATURE ] = {
-							err  : null,
-							args : [],
-						}
-						defaultArgs[ CONTRACT.METHODS.tokenURI.SIGNATURE ] = {
-							err  : null,
-							args : [
-								TEST.FIRST_TOKEN,
-							],
-						}
 						// IERC165
 						defaultArgs[ CONTRACT.METHODS.supportsInterface.SIGNATURE ] = {
 							err  : null,
@@ -412,10 +423,10 @@
 			}
 		})
 	}
-	function shouldBehaveLikeMock_Reg_ERC721BatchEnumerableAtDeploy ( fixture, TEST, CONTRACT ) {
+	function shouldBehaveLikeMock_ERC721BatchBurnableAtDeploy ( fixture, TEST, CONTRACT ) {
 		shouldBehaveLikeERC721BatchBeforeMint( fixture, TEST, CONTRACT )
 
-		describe( `Should behave like Mock_Reg_ERC721Batch before any token is minted`, function () {
+		describe( `Should behave like Mock_ERC721BatchBurnable before any token is minted`, function () {
 			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
 				beforeEach( async function () {
 					const {
@@ -600,13 +611,195 @@
 							).to.equal( TEST.TOKEN_OWNER_INIT_SUPPLY )
 						})
 					})
+					describe( CONTRACT.METHODS.mint2309.SIGNATURE, function () {
+						it( `Should be reverted when minting to the NULL address`, async function () {
+							const qty     = 1
+							const from    = ethers.constants.AddressZero
+							const to      = ethers.constants.AddressZero
+							const tokenId = TEST.FIRST_TOKEN
+							await shouldRevertWhenTransferingToNullAddress(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.mint2309( to, qty ),
+								contract
+							)
+						})
+						it( `Should be reverted when minting to non ERC721Receiver contract`, async function () {
+							const non_holder_artifact = await ethers.getContractFactory( 'Mock_NonERC721Receiver' )
+							const non_holder = await non_holder_artifact.deploy()
+
+							const qty     = 1
+							const from    = ethers.constants.AddressZero
+							const to      = non_holder.address
+							const tokenId = TEST.FIRST_TOKEN
+							await shouldRevertWhenTransferingToNonERC721Receiver(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.mint2309( to, qty ),
+								contract,
+								to
+							)
+						})
+						it( `Should be reverted when minting to a receiver contract returning unexpected value`, async function () {
+							const retval = INTERFACE_ID.IERC165
+							const error  = ERC721ReceiverError.None
+							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+							const invalidReceiver = await holder_artifact.deploy( retval, error )
+
+							const qty     = 1
+							const from    = ethers.constants.AddressZero
+							const to      = invalidReceiver.address
+							const tokenId = TEST.FIRST_TOKEN
+							await shouldRevertWhenTransferingToNonERC721Receiver(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.mint2309( to, qty ),
+								contract,
+								to
+							)
+						})
+						it( `Should be reverted when minting to a receiver contract that reverts with custom error`, async function () {
+							const retval = INTERFACE_ID.IERC721Receiver
+							const error  = ERC721ReceiverError.RevertWithERC721ReceiverError
+							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+							const invalidReceiver = await holder_artifact.deploy( retval, error )
+
+							const qty     = 1
+							const from    = ethers.constants.AddressZero
+							const to      = invalidReceiver.address
+							const tokenId = TEST.FIRST_TOKEN
+							await shouldRevertWhenTransferingToNonERC721Receiver(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.mint2309( to, qty ),
+								contract,
+								to,
+								ERC721ReceiverError.RevertWithERC721ReceiverError
+							)
+						})
+						it( `Should be reverted when minting to a receiver contract that reverts with message`, async function () {
+							const retval = INTERFACE_ID.IERC721Receiver
+							const error  = ERC721ReceiverError.RevertWithMessage
+							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+							const invalidReceiver = await holder_artifact.deploy( retval, error )
+
+							const qty     = 1
+							const from    = ethers.constants.AddressZero
+							const to      = invalidReceiver.address
+							const tokenId = TEST.FIRST_TOKEN
+							await shouldRevertWhenTransferingToNonERC721Receiver(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.mint2309( to, qty ),
+								contract,
+								to,
+								ERC721ReceiverError.RevertWithMessage
+							)
+						})
+						it( `Should be reverted when minting to a receiver contract that reverts without message`, async function () {
+							const retval = INTERFACE_ID.IERC721Receiver
+							const error  = ERC721ReceiverError.RevertWithoutMessage
+							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+							const invalidReceiver = await holder_artifact.deploy( retval, error )
+
+							const qty     = 1
+							const from    = ethers.constants.AddressZero
+							const to      = invalidReceiver.address
+							const tokenId = TEST.FIRST_TOKEN
+							await shouldRevertWhenTransferingToNonERC721Receiver(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.mint2309( to, qty ),
+								contract,
+								to
+							)
+						})
+						it( `Should be reverted when minting to a receiver contract that panics`, async function () {
+							const retval = INTERFACE_ID.IERC721Receiver
+							const error  = ERC721ReceiverError.Panic
+							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+							const invalidReceiver = await holder_artifact.deploy( retval, error )
+
+							const qty     = 1
+							const from    = ethers.constants.AddressZero
+							const to      = invalidReceiver.address
+							const tokenId = TEST.FIRST_TOKEN
+							await shouldRevertWhenTransferingToNonERC721Receiver(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.mint2309( to, qty ),
+								contract,
+								to,
+								ERC721ReceiverError.Panic
+							)
+						})
+						it( `To a valid ERC721Receiver contract`, async function () {
+							const retval = INTERFACE_ID.IERC721Receiver
+							const error  = ERC721ReceiverError.None
+							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
+							const holder = await holder_artifact.deploy( retval, error )
+
+							const qty         = 1
+							const to          = holder.address
+							const fromTokenId = TEST.FIRST_TOKEN
+							const toTokenId   = TEST.INIT_SUPPLY + qty
+							const fromAddress = ethers.constants.AddressZero
+							await shouldEmitConsecutiveTransferEvent(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.mint2309( to, qty ),
+								contract,
+								fromTokenId,
+								toTokenId,
+								fromAddress,
+								to,
+								1
+							)
+
+							expect(
+								await contract.ownerOf( toTokenId )
+							).to.equal( to )
+
+							expect(
+								await contract.ownerOf( fromTokenId )
+							).to.equal( to )
+
+							expect(
+								await contract.balanceOf( to )
+							).to.equal( 1 )
+						})
+						it( `${ USER_NAMES[ TOKEN_OWNER ] } should own ${ TEST.TOKEN_OWNER_INIT_SUPPLY } tokens`, async function() {
+							const qty         = TEST.TOKEN_OWNER_INIT_SUPPLY
+							const to          = users[ TOKEN_OWNER ].address
+							const fromTokenId = TEST.FIRST_TOKEN
+							const toTokenId   = TEST.INIT_SUPPLY + qty
+							const fromAddress = ethers.constants.AddressZero
+							await shouldEmitConsecutiveTransferEvent(
+								contract.connect( users[ TOKEN_OWNER ] )
+												.mint2309( to, qty ),
+								contract,
+								fromTokenId,
+								toTokenId,
+								fromAddress,
+								to
+							)
+
+							expect(
+								await contract.ownerOf( toTokenId )
+							).to.equal( to )
+
+							expect(
+								await contract.ownerOf( fromTokenId )
+							).to.equal( to )
+
+							const tokenOwner = users[ TOKEN_OWNER ].address
+							expect(
+								await contract.balanceOf( tokenOwner )
+							).to.equal( TEST.TOKEN_OWNER_INIT_SUPPLY )
+						})
+					})
 				// **************************************
 			}
 		})
 	}
-	function shouldBehaveLikeMock_Reg_ERC721BatchEnumerableAfterMint ( fixture, TEST, CONTRACT ) {
+	function shouldBehaveLikeMock_ERC721BatchBurnableAfterMint ( fixture, TEST, CONTRACT ) {
 		shouldBehaveLikeERC721BatchAfterMint( fixture, TEST, CONTRACT )
-		shouldBehaveLikeERC721BatchMetadata( fixture, TEST, CONTRACT )
+		shouldBehaveLikeERC721BatchBurnableBeforeBurn( fixture, TEST, CONTRACT )
+	}
+	function shouldBehaveLikeMock_ERC721BatchBurnableAfterBurn ( fixture, TEST, CONTRACT ) {
+		shouldBehaveLikeERC721BatchBurnableAfterBurn( fixture, TEST, CONTRACT )
 	}
 // **************************************
 
@@ -614,16 +807,21 @@
 // *****          TEST RUN          *****
 // **************************************
 describe( TEST_DATA.NAME, function () {
-	if ( true ) {
-		testInvalidInputs( deployFixture, TEST_DATA, CONTRACT_INTERFACE )
-	}
-	if ( true ) {
-		shouldSupportInterface( deployFixture, TEST_DATA.INTERFACES, CONTRACT_INTERFACE )
-	}
-	if ( true ) {
-		shouldBehaveLikeMock_Reg_ERC721BatchEnumerableAtDeploy( deployFixture, TEST_DATA, CONTRACT_INTERFACE )
-	}
-	if ( true ) {
-		shouldBehaveLikeMock_Reg_ERC721BatchEnumerableAfterMint( mintFixture, TEST_DATA, CONTRACT_INTERFACE )
+	if ( TEST_ACTIVATION.ERC721BatchBurnable ) {
+		if ( true ) {
+			testInvalidInputs( deployFixture, TEST_DATA, CONTRACT_INTERFACE )
+		}
+		if ( true ) {
+			shouldSupportInterface( deployFixture, TEST_DATA.INTERFACES, CONTRACT_INTERFACE )
+		}
+		if ( true ) {
+			shouldBehaveLikeMock_ERC721BatchBurnableAtDeploy( deployFixture, TEST_DATA, CONTRACT_INTERFACE )
+		}
+		if ( true ) {
+			shouldBehaveLikeMock_ERC721BatchBurnableAfterMint( mintFixture, TEST_DATA, CONTRACT_INTERFACE )
+		}
+		if ( true ) {
+			shouldBehaveLikeMock_ERC721BatchBurnableAfterBurn( burnFixture, TEST_DATA, CONTRACT_INTERFACE )
+		}
 	}
 })

@@ -3,13 +3,12 @@ const TEST_ACTIVATION = {
 	// *****           INPUTS           *****
 	// **************************************
 		CORRECT_INPUT                 : true,
-		INVALID_INPUT                 : true,
+		INVALID_INPUT                 : false,
 	// **************************************
 
 	// **************************************
 	// *****            UTIL            *****
 	// **************************************
-		ContractMetadata              : true,
 		ContractState                 : true,
 		ERC173                        : true,
 		ERC2981                       : true,
@@ -22,45 +21,27 @@ const TEST_ACTIVATION = {
 	// **************************************
 	// *****           ERC721           *****
 	// **************************************
-		Consec_ERC721Batch            : false,
-		ERC721A                       : false,
-		ERC721B                       : false,
-		ERC721OZ                      : false,
-		Reg_ERC721Batch               : false,
+		ERC721Batch                   : true,
 	// **************************************
 
 	// **************************************
 	// *****     ERC721  EXTENSIONS     *****
 	// **************************************
-		Consec_ERC721BatchBurnable    : false,
-		Reg_ERC721BatchBurnable       : false,
+		ERC721BatchBurnable           : true,
+		ERC721BatchEnumerable         : true,
+		ERC721BatchMetadata           : true,
 	// **************************************
 
 	// **************************************
 	// *****          ERC1155           *****
 	// **************************************
-		ERC1155                       : false,
+		ERC1155                       : true,
 	// **************************************
 
 	// **************************************
-	// *****          NFT BASE          *****
+	// *****     ERC1155 EXTENSIONS     *****
 	// **************************************
-		NFTBaseC                      : false,
-		NFTBaseR                      : false,
-		NFTFree                       : false,
-	// **************************************
-
-	// **************************************
-	// *****          TEMPLATE          *****
-	// **************************************
-		NFT721                        : false,
-	// **************************************
-
-	// **************************************
-	// *****      PRICE COMPARISON      *****
-	// **************************************
-		PRICE_MINT_ERC721             : false,
-		PRICE_TRANSFER_ERC721         : false,
+		ERC1155MetadataURI            : true,
 	// **************************************
 }
 

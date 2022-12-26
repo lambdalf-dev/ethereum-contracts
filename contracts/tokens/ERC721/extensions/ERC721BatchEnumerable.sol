@@ -7,7 +7,7 @@
 pragma solidity 0.8.17;
 
 import '../../../interfaces/IERC721Enumerable.sol';
-import '../../../tokens/ERC721/Reg_ERC721Batch.sol';
+import '../../../tokens/ERC721/ERC721Batch.sol';
 
 /**
 * @dev Required interface of an ERC721 compliant contract.
@@ -18,7 +18,7 @@ import '../../../tokens/ERC721/Reg_ERC721Batch.sol';
 * Note: This implementation imposes a very expensive `balanceOf()` and `ownerOf()`.
 * It is not recommended to interract with those from another contract.
 */
-abstract contract Reg_ERC721BatchEnumerable is Reg_ERC721Batch, IERC721Enumerable {
+abstract contract ERC721BatchEnumerable is ERC721Batch, IERC721Enumerable {
   // **************************************
   // *****          INTERNAL          *****
   // **************************************
