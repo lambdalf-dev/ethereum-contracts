@@ -6,6 +6,7 @@ require("hardhat-gas-reporter")
 require("solidity-coverage")
 require("./snapshot/snapshot")
 require("./snapshot/snapshotOS")
+require("./create-wallet/create-wallet")
 require("./generate-proofs/generate-proofs")
 require("./generate-proofs/generate-single-proof")
 
