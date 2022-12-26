@@ -28,25 +28,29 @@ abstract contract Whitelist_Merkle {
   */
 	error Whitelist_FORBIDDEN( address account );
 
-	bytes32 private _root;
-	mapping( address => uint256 ) private _consumed;
+  /**
+  * @dev A structure representing a specific whitelist.
+  */
+	struct Whitelist {
+		bytes32 root;
+		uint256 alloted;
+		mapping( address => uint256 ) consumed;
+	}
+
+	mapping( uint256 => Whitelist ) private _whitelists;
 
 	/**
-	* @dev Ensures that `account_` has `qty_` alloted access on the whitelist.
+	* @dev Ensures that `account_` is allowed to mint `qty_` token on the identified whitelist
 	* 
-	* @param account_ : the address to validate access
-	* @param proof_   : the Merkle proof to validate whitelist allocation
-	* @param alloted_ : the max amount of whitelist spots allocated
-	* @param qty_     : the amount of whitelist access requested
+	* @param account_     ~ type = address   : the address to verify
+	* @param proof_       ~ type = bytes32[] : the Merkle Proof for the whitelist
+	* @param qty_         ~ type = uint256   : the amount of tokens desired
+	* @param whitelistId_ ~ type = uint256   : the whitelist identifier
 	*/
-	modifier isWhitelisted( address account_, bytes32[] memory proof_, uint256 alloted_, uint256 qty_ ) {
-		// if ( qty_ > alloted_ ) {
-		// 	revert Whitelist_FORBIDDEN( account_ );
-		// }
+	modifier isWhitelisted( address account_, bytes32[] memory proof_, uint256 qty_, uint256 whitelistId_ ) {
+		uint256 _alloted_ = checkWhitelistAllowance( account_, proof_, whitelistId_ );
 
-		uint256 _allowed_ = checkWhitelistAllowance( account_, proof_/*, alloted_*/ );
-
-		if ( _allowed_ < qty_ ) {
+		if ( _alloted_ < qty_ ) {
 			revert Whitelist_FORBIDDEN( account_ );
 		}
 
@@ -54,70 +58,77 @@ abstract contract Whitelist_Merkle {
 	}
 
 	/**
-	* @dev Internal function setting the pass to protect the whitelist.
+	* @dev Internal function setting up a whitelist.
 	* 
-	* @param root_ : the Merkle root to hold the whitelist
+	* @param root_        ~ type = bytes32 : the whitelist's Merkle root
+	* @param alloted_     ~ type = uint256 : the max amount people can mint on whitelist
+	* @param whitelistId_ ~ type = uint256 : the whitelist identifier
 	*/
-	function _setWhitelist( bytes32 root_ ) internal virtual {
-		_root = root_;
+	function _setWhitelist( bytes32 root_, uint256 alloted_, uint256 whitelistId_ ) internal virtual {
+		_whitelists[ whitelistId_ ].alloted = alloted_;
+		_whitelists[ whitelistId_ ].root    = root_;
 	}
 
 	/**
-	* @dev Returns the amount that `account_` is allowed to access from the whitelist.
-	* 
-	* @param account_ : the address to validate access
-	* @param proof_   : the Merkle proof to validate whitelist allocation
-	* 
-	* @return uint256 : the total amount of whitelist allocation remaining for `account_`
+	* @dev Internal function returning the amount that `account_` is allowed to access from the whitelist.
 	* 
 	* Requirements:
 	* 
-	* - `_root` must be set.
+	* - the whitelist with identifier `whitelistId_` must be set.
+	* 
+	* @param account_     ~ type = address   : the address to verify
+	* @param proof_       ~ type = bytes32[] : the Merkle Proof for the whitelist
+	* @param whitelistId_ ~ type = uint256   : the whitelist identifier
+	* 
+	* @return uint256 : the total amount of whitelist allocation remaining for `account_`
 	*/
-	function checkWhitelistAllowance( address account_, bytes32[] memory proof_/*, uint256 alloted_*/ ) public view returns ( uint256 ) {
-		if ( _root == 0 ) {
+	function checkWhitelistAllowance( address account_, bytes32[] memory proof_, uint256 whitelistId_ ) public view returns ( uint256 ) {
+		if ( _whitelists[ whitelistId_ ].root == 0 ) {
 			revert Whitelist_NOT_SET();
 		}
 
-		if ( _consumed[ account_ ] >= 1/*alloted_*/ ) {
+		if ( _whitelists[ whitelistId_ ].consumed[ account_ ] >= _whitelists[ whitelistId_ ].alloted ) {
 			revert Whitelist_CONSUMED( account_ );
 		}
 
-		if ( ! _computeProof( account_, proof_ ) ) {
+		if ( ! _computeProof( account_, proof_, whitelistId_ ) ) {
 			revert Whitelist_FORBIDDEN( account_ );
 		}
 
-		// uint256 _res_;
-		// unchecked {
-		// 	_res_ = alloted_ - _consumed[ account_ ];
-		// }
+		uint256 _res_;
+		unchecked {
+			_res_ = _whitelists[ whitelistId_ ].alloted - _whitelists[ whitelistId_ ].consumed[ account_ ];
+		}
 
-		return 1/*_res_*/;
+		return _res_;
 	}
 
 	/**
-	* @dev Processes the Merkle proof to determine if `account_` is whitelisted.
+	* @dev Internal function ensuring that `account_` is indeed on the whitelist identified
 	* 
-	* @param account_ : the address to validate access
-	* @param proof_   : the Merkle proof to validate whitelist allocation
+	* @param account_     ~ type = address   : the address to verify
+	* @param proof_       ~ type = bytes32[] : the Merkle Proof for the whitelist
+	* @param whitelistId_ ~ type = uint256   : the whitelist identifier
 	* 
 	* @return bool : whether `account_` is whitelisted or not
 	*/
-	function _computeProof( address account_, bytes32[] memory proof_ ) private view returns ( bool ) {
-		bytes32 leaf = keccak256(abi.encodePacked(account_));
-		return MerkleProof.processProof( proof_, leaf ) == _root;
+	function _computeProof( address account_, bytes32[] memory proof_, uint256 whitelistId_ ) private view returns ( bool ) {
+		bytes32 _leaf_ = keccak256( abi.encodePacked( account_ ) );
+		return MerkleProof.processProof( proof_, _leaf_ ) == _whitelists[ whitelistId_ ].root;
 	}
 
 	/**
-	* @dev Consumes `amount_` whitelist access passes from `account_`.
+	* @dev Internal function consuming `amount_` whitelist access from `account_`.
 	* 
-	* @param account_ : the address to consume access from
+	* Note: Before calling this function, eligibility should be checked through {_checkWhitelistAllowance}
 	* 
-	* Note: Before calling this function, eligibility should be checked through {Whitelistable-checkWhitelistAllowance}.
+	* @param account_     ~ type = address   : the address to verify
+	* @param qty_         ~ type = uint256   : the amount of whitelist allowance consumed
+	* @param whitelistId_ ~ type = uint256   : the whitelist identifier
 	*/
-	function _consumeWhitelist( address account_/*, uint256 qty_*/ ) internal {
+	function _consumeWhitelist( address account_, uint256 qty_, uint256 whitelistId_ ) internal {
 		unchecked {
-			_consumed[ account_ ] += 1/*qty_*/;
+			_whitelists[ whitelistId_ ].consumed[ account_ ] += qty_;
 		}
 	}
 }
