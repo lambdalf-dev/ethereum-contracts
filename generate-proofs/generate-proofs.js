@@ -1,6 +1,5 @@
 require("dotenv").config()
 require("@nomiclabs/hardhat-ethers")
-
 const fs = require( 'fs' )
 const {
 	keccak256,
@@ -10,14 +9,15 @@ const {
 	privateToAddress,
 } = require( `ethereumjs-utils` )
 const crypto = require( `crypto` )
+const whitelist = require( `./whitelist` )
 
 const normalize = ( account ) => {
 	try {
-		return ethers.utils.getAddress( account )
+		return { addr: ethers.utils.getAddress( account ), pass: true }
 	}
 	catch( err ) {
-    // console.warn( err )
-    return account
+    console.warn( err )
+    return { addr: account, pass: false }
   }
 }
 
@@ -86,20 +86,22 @@ const generateProofs = async ( accesslist, signer, whitelistType, listName = 'wh
 	})
 	const values = Object.entries( accesslist ).map(
 		async ( [ account, maxQty ] ) => {
-			account = normalize( account )
-			const _hashBuffer_ = generateHashBuffer(
-				[ 'uint8', 'uint256', 'address' ],
-				[ whitelistType, maxQty, account ]
+			const { addr, pass } = normalize( account )
+			if ( pass ) {
+				const _hashBuffer_ = generateHashBuffer(
+					[ 'uint8', 'uint256', 'address' ],
+					[ whitelistType, maxQty, addr ]
 				)
-			const _proof_ = serializeProof(
-				createProof( _hashBuffer_, signer )
+				const _proof_ = serializeProof(
+					createProof( _hashBuffer_, signer )
 				)
 
-			_normalized_[ account ] = _proof_
-			console.log( account + ',' + printProof( _proof_ ) )
-			await recordProofJSON( account, whitelistType, maxQty, _proof_ )
-			// await recordProofCSV( account, whitelistType, maxQty, _proof_ )
-			return account
+				_normalized_[ addr ] = _proof_
+				console.log( addr + ',' + printProof( _proof_ ) )
+				await recordProofJSON( addr, whitelistType, maxQty, _proof_ )
+			}
+			// await recordProofCSV( addr, whitelistType, maxQty, _proof_ )
+			return addr
 		}
 	)
 	fs.appendFileSync( `proofs.js`, `}\n`, function ( err ) {
@@ -117,30 +119,36 @@ task( 'generate-proofs', 'generate proofs for the signature based whitelist' )
 	const signeraddress  = taskArgs.signeraddress
 
 		// Mapping from address to max quantity allowed
-		const whitelist = {
-			'0x90f8E65C4b5ABCa0D640564608123b2853365D02': 2,
-			'0xb15Cd1FCEB9F647e8bD5f5BA74a5e3b71870D66E': 2,
-			'0x7f51898f14A451C37166a8B0A10616745ECBA206': 2,
-			'0x7B0056C0b13978a46720B925A9b0fe4273AAE098': 2,
-			'0x034367f5c20eb75Df23ed5B1bB77358639105820': 2,
-		}
-		const waitlist = {
-			'0xA6b3De3bca81f08F53f102fB7cC2EcC816f39496': 2,
-			'0xb15Cd1FCEB9F647e8bD5f5BA74a5e3b71870D66E': 2,
-			'0x7f51898f14A451C37166a8B0A10616745ECBA206': 2,
-			'0x7B0056C0b13978a46720B925A9b0fe4273AAE098': 2,
-			'0x034367f5c20eb75Df23ed5B1bB77358639105820': 2,
-		}
-		const claimlist = {
-			'0xb15Cd1FCEB9F647e8bD5f5BA74a5e3b71870D66E': 1,
-			'0x3Ebec1F343126c4707FCe01afEC03240713aEbb4': 5,
-			'0xA6b3De3bca81f08F53f102fB7cC2EcC816f39496': 3,
-			'0x7f51898f14A451C37166a8B0A10616745ECBA206': 5,
-			'0x7B0056C0b13978a46720B925A9b0fe4273AAE098': 5,
-			'0x034367f5c20eb75Df23ed5B1bB77358639105820': 5,
-		}
+		// const whitelist = {
+		// 	'0x90f8E65C4b5ABCa0D640564608123b2853365D02': 1,
+		// 	'0xb15Cd1FCEB9F647e8bD5f5BA74a5e3b71870D66E': 1,
+		// 	'0x7f51898f14A451C37166a8B0A10616745ECBA206': 1,
+		// 	'0x7B0056C0b13978a46720B925A9b0fe4273AAE098': 1,
+		// 	'0x034367f5c20eb75Df23ed5B1bB77358639105820': 1,
+		// 	'0xc03D1E2D94dc8fBCD7b015FD8bA1267245cFf2af': 1,
+		// 	'0x00A59Ec1F4BF9718EeE07078141b540272BAB807': 1,
+		// 	'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266': 1,
+		// 	'0x176D66A86398c0d1A91Ee484BE5B1DB47949Eee1': 1,
+		// 	'0xA38411a7ed537AE3E865b766Ab152545d9b6Eb00': 1,
+		// 	// '0x6dE28BA7d6d029779d58198ca5CCfb1056af0B79': 1,
+		// }
+		// const waitlist = {
+		// 	'0xA6b3De3bca81f08F53f102fB7cC2EcC816f39496': 2,
+		// 	'0xb15Cd1FCEB9F647e8bD5f5BA74a5e3b71870D66E': 2,
+		// 	'0x7f51898f14A451C37166a8B0A10616745ECBA206': 2,
+		// 	'0x7B0056C0b13978a46720B925A9b0fe4273AAE098': 2,
+		// 	'0x034367f5c20eb75Df23ed5B1bB77358639105820': 2,
+		// }
+		// const claimlist = {
+		// 	'0xb15Cd1FCEB9F647e8bD5f5BA74a5e3b71870D66E': 1,
+		// 	'0x3Ebec1F343126c4707FCe01afEC03240713aEbb4': 5,
+		// 	'0xA6b3De3bca81f08F53f102fB7cC2EcC816f39496': 3,
+		// 	'0x7f51898f14A451C37166a8B0A10616745ECBA206': 5,
+		// 	'0x7B0056C0b13978a46720B925A9b0fe4273AAE098': 5,
+		// 	'0x034367f5c20eb75Df23ed5B1bB77358639105820': 5,
+		// }
 		const whitelistTypes = {
-			WHITELIST : 2,
+			WHITELIST : 1,
 			WAITLIST  : 3,
 			CLAIM     : 4,
 		}
@@ -148,8 +156,8 @@ task( 'generate-proofs', 'generate proofs for the signature based whitelist' )
 		const signer = typeof signerkey === 'undefined' || typeof signeraddress === 'undefined' ? getSignerWallet() : { privateKey: signerkey, address: signeraddress}
 
 		await generateProofs( whitelist, signer, whitelistTypes.WHITELIST, 'whitelist' )
-		await generateProofs( waitlist, signer, whitelistTypes.WAITLIST, 'waitlist' )
-		await generateProofs( claimlist, signer, whitelistTypes.CLAIM, 'claimlist' )
+		// await generateProofs( waitlist, signer, whitelistTypes.WAITLIST, 'waitlist' )
+		// await generateProofs( claimlist, signer, whitelistTypes.CLAIM, 'claimlist' )
 
 		console.log( 'SIGNER:' )
 		console.log( signer.privateKey )
