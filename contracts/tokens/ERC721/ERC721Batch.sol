@@ -197,6 +197,10 @@ abstract contract ERC721Batch is IERC721Errors, IERC165, IERC721, IERC2309 {
     * @param qty_       : number of NFTs being minted
     */
     function _mint2309( address toAddress_, uint256 qty_ ) internal virtual {
+      if ( toAddress_ == address( 0 ) ) {
+        revert IERC721_INVALID_TRANSFER();
+      }
+
       uint256 _firstToken_ = _nextId;
       uint256 _nextStart_ = _firstToken_ + qty_;
       uint256 _lastToken_ = _nextStart_ - 1;
@@ -225,6 +229,10 @@ abstract contract ERC721Batch is IERC721Errors, IERC165, IERC721, IERC2309 {
     * @param qty_       : number of NFTs being minted
     */
     function _mint( address toAddress_, uint256 qty_ ) internal virtual {
+      if ( toAddress_ == address( 0 ) ) {
+        revert IERC721_INVALID_TRANSFER();
+      }
+
       uint256 _firstToken_ = _nextId;
       uint256 _nextStart_ = _firstToken_ + qty_;
       uint256 _lastToken_ = _nextStart_ - 1;

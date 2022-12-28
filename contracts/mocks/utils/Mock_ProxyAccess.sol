@@ -11,10 +11,6 @@ import "../../utils/ProxyAccess.sol";
 contract Mock_ProxyAccess is ProxyAccess {
 	constructor() {}
 
-	function isRegisteredProxy( address tokenOwner_, address operator_ ) public view returns ( bool ) {
-		return _isRegisteredProxy( tokenOwner_, operator_ );
-	}
-
 	function addProxyRegistry( address proxyRegistryAddress_ ) public {
 		_addProxyRegistry( proxyRegistryAddress_ );
 	}

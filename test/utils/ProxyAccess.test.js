@@ -3,12 +3,8 @@
 // **************************************
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
-		USER1,
-		USER2,
-		USER_NAMES,
 		PROXY_USER,
 		TOKEN_OWNER,
-		OTHER_OWNER,
 		CONTRACT_DEPLOYER,
 	} = require( `../test-var-module` )
 
@@ -16,14 +12,20 @@
 	const chaiAsPromised = require( `chai-as-promised` )
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
-
-	const { ethers } = require( `hardhat` )
 	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
+	const { ethers } = require( `hardhat` )
 
 	const {
 		getTestCasesByFunction,
 		generateTestCase
 	} = require( `../fail-test-module` )
+
+	const {
+		shouldBehaveLikeProxyAccessBeforeProxy,
+		shouldBehaveLikeProxyAccessAfterProxy,
+		shouldRevertWhenProxyRegistryExist,
+		shouldRevertWhenProxyRegistryDontExist,
+	} = require( `../utils/behavior.ProxyAccess` )
 // **************************************
 
 // **************************************
@@ -60,14 +62,11 @@
 // **************************************
 // *****          FIXTURES          *****
 // **************************************
-	async function fixture () {
+	async function noProxyFixture () {
 		const [
-			test_user1,
-			test_user2,
+			test_contract_deployer,
 			test_proxy_user,
 			test_token_owner,
-			test_other_owner,
-			test_contract_deployer,
 			...addrs
 		] = await ethers.getSigners()
 
@@ -79,18 +78,29 @@
 		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
 		test_contract = await contract_artifact.deploy()
 		await test_contract.deployed()
-		await test_contract.connect( test_contract_deployer )
-											 .addProxyRegistry( test_proxy_contract.address )
 
 		return {
-			test_user1,
-			test_user2,
 			test_contract,
 			test_proxy_user,
 			test_token_owner,
-			test_other_owner,
 			test_proxy_contract,
-			test_contract_deployer,
+		}
+	}
+	async function proxyFixture () {
+		const {
+			test_contract,
+			test_proxy_user,
+			test_token_owner,
+			test_proxy_contract,
+		} = await loadFixture( noProxyFixture )
+
+		await test_contract.addProxyRegistry( test_proxy_contract.address )
+
+		return {
+			test_contract,
+			test_proxy_user,
+			test_token_owner,
+			test_proxy_contract,
 		}
 	}
 // **************************************
@@ -103,24 +113,15 @@
 			if ( TEST_ACTIVATION.INVALID_INPUT ) {
 				beforeEach( async function () {
 					const {
-						test_user1,
-						test_user2,
 						test_contract,
 						test_proxy_user,
-						test_token_owner,
-						test_other_owner,
 						test_proxy_contract,
-						test_contract_deployer,
 					} = await loadFixture( fixture )
 
-					contract       = test_contract
+					contract = test_contract
 					proxy_contract = test_proxy_contract
-					users[ USER1             ] = test_user1
-					users[ USER2             ] = test_user2
-					users[ PROXY_USER        ] = test_proxy_user
-					users[ TOKEN_OWNER       ] = test_token_owner
-					users[ OTHER_OWNER       ] = test_other_owner
-					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
+					users[ PROXY_USER ] = test_proxy_user
+					users[ TOKEN_OWNER ] = test_token_owner
 
 					defaultArgs = {}
 					defaultArgs [ CONTRACT.METHODS.isRegisteredProxy.SIGNATURE ] = {
@@ -158,82 +159,83 @@
 			}
 		})
 	}
+	async function shouldBehaveLikeMock_ProxyAccessBeforeProxy ( fixture, TEST, CONTRACT ) {
+		shouldBehaveLikeProxyAccessBeforeProxy( fixture, TEST, CONTRACT )
 
-	async function shouldBehaveLikeMock_ProxyAccess ( fixture, TEST, CONTRACT ) {
-		describe( `Should behave like ProxyAccess`, function () {
-			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
-				beforeEach( async function () {
-					const {
-						test_user1,
-						test_user2,
-						test_contract,
-						test_proxy_user,
-						test_token_owner,
-						test_other_owner,
-						test_proxy_contract,
-						test_contract_deployer,
-					} = await loadFixture( fixture )
+		describe( `Should behave like Mock_ProxyAccess before setting proxy`, function () {
+			beforeEach( async function () {
+				const {
+					test_contract,
+					test_proxy_user,
+					test_token_owner,
+					test_proxy_contract,
+				} = await loadFixture( fixture )
 
-					contract       = test_contract
-					proxy_contract = test_proxy_contract
-					users[ USER1             ] = test_user1
-					users[ USER2             ] = test_user2
-					users[ PROXY_USER        ] = test_proxy_user
-					users[ TOKEN_OWNER       ] = test_token_owner
-					users[ OTHER_OWNER       ] = test_other_owner
-					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
+				contract = test_contract
+				proxy_contract = test_proxy_contract
+				users[ PROXY_USER ] = test_proxy_user
+				users[ TOKEN_OWNER ] = test_token_owner
+			})
+
+			describe( CONTRACT.METHODS.addProxyRegistry.SIGNATURE, function () {
+				it( `Setting up a proxy registry`, async function () {
+					const proxyRegistryAddress = proxy_contract.address
+					await expect(
+						contract.addProxyRegistry( proxyRegistryAddress )
+					).to.be.fulfilled
 				})
-
-				describe( CONTRACT.METHODS.addProxyRegistry.SIGNATURE, function () {
-					it( `Setting up a proxy registry`, async function () {
-						const proxyRegistryAddress = proxy_contract.address
-						await expect(
-							contract.connect( users[ CONTRACT_DEPLOYER ] )
-											.addProxyRegistry( proxyRegistryAddress )
-						).to.be.fulfilled
-					})
+			})
+			describe( CONTRACT.METHODS.removeProxyRegistry.SIGNATURE, function () {
+				it( `Should be reverted when the proxy registry is not registered`, async function () {
+					const proxyRegistryAddress = proxy_contract.address
+					await shouldRevertWhenProxyRegistryDontExist(
+						contract.removeProxyRegistry( proxyRegistryAddress ),
+						contract
+					)
 				})
+			})
+		})
+	}
+	async function shouldBehaveLikeMock_ProxyAccessAfterProxy ( fixture, TEST, CONTRACT ) {
+		shouldBehaveLikeProxyAccessAfterProxy( fixture, TEST, CONTRACT )
 
-				describe( CONTRACT.METHODS.isRegisteredProxy.SIGNATURE, function () {
-					beforeEach( async function () {
-						const proxyRegistryAddress = proxy_contract.address
-						await contract.connect( users[ CONTRACT_DEPLOYER ] )
-													.addProxyRegistry( proxyRegistryAddress )
-					})
+		describe( `Should behave like Mock_ProxyAccess after setting proxy`, function () {
+			beforeEach( async function () {
+				const {
+					test_contract,
+					test_proxy_user,
+					test_token_owner,
+					test_proxy_contract,
+				} = await loadFixture( fixture )
 
-					it( `${ USER_NAMES[ PROXY_USER ] } is a registered proxy for ${ USER_NAMES[ TOKEN_OWNER ] }`, async function () {
-						const tokenOwner = users[ TOKEN_OWNER ].address
-						const operator   = users[ PROXY_USER ].address
-						expect(
-							await contract.isRegisteredProxy( tokenOwner, operator )
-						).to.be.true
-					})
+				contract = test_contract
+				proxy_contract = test_proxy_contract
+				users[ PROXY_USER ] = test_proxy_user
+				users[ TOKEN_OWNER ] = test_token_owner
+			})
 
-					it( `${ USER_NAMES[ PROXY_USER ] } is not a registerd proxy for ${ USER_NAMES[ CONTRACT_DEPLOYER ] }`, async function () {
-						const tokenOwner = users[ CONTRACT_DEPLOYER ].address
-						const operator   = users[ PROXY_USER ].address
-						expect(
-							await contract.isRegisteredProxy( tokenOwner, operator )
-						).to.be.false
-					})
-
-					describe( CONTRACT.METHODS.removeProxyRegistry.SIGNATURE, function () {
-						it( `Removing a proxy registry`, async function () {
-							const proxyRegistryAddress = proxy_contract.address
-							await expect(
-								contract.connect( users[ CONTRACT_DEPLOYER ] )
-												.removeProxyRegistry( proxyRegistryAddress )
-							).to.be.fulfilled
-
-							const tokenOwner = users[ TOKEN_OWNER ].address
-							const operator   = users[ PROXY_USER ].address
-							expect(
-								await contract.isRegisteredProxy( tokenOwner, operator )
-							).to.be.false
-						})
-					})
+			describe( CONTRACT.METHODS.addProxyRegistry.SIGNATURE, function () {
+				it( `Should be reverted when the proxy registry is already registered`, async function () {
+					const proxyRegistryAddress = proxy_contract.address
+					await shouldRevertWhenProxyRegistryExist(
+						contract.addProxyRegistry( proxyRegistryAddress ),
+						contract
+					)
 				})
-			}
+			})
+			describe( CONTRACT.METHODS.removeProxyRegistry.SIGNATURE, function () {
+				it( `Removing a proxy registry`, async function () {
+					const proxyRegistryAddress = proxy_contract.address
+					await expect(
+						contract.removeProxyRegistry( proxyRegistryAddress )
+					).to.be.fulfilled
+					const tokenOwner = users[ TOKEN_OWNER ].address
+					const operator = users[ PROXY_USER ].address
+					expect(
+						await contract.isRegisteredProxy( tokenOwner, operator )
+					).to.be.false
+				})
+			})
 		})
 	}
 // **************************************
@@ -243,7 +245,8 @@
 // **************************************
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
-		testInvalidInputs( fixture, TEST_DATA, CONTRACT_INTERFACE )
-		shouldBehaveLikeMock_ProxyAccess( fixture, TEST_DATA, CONTRACT_INTERFACE )
+		testInvalidInputs( noProxyFixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeMock_ProxyAccessBeforeProxy( noProxyFixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeMock_ProxyAccessAfterProxy( proxyFixture, TEST_DATA, CONTRACT_INTERFACE )
 	}
 })

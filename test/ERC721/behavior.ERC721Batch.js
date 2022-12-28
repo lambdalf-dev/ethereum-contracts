@@ -4,21 +4,16 @@
   const {
     USER1,
     USER2,
-    USER_NAMES,
-    PROXY_USER,
     TOKEN_OWNER,
     OTHER_OWNER,
-    CONTRACT_DEPLOYER,
   } = require(`../test-var-module`)
 
   const chai = require(`chai`)
   const chaiAsPromised = require(`chai-as-promised`)
   chai.use(chaiAsPromised)
   const expect = chai.expect
-
-  const { ethers } = require(`hardhat`)
   const { loadFixture } = require(`@nomicfoundation/hardhat-network-helpers`)
-  const { PANIC_CODES } = require("@nomicfoundation/hardhat-chai-matchers/panic")
+  const { ethers } = require(`hardhat`)
 
 	const {
 		INTERFACE_ID,
@@ -145,25 +140,16 @@
 					test_user1,
 					test_user2,
 					test_contract,
-					test_proxy_user,
 					test_token_owner,
 					test_other_owner,
-					test_contract_deployer,
 				} = await loadFixture( fixture )
 
 				contract = test_contract
-				users[ USER1             ] = test_user1
-				users[ USER2             ] = test_user2
-				users[ PROXY_USER        ] = test_proxy_user
-				users[ TOKEN_OWNER       ] = test_token_owner
-				users[ OTHER_OWNER       ] = test_other_owner
-				users[ CONTRACT_DEPLOYER ] = test_contract_deployer
+				users[ USER1 ] = test_user1
+				users[ USER2 ] = test_user2
+				users[ TOKEN_OWNER ] = test_token_owner
+				users[ OTHER_OWNER ] = test_other_owner
 			})
-
-			// **************************************
-			// *****           PUBLIC           *****
-			// **************************************
-			// **************************************
 
 			// **************************************
 			// *****            VIEW            *****
@@ -192,14 +178,14 @@
 				describe( CONTRACT.METHODS.isApprovedForAll.SIGNATURE, function () {
 					it( `A token owner does not need approval to manage their own tokens, expect false`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const operator   = users[ TOKEN_OWNER ]
+						const operator = users[ TOKEN_OWNER ]
 						expect(
 							await contract.isApprovedForAll( tokenOwner.address, operator.address )
 						).to.be.false
 					})
 					it( `A random user requires the token owner's approval to manage tokens on their behalf, expect false`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const operator   = users[ USER1       ]
+						const operator = users[ USER1       ]
 						expect(
 							await contract.isApprovedForAll( tokenOwner.address, operator.address )
 						).to.be.false
@@ -215,19 +201,15 @@
 					test_user1,
 					test_user2,
 					test_contract,
-					test_proxy_user,
 					test_token_owner,
 					test_other_owner,
-					test_contract_deployer,
 				} = await loadFixture( fixture )
 
 				contract = test_contract
-				users[ USER1             ] = test_user1
-				users[ USER2             ] = test_user2
-				users[ PROXY_USER        ] = test_proxy_user
-				users[ TOKEN_OWNER       ] = test_token_owner
-				users[ OTHER_OWNER       ] = test_other_owner
-				users[ CONTRACT_DEPLOYER ] = test_contract_deployer
+				users[ USER1 ] = test_user1
+				users[ USER2 ] = test_user2
+				users[ TOKEN_OWNER ] = test_token_owner
+				users[ OTHER_OWNER ] = test_other_owner
 			})
 
 			// **************************************
@@ -239,74 +221,80 @@
 						const to = users[ OTHER_OWNER ]
 						let tokenId = TEST.UNMINTED_TOKEN
 						await shouldRevertWhenRequestedTokenDoesNotExist(
-							contract.connect( tokenOwner )
-											.approve( to.address, tokenId ),
+							contract
+								.connect( tokenOwner )
+								.approve( to.address, tokenId ),
 							contract,
 							tokenId
 						)
 
 						tokenId = TEST.INVALID_TOKEN
 						await shouldRevertWhenRequestedTokenDoesNotExist(
-							contract.connect( tokenOwner )
-											.approve( to.address, tokenId ),
+							contract
+								.connect( tokenOwner )
+								.approve( to.address, tokenId ),
 							contract,
 							tokenId
 						)
 					})
 					it( `Should be reverted when caller is not approved operator`, async function () {
-						const to         = users[ USER1 ]
-						const tokenId    = TEST.TARGET_TOKEN
+						const to = users[ USER1 ]
+						const tokenId = TEST.TARGET_TOKEN
 						const tokenOwner = users[ TOKEN_OWNER ]
 						await shouldRevertWhenCallerIsNotApproved(
-							contract.connect( to )
-											.approve( to.address, tokenId ),
+							contract
+								.connect( to )
+								.approve( to.address, tokenId ),
 							contract,
 							tokenOwner.address,
 							to.address,
 							tokenId
 						)
 					})
-					describe( `${ USER_NAMES[ TOKEN_OWNER ] } approve management of token ${ TEST.TARGET_TOKEN } owned, by ${ USER_NAMES[ USER1 ] }`, function () {
+					describe( `Token owner approve management of token ${ TEST.TARGET_TOKEN } owned`, function () {
 						beforeEach( async function () {
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = users[ USER1       ]
+							const from = users[ TOKEN_OWNER ]
+							const to = users[ USER1       ]
 							const tokenId = TEST.TARGET_TOKEN
 							await shouldEmitApprovalEvent(
-								contract.connect( tokenOwner )
-												.approve( to.address, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.approve( to.address, tokenId ),
 								contract,
 								from.address,
 								to.address,
 								tokenId
 							)
 						})
-						it( `${ USER_NAMES[ USER1 ] } should be approved to manage token ${ TEST.TARGET_TOKEN }`, async function () {
+						it( `Individually approved user should be approved to manage token ${ TEST.TARGET_TOKEN }`, async function () {
 							const tokenId = TEST.TARGET_TOKEN
 							expect(
 								await contract.getApproved( tokenId )
 							).to.equal( users[ USER1 ].address )
 						})
-						describe( `${ USER_NAMES[ USER1 ] } trying to approve management of token ${ TEST.TARGET_TOKEN }`, function () {
+						describe( `Individually approved user trying to approve management of token ${ TEST.TARGET_TOKEN }`, function () {
 							it( `Should be reverted when approving current token owner`, async function () {
 								const operator = users[ USER1 ]
-								const to       = users[ TOKEN_OWNER ]
-								const tokenId  = TEST.TARGET_TOKEN
+								const to = users[ TOKEN_OWNER ]
+								const tokenId = TEST.TARGET_TOKEN
 								await shouldRevertWhenApprovingTokenOwner(
-									contract.connect( operator )
-													.approve( to.address, tokenId ),
+									contract
+										.connect( operator )
+										.approve( to.address, tokenId ),
 									contract,
 									to.address
 								)
 							})
 							it( `Should be be allowed and clear their approval when approving someone else`, async function () {
 								const operator = users[ USER1 ]
-								const from     = users[ TOKEN_OWNER ]
-								const to       = users[ USER2 ]
-								const tokenId  = TEST.TARGET_TOKEN
+								const from = users[ TOKEN_OWNER ]
+								const to = users[ USER2 ]
+								const tokenId = TEST.TARGET_TOKEN
 								await shouldEmitApprovalEvent(
-									contract.connect( operator )
-													.approve( to.address, tokenId ),
+									contract
+										.connect( operator )
+										.approve( to.address, tokenId ),
 									contract,
 									from.address,
 									to.address,
@@ -323,24 +311,26 @@
 				describe( CONTRACT.METHODS.safeTransferFrom.SIGNATURE, function () {
 					it( `Should be reverted when requested token does not exist`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.UNMINTED_TOKEN
 						await shouldRevertWhenRequestedTokenDoesNotExist(
-							contract.connect( tokenOwner )
-											.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+							contract
+								.connect( tokenOwner )
+								.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 							contract,
 							tokenId
 						)
 					})
 					it( `Should be reverted when operator is not approved`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.TARGET_TOKEN
 						await shouldRevertWhenCallerIsNotApproved(
-							contract.connect( to )
-											.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+							contract
+								.connect( to )
+								.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 							contract,
 							from.address,
 							to.address,
@@ -349,12 +339,13 @@
 					})
 					it( `Safe transfer of very first minted token`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.FIRST_TOKEN
 						await shouldEmitTransferEvent(
-							contract.connect( tokenOwner )
-											.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+							contract
+								.connect( tokenOwner )
+								.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 							contract,
 							from.address,
 							to.address,
@@ -363,12 +354,13 @@
 					})
 					it( `Safe transfer of very last minted token`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.LAST_TOKEN
 						await shouldEmitTransferEvent(
-							contract.connect( tokenOwner )
-											.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+							contract
+								.connect( tokenOwner )
+								.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 							contract,
 							from.address,
 							to.address,
@@ -378,47 +370,51 @@
 					it( `Safe transfer of individually approved token`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
 						const operator = users[ USER1 ]
-						const from     = users[ TOKEN_OWNER ]
-						const to       = users[ USER1       ]
-						const tokenId  = TEST.LAST_TOKEN
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
+						const tokenId = TEST.LAST_TOKEN
 
 						await expect(
-							contract.connect( tokenOwner )
-											.approve( operator.address, tokenId )
+							contract
+								.connect( tokenOwner )
+								.approve( operator.address, tokenId )
 						).to.be.fulfilled
 
 						await shouldEmitTransferEvent(
-							contract.connect( operator )
-											.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+							contract
+								.connect( operator )
+								.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 							contract,
 							from.address,
 							to.address,
 							tokenId
 						)
 					})
-					it( `${ USER_NAMES[ TOKEN_OWNER ] } safe transfering token ${ TEST.TOKEN_OWNER_FIRST } owned`, async function () {
+					it( `Token owner safe transfering token ${ TEST.TOKEN_OWNER_FIRST } owned`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.TOKEN_OWNER_FIRST
 						await shouldEmitTransferEvent(
-							contract.connect( tokenOwner )
-											.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+							contract
+								.connect( tokenOwner )
+								.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 							contract,
 							from.address,
 							to.address,
 							tokenId
 						)
 					})
-					describe( `${ USER_NAMES[ TOKEN_OWNER ] } safe transfering token ${ TEST.TARGET_TOKEN } owned`, function () {
+					describe( `Token owner safe transfering token ${ TEST.TARGET_TOKEN } owned`, function () {
 						it( `Should be reverted when transfering from another address than the token owner`, async function () {
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from       = users[ OTHER_OWNER ]
-							const to         = users[ OTHER_OWNER ]
-							const tokenId    = TEST.TARGET_TOKEN
+							const from = users[ OTHER_OWNER ]
+							const to = users[ OTHER_OWNER ]
+							const tokenId = TEST.TARGET_TOKEN
 							await shouldRevertWhenTransferingFromNonOwner(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 								contract,
 								tokenOwner.address,
 								from.address,
@@ -427,12 +423,13 @@
 						})
 						it( `Should be reverted when transfering to the NULL address`, async function () {
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = ethers.constants.AddressZero
+							const from = users[ TOKEN_OWNER ]
+							const to = ethers.constants.AddressZero
 							const tokenId = TEST.TARGET_TOKEN
 							await shouldRevertWhenTransferingToNullAddress(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to, tokenId ),
 								contract
 							)
 						})
@@ -441,48 +438,51 @@
 							const non_holder = await non_holder_artifact.deploy()
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = non_holder
+							const from = users[ TOKEN_OWNER ]
+							const to = non_holder
 							const tokenId = TEST.TARGET_TOKEN
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 								contract,
 								to.address
 							)
 						})
 						it( `Should be reverted when transfering to a receiver contract returning unexpected value`, async function () {
 							const retval = INTERFACE_ID.IERC165
-							const error  = ERC721ReceiverError.None
+							const error = ERC721ReceiverError.None
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = invalidReceiver
+							const from = users[ TOKEN_OWNER ]
+							const to = invalidReceiver
 							const tokenId = TEST.TARGET_TOKEN
 
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 								contract,
 								to.address
 							)
 						})
 						it( `Should be reverted when transfering to a receiver contract that reverts with custom error`, async function () {
 							const retval = INTERFACE_ID.IERC721Receiver
-							const error  = ERC721ReceiverError.RevertWithERC721ReceiverError
+							const error = ERC721ReceiverError.RevertWithERC721ReceiverError
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = invalidReceiver
+							const from = users[ TOKEN_OWNER ]
+							const to = invalidReceiver
 							const tokenId = TEST.TARGET_TOKEN
 
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 								contract,
 								to.address,
 								error
@@ -490,18 +490,19 @@
 						})
 						it( `Should be reverted when transfering to a receiver contract that reverts with message`, async function () {
 							const retval = INTERFACE_ID.IERC721Receiver
-							const error  = ERC721ReceiverError.RevertWithMessage
+							const error = ERC721ReceiverError.RevertWithMessage
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = invalidReceiver
+							const from = users[ TOKEN_OWNER ]
+							const to = invalidReceiver
 							const tokenId = TEST.TARGET_TOKEN
 
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 								contract,
 								to.address,
 								error
@@ -509,36 +510,38 @@
 						})
 						it( `Should be reverted when transfering to a receiver contract that reverts without message`, async function () {
 							const retval = INTERFACE_ID.IERC721Receiver
-							const error  = ERC721ReceiverError.RevertWithoutMessage
+							const error = ERC721ReceiverError.RevertWithoutMessage
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = invalidReceiver
+							const from = users[ TOKEN_OWNER ]
+							const to = invalidReceiver
 							const tokenId = TEST.TARGET_TOKEN
 
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 								contract,
 								to.address
 							)
 						})
 						/*it( `Should be reverted when transfering to a receiver contract that panics`, async function () {
 							const retval = INTERFACE_ID.IERC721Receiver
-							const error  = ERC721ReceiverError.Panic
+							const error = ERC721ReceiverError.Panic
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = invalidReceiver
+							const from = users[ TOKEN_OWNER ]
+							const to = invalidReceiver
 							const tokenId = TEST.TARGET_TOKEN
 
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 								contract,
 								to.address,
 								error
@@ -546,17 +549,18 @@
 						})*/
 						it( `To a valid ERC721Receiver contract`, async function () {
 							const retval = INTERFACE_ID.IERC721Receiver
-							const error  = ERC721ReceiverError.None
+							const error = ERC721ReceiverError.None
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const holder = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = holder
+							const from = users[ TOKEN_OWNER ]
+							const to = holder
 							const tokenId = TEST.TARGET_TOKEN
 							await shouldEmitTransferEvent(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 								contract,
 								from.address,
 								to.address,
@@ -574,31 +578,32 @@
 						describe( `To other user`, function () {
 							beforeEach( async function () {
 								const tokenOwner = users[ TOKEN_OWNER ]
-								const from    = users[ TOKEN_OWNER ]
-								const to      = users[ USER1       ]
+								const from = users[ TOKEN_OWNER ]
+								const to = users[ USER1       ]
 								const tokenId = TEST.TARGET_TOKEN
 								await shouldEmitTransferEvent(
-									contract.connect( tokenOwner )
-													.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
+									contract
+										.connect( tokenOwner )
+										.functions[ CONTRACT.METHODS.safeTransferFrom.SIGNATURE ]( from.address, to.address, tokenId ),
 									contract,
 									from.address,
 									to.address,
 									tokenId
 								)
 							})
-							it( `Token ${ TEST.TARGET_TOKEN } owner should now be ${ USER_NAMES[ USER1 ] }`, async function () {
+							it( `Token ${ TEST.TARGET_TOKEN } owner should be correctly updated`, async function () {
 								const tokenId = TEST.TARGET_TOKEN
 								expect(
 									await contract.ownerOf( tokenId )
 								).to.equal( users[ USER1 ].address )
 							})
-							it( `Balance of ${ USER_NAMES[ TOKEN_OWNER ] } should now be ${ ( TEST.TOKEN_OWNER_SUPPLY - 1 ).toString() }`, async function () {
+							it( `Balance of initial token owner should now be ${ ( TEST.TOKEN_OWNER_SUPPLY - 1 ).toString() }`, async function () {
 								const tokenOwner = users[ TOKEN_OWNER ]
 								expect(
 									await contract.balanceOf( tokenOwner.address )
 								).to.equal( TEST.TOKEN_OWNER_SUPPLY - 1 )
 							})
-							it( `Balance of ${ USER_NAMES[ USER1 ] } should now be 1`, async function () {
+							it( `Balance of new token owner should now be 1`, async function () {
 								const tokenOwner = users[ USER1 ]
 								expect(
 									await contract.balanceOf( tokenOwner.address )
@@ -616,26 +621,28 @@
 				describe( CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE, function () {
 					it( `Should be reverted when requested token does not exist`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.UNMINTED_TOKEN
-						const data    = `0x`
+						const data = `0x`
 						await shouldRevertWhenRequestedTokenDoesNotExist(
-							contract.connect( tokenOwner )
-											.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+							contract
+								.connect( tokenOwner )
+								.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 							contract,
 							tokenId
 						)
 					})
 					it( `Should be reverted when operator is not approved`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.TARGET_TOKEN
-						const data    = `0x`
+						const data = `0x`
 						await shouldRevertWhenCallerIsNotApproved(
-							contract.connect( to )
-											.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+							contract
+								.connect( to )
+								.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 							contract,
 							from.address,
 							to.address,
@@ -644,13 +651,14 @@
 					})
 					it( `Safe transfer of very first minted token`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.FIRST_TOKEN
-						const data    = '0x'
+						const data = '0x'
 						await shouldEmitTransferEvent(
-							contract.connect( tokenOwner )
-											.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+							contract
+								.connect( tokenOwner )
+								.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 							contract,
 							from.address,
 							to.address,
@@ -659,44 +667,47 @@
 					})
 					it( `Safe transfer of very last minted token`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.LAST_TOKEN
-						const data    = '0x'
+						const data = '0x'
 						await shouldEmitTransferEvent(
-							contract.connect( tokenOwner )
-											.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+							contract
+								.connect( tokenOwner )
+								.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 							contract,
 							from.address,
 							to.address,
 							tokenId
 						)
 					})
-					it( `${ USER_NAMES[ TOKEN_OWNER ] } safe transfering token ${ TEST.TOKEN_OWNER_FIRST } owned`, async function () {
+					it( `Token owner safe transfering token ${ TEST.TOKEN_OWNER_FIRST } owned`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.TOKEN_OWNER_FIRST
-						const data    = `0x`
+						const data = `0x`
 						await shouldEmitTransferEvent(
-							contract.connect( tokenOwner )
-											.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+							contract
+								.connect( tokenOwner )
+								.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 							contract,
 							from.address,
 							to.address,
 							tokenId
 						)
 					})
-					describe( `${ USER_NAMES[ TOKEN_OWNER ] } safe transfering token ${ TEST.TARGET_TOKEN } owned`, function () {
+					describe( `Token owner safe transfering token ${ TEST.TARGET_TOKEN } owned`, function () {
 						it( `Should be reverted when transfering from another address than the token owner`, async function () {
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from       = users[ OTHER_OWNER ]
-							const to         = users[ OTHER_OWNER ]
-							const tokenId    = TEST.TARGET_TOKEN
-							const data       = `0x`
+							const from = users[ OTHER_OWNER ]
+							const to = users[ OTHER_OWNER ]
+							const tokenId = TEST.TARGET_TOKEN
+							const data = `0x`
 							await shouldRevertWhenTransferingFromNonOwner(
-								contract.connect( from )
-												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+								contract
+									.connect( from )
+									.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 								contract,
 								tokenOwner.address,
 								from.address,
@@ -705,13 +716,14 @@
 						})
 						it( `Should be reverted when transfering to the NULL address`, async function () {
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = ethers.constants.AddressZero
+							const from = users[ TOKEN_OWNER ]
+							const to = ethers.constants.AddressZero
 							const tokenId = TEST.TARGET_TOKEN
-							const data    = `0x`
+							const data = `0x`
 							await shouldRevertWhenTransferingToNullAddress(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to, tokenId, data ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to, tokenId, data ),
 								contract
 							)
 						})
@@ -720,49 +732,52 @@
 							const non_holder = await non_holder_artifact.deploy()
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = non_holder
+							const from = users[ TOKEN_OWNER ]
+							const to = non_holder
 							const tokenId = TEST.TARGET_TOKEN
-							const data    = `0x`
+							const data = `0x`
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 								contract,
 								to.address
 							)
 						})
 						it( `Should be reverted when transfering to a receiver contract returning unexpected value`, async function () {
 							const retval = INTERFACE_ID.IERC165
-							const error  = ERC721ReceiverError.None
+							const error = ERC721ReceiverError.None
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = invalidReceiver
+							const from = users[ TOKEN_OWNER ]
+							const to = invalidReceiver
 							const tokenId = TEST.TARGET_TOKEN
-							const data    = `0x`
+							const data = `0x`
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 								contract,
 								to.address
 							)
 						})
 						it( `Should be reverted when transfering to a receiver contract that reverts with custom error`, async function () {
 							const retval = INTERFACE_ID.IERC721Receiver
-							const error  = ERC721ReceiverError.RevertWithERC721ReceiverError
+							const error = ERC721ReceiverError.RevertWithERC721ReceiverError
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = invalidReceiver
+							const from = users[ TOKEN_OWNER ]
+							const to = invalidReceiver
 							const tokenId = TEST.TARGET_TOKEN
-							const data    = `0x`
+							const data = `0x`
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 								contract,
 								to.address,
 								error
@@ -770,18 +785,19 @@
 						})
 						it( `Should be reverted when transfering to a receiver contract that reverts with message`, async function () {
 							const retval = INTERFACE_ID.IERC721Receiver
-							const error  = ERC721ReceiverError.RevertWithMessage
+							const error = ERC721ReceiverError.RevertWithMessage
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = invalidReceiver
+							const from = users[ TOKEN_OWNER ]
+							const to = invalidReceiver
 							const tokenId = TEST.TARGET_TOKEN
-							const data    = `0x`
+							const data = `0x`
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 								contract,
 								to.address,
 								error
@@ -789,36 +805,38 @@
 						})
 						it( `Should be reverted when transfering to a receiver contract that reverts without message`, async function () {
 							const retval = INTERFACE_ID.IERC721Receiver
-							const error  = ERC721ReceiverError.RevertWithoutMessage
+							const error = ERC721ReceiverError.RevertWithoutMessage
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = invalidReceiver
+							const from = users[ TOKEN_OWNER ]
+							const to = invalidReceiver
 							const tokenId = TEST.TARGET_TOKEN
-							const data    = `0x`
+							const data = `0x`
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 								contract,
 								to.address
 							)
 						})
 						/*it( `Should be reverted when transfering to a receiver contract that panics`, async function () {
 							const retval = INTERFACE_ID.IERC721Receiver
-							const error  = ERC721ReceiverError.Panic
+							const error = ERC721ReceiverError.Panic
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const invalidReceiver = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = invalidReceiver
+							const from = users[ TOKEN_OWNER ]
+							const to = invalidReceiver
 							const tokenId = TEST.TARGET_TOKEN
-							const data    = `0x`
+							const data = `0x`
 							await shouldRevertWhenTransferingToNonERC721Receiver(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 								contract,
 								to.address,
 								error
@@ -826,18 +844,19 @@
 						})*/
 						it( `To a valid ERC721Receiver contract`, async function () {
 							const retval = INTERFACE_ID.IERC721Receiver
-							const error  = ERC721ReceiverError.None
+							const error = ERC721ReceiverError.None
 							const holder_artifact = await ethers.getContractFactory( 'Mock_ERC721Receiver' )
 							const holder = await holder_artifact.deploy( retval, error )
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = holder
+							const from = users[ TOKEN_OWNER ]
+							const to = holder
 							const tokenId = TEST.TARGET_TOKEN
-							const data    = `0x`
+							const data = `0x`
 							await shouldEmitTransferEvent(
-								contract.connect( tokenOwner )
-												.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+								contract
+									.connect( tokenOwner )
+									.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 								contract,
 								from.address,
 								to.address,
@@ -855,32 +874,33 @@
 						describe( `To other user`, function () {
 							beforeEach( async function () {
 								const tokenOwner = users[ TOKEN_OWNER ]
-								const from    = users[ TOKEN_OWNER ]
-								const to      = users[ USER1       ]
+								const from = users[ TOKEN_OWNER ]
+								const to = users[ USER1       ]
 								const tokenId = TEST.TARGET_TOKEN
-								const data    = `0x`
+								const data = `0x`
 								await shouldEmitTransferEvent(
-									contract.connect( tokenOwner )
-													.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
+									contract
+										.connect( tokenOwner )
+										.functions[ CONTRACT.METHODS.safeTransferFrom_ol.SIGNATURE ]( from.address, to.address, tokenId, data ),
 									contract,
 									from.address,
 									to.address,
 									tokenId
 								)
 							})
-							it( `Token ${ TEST.TARGET_TOKEN } owner should now be ${ USER_NAMES[ USER1 ] }`, async function () {
+							it( `Token ${ TEST.TARGET_TOKEN } owner should be correctly updated`, async function () {
 								const tokenId = TEST.TARGET_TOKEN
 								expect(
 									await contract.ownerOf( tokenId )
 								).to.equal( users[ USER1 ].address )
 							})
-							it( `Balance of ${ USER_NAMES[ TOKEN_OWNER ] } should now be ${ ( TEST.TOKEN_OWNER_SUPPLY - 1 ).toString() }`, async function () {
+							it( `Balance of initial token owner should now be ${ ( TEST.TOKEN_OWNER_SUPPLY - 1 ).toString() }`, async function () {
 								const tokenOwner = users[ TOKEN_OWNER ]
 								expect(
 									await contract.balanceOf( tokenOwner.address )
 								).to.equal( TEST.TOKEN_OWNER_SUPPLY - 1 )
 							})
-							it( `Balance of ${ USER_NAMES[ USER1 ] } should now be 1`, async function () {
+							it( `Balance of new token owner should now be 1`, async function () {
 								const tokenOwner = users[ USER1 ]
 								expect(
 									await contract.balanceOf( tokenOwner.address )
@@ -900,49 +920,52 @@
 						const operator = users[ USER1 ]
 						const approved = true
 						await shouldRevertWhenApprovingTokenOwner(
-							contract.connect( operator )
-											.setApprovalForAll( operator.address, approved ),
+							contract
+								.connect( operator )
+								.setApprovalForAll( operator.address, approved ),
 							contract,
 							operator.address
 						)
 					})
 					describe( `Allowing another user to trade owned tokens`, function () {
 						beforeEach( async function () {
-							const owner    = users[ TOKEN_OWNER ]
+							const owner = users[ TOKEN_OWNER ]
 							const operator = users[ USER1 ]
 							const approved = true
 							await shouldEmitApprovalForAllEvent(
-								contract.connect( owner )
-												.setApprovalForAll( operator.address, approved ),
+								contract
+									.connect( owner )
+									.setApprovalForAll( operator.address, approved ),
 								contract,
 								owner.address,
 								operator.address,
 								approved
 							)
 						})
-						it( `${ USER_NAMES[ USER1 ] } should now be allowed to trade tokens owned by ${ USER_NAMES[ TOKEN_OWNER ] }`, async function () {
+						it( `Approved user should now be allowed to trade tokens owned by token owner`, async function () {
 							tokenOwner = users[ TOKEN_OWNER ]
-							operator   = users[ USER1 ]
+							operator = users[ USER1 ]
 							expect(
 								await contract.isApprovedForAll( tokenOwner.address, operator.address )
 							).to.be.true
 						})
 						describe( `Removing approval for other user to trade owned tokens`, function () {
 							beforeEach( async function () {
-								const owner    = users[ TOKEN_OWNER ]
+								const owner = users[ TOKEN_OWNER ]
 								const operator = users[ USER1       ]
 								const approved = false
 								await shouldEmitApprovalForAllEvent(
-									contract.connect( owner )
-													.setApprovalForAll( operator.address, approved ),
+									contract
+										.connect( owner )
+										.setApprovalForAll( operator.address, approved ),
 									contract,
 									owner.address,
 									operator.address,
 									approved
 								)
 							})
-							it( `${ USER_NAMES[ USER1 ] } should not be allowed to trade tokens owned by ${ USER_NAMES[ TOKEN_OWNER ] } anymore`, async function () {
-								const owner    = users[ TOKEN_OWNER ]
+							it( `Approved user should not be allowed to trade tokens owned by token owner anymore`, async function () {
+								const owner = users[ TOKEN_OWNER ]
 								const operator = users[ USER1       ]
 								expect(
 									await contract.isApprovedForAll( owner.address, operator.address )
@@ -954,24 +977,26 @@
 				describe( CONTRACT.METHODS.transferFrom.SIGNATURE, function () {
 					it( `Should be reverted when requested token does not exist`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.UNMINTED_TOKEN
 						await shouldRevertWhenRequestedTokenDoesNotExist(
-							contract.connect( tokenOwner )
-											.transferFrom( from.address, to.address, tokenId ),
+							contract
+								.connect( tokenOwner )
+								.transferFrom( from.address, to.address, tokenId ),
 							contract,
 							tokenId
 						)
 					})
 					it( `Should be reverted when trying to transfer token ${ TEST.TARGET_TOKEN } not owned`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.TARGET_TOKEN
 						await shouldRevertWhenCallerIsNotApproved(
-							contract.connect( to )
-											.transferFrom( from.address, to.address, tokenId ),
+							contract
+								.connect( to )
+								.transferFrom( from.address, to.address, tokenId ),
 							contract,
 							from.address,
 							to.address,
@@ -980,12 +1005,13 @@
 					})
 					it( `Transfer of very first minted token`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.FIRST_TOKEN
 						await shouldEmitTransferEvent(
-							contract.connect( tokenOwner )
-											.transferFrom( from.address, to.address, tokenId ),
+							contract
+								.connect( tokenOwner )
+								.transferFrom( from.address, to.address, tokenId ),
 							contract,
 							from.address,
 							to.address,
@@ -994,41 +1020,44 @@
 					})
 					it( `Transfer of very last minted token`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.LAST_TOKEN
 						await shouldEmitTransferEvent(
-							contract.connect( tokenOwner )
-											.transferFrom( from.address, to.address, tokenId ),
+							contract
+								.connect( tokenOwner )
+								.transferFrom( from.address, to.address, tokenId ),
 							contract,
 							from.address,
 							to.address,
 							tokenId
 						)
 					})
-					it( `${ USER_NAMES[ TOKEN_OWNER ] } transfering token ${ TEST.TOKEN_OWNER_FIRST } owned`, async function () {
+					it( `Token owner transfering token ${ TEST.TOKEN_OWNER_FIRST } owned`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
-						const from    = users[ TOKEN_OWNER ]
-						const to      = users[ USER1       ]
+						const from = users[ TOKEN_OWNER ]
+						const to = users[ USER1       ]
 						const tokenId = TEST.TOKEN_OWNER_FIRST
 						await shouldEmitTransferEvent(
-							contract.connect( tokenOwner )
-											.transferFrom( from.address, to.address, tokenId ),
+							contract
+								.connect( tokenOwner )
+								.transferFrom( from.address, to.address, tokenId ),
 							contract,
 							from.address,
 							to.address,
 							tokenId
 						)
 					})
-					describe( `${ USER_NAMES[ TOKEN_OWNER ] } transfering token ${ TEST.TARGET_TOKEN } owned`, function () {
+					describe( `Token owner transfering token ${ TEST.TARGET_TOKEN } owned`, function () {
 						it( `Should be reverted when transfering from another address than the token owner`, async function () {
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from       = users[ OTHER_OWNER ]
-							const to         = users[ OTHER_OWNER ]
-							const tokenId    = TEST.TARGET_TOKEN
+							const from = users[ OTHER_OWNER ]
+							const to = users[ OTHER_OWNER ]
+							const tokenId = TEST.TARGET_TOKEN
 							await shouldRevertWhenTransferingFromNonOwner(
-								contract.connect( tokenOwner )
-												.transferFrom( from.address, to.address, tokenId ),
+								contract
+									.connect( tokenOwner )
+									.transferFrom( from.address, to.address, tokenId ),
 								contract,
 								tokenOwner.address,
 								from.address,
@@ -1037,12 +1066,13 @@
 						})
 						it( `Should be reverted when transfering to the NULL address`, async function () {
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = ethers.constants.AddressZero
+							const from = users[ TOKEN_OWNER ]
+							const to = ethers.constants.AddressZero
 							const tokenId = TEST.TARGET_TOKEN
 							await shouldRevertWhenTransferingToNullAddress(
-								contract.connect( from )
-												.transferFrom( from.address, to, tokenId ),
+								contract
+									.connect( from )
+									.transferFrom( from.address, to, tokenId ),
 								contract
 							)
 						})
@@ -1051,11 +1081,12 @@
 							const non_holder = await non_holder_artifact.deploy()
 
 							const tokenOwner = users[ TOKEN_OWNER ]
-							const from    = users[ TOKEN_OWNER ]
-							const to      = non_holder
+							const from = users[ TOKEN_OWNER ]
+							const to = non_holder
 							const tokenId = TEST.TARGET_TOKEN
-							await contract.connect( tokenOwner )
-														.transferFrom( from.address, to.address, tokenId )
+							await contract
+								.connect( tokenOwner )
+								.transferFrom( from.address, to.address, tokenId )
 
 							expect(
 								await contract.ownerOf( TEST.TARGET_TOKEN )
@@ -1064,31 +1095,32 @@
 						describe( `To other user`, function () {
 							beforeEach( async function () {
 								const tokenOwner = users[ TOKEN_OWNER ]
-								const from    = users[ TOKEN_OWNER ]
-								const to      = users[ USER1       ]
+								const from = users[ TOKEN_OWNER ]
+								const to = users[ USER1       ]
 								const tokenId = TEST.TARGET_TOKEN
 								await shouldEmitTransferEvent(
-									contract.connect( tokenOwner )
-													.transferFrom( from.address, to.address, tokenId ),
+									contract
+										.connect( tokenOwner )
+										.transferFrom( from.address, to.address, tokenId ),
 									contract,
 									from.address,
 									to.address,
 									tokenId
 								)
 							})
-							it( `Token ${ TEST.TARGET_TOKEN } owner should now be ${ USER_NAMES[ USER1 ] }`, async function () {
+							it( `Token ${ TEST.TARGET_TOKEN } owner should be correctly updated`, async function () {
 								const tokenId = TEST.TARGET_TOKEN
 								expect(
 									await contract.ownerOf( tokenId )
 								).to.equal( users[ USER1 ].address )
 							})
-							it( `Balance of ${ USER_NAMES[ TOKEN_OWNER ] } should now be ${ ( TEST.TOKEN_OWNER_SUPPLY - 1 ).toString() }`, async function () {
+							it( `Balance of initial token owner should now be ${ ( TEST.TOKEN_OWNER_SUPPLY - 1 ).toString() }`, async function () {
 								const tokenOwner = users[ TOKEN_OWNER ]
 								expect(
 									await contract.balanceOf( tokenOwner.address )
 								).to.equal( TEST.TOKEN_OWNER_SUPPLY - 1 )
 							})
-							it( `Balance of ${ USER_NAMES[ USER1 ] } should now be 1`, async function () {
+							it( `Balance of new token owner should now be 1`, async function () {
 								const tokenOwner = users[ USER1 ]
 								expect(
 									await contract.balanceOf( tokenOwner.address )
@@ -1116,13 +1148,13 @@
 					})
 				})
 				describe( CONTRACT.METHODS.balanceOf.SIGNATURE, function () {
-					it( `Balance of ${ USER_NAMES[ TOKEN_OWNER ] } should be ${ TEST.TOKEN_OWNER_SUPPLY }`, async function () {
+					it( `Balance of token owner should be ${ TEST.TOKEN_OWNER_SUPPLY }`, async function () {
 						const tokenOwner = users[ TOKEN_OWNER ]
 						expect(
 							await contract.balanceOf( tokenOwner.address )
 						).to.equal( TEST.TOKEN_OWNER_SUPPLY )
 					})
-					it( `Balance of ${ USER_NAMES[ OTHER_OWNER ] } should be ${ TEST.OTHER_OWNER_SUPPLY }`, async function () {
+					it( `Balance of other owner should be ${ TEST.OTHER_OWNER_SUPPLY }`, async function () {
 						const tokenOwner = users[ OTHER_OWNER ]
 						expect(
 							await contract.balanceOf( tokenOwner.address )
@@ -1162,7 +1194,7 @@
 							tokenId
 						)
 					})
-					it( `Owner of token ${ TEST.TARGET_TOKEN } should be ${ USER_NAMES[ TOKEN_OWNER ] }`, async function () {
+					it( `Owner of token ${ TEST.TARGET_TOKEN } should be accurate`, async function () {
 						const tokenId = TEST.TARGET_TOKEN
 						expect(
 							await contract.ownerOf( tokenId )

@@ -1,24 +1,11 @@
 // **************************************
 // *****           IMPORT           *****
 // **************************************
-  const {
-    USER1,
-    USER2,
-    USER_NAMES,
-    PROXY_USER,
-    TOKEN_OWNER,
-    OTHER_OWNER,
-    CONTRACT_DEPLOYER,
-  } = require( `../test-var-module` )
-
   const chai = require( `chai` )
   const chaiAsPromised = require( `chai-as-promised` )
   chai.use( chaiAsPromised )
   const expect = chai.expect
-
-  const { ethers } = require( `hardhat` )
   const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
-  const { PANIC_CODES } = require( "@nomicfoundation/hardhat-chai-matchers/panic" )
 
   const {
     INTERFACE_ID,
@@ -69,23 +56,23 @@
       // **************************************
       // *****            VIEW            *****
       // **************************************
-      describe( CONTRACT.METHODS.uri.SIGNATURE, function () {
-        it( `Should be reverted when requesting an invalid token ID`, async function () {
-          const id = TEST.INVALID_SERIES_ID
-          await shouldRevertWhenRequestedTokenDoesNotExist(
-            contract.uri( id ),
-            contract,
-            TEST.INVALID_SERIES_ID
-          )
+        describe( CONTRACT.METHODS.uri.SIGNATURE, function () {
+          it( `Should be reverted when requesting an invalid token ID`, async function () {
+            const id = TEST.INVALID_SERIES_ID
+            await shouldRevertWhenRequestedTokenDoesNotExist(
+              contract.uri( id ),
+              contract,
+              TEST.INVALID_SERIES_ID
+            )
+          })
+          it( `Initial uri should be ${ TEST.INIT_BASE_URI }`, async function () {
+            const id = TEST.INIT_SERIES.id_
+            const baseUri = TEST.INIT_BASE_URI
+            expect(
+              await contract.uri( id )
+            ).to.equal( `${ baseUri }${ id }` )
+          })
         })
-        it( `Initial uri should be ${ TEST.INIT_BASE_URI }`, async function () {
-          const id = TEST.INIT_SERIES.id_
-          const baseUri = TEST.INIT_BASE_URI
-          expect(
-            await contract.uri( id )
-          ).to.equal( `${ baseUri }${ id }` )
-        })
-      })
       // **************************************
     })
   }

@@ -3,24 +3,16 @@
 // **************************************
 	const { TEST_ACTIVATION } = require( '../test-activation-module' )
 	const {
-		THROW,
-		ERROR,
 		USER1,
-		USER2,
-		USER_NAMES,
-		PROXY_USER,
-		TOKEN_OWNER,
-		OTHER_OWNER,
-		CONTRACT_DEPLOYER,
+		ROYALTY_RECIPIENT,
 	} = require( '../test-var-module' )
 
 	const chai = require( 'chai' )
 	const chaiAsPromised = require( 'chai-as-promised' )
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
-
-	const { ethers } = require( `hardhat` )
 	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
+	const { ethers } = require( `hardhat` )
 
 	const {
 		getTestCasesByFunction,
@@ -33,6 +25,7 @@
 	} = require( '../utils/behavior.ERC165' )
 
 	const {
+		shouldRevertWhenRoyaltyRateHigherThanRoyaltyBase,
 		shouldBehaveLikeERC2981,
 	} = require( '../utils/behavior.ERC2981' )
 // **************************************
@@ -44,85 +37,33 @@
 	const CONTRACT_INTERFACE = {
 		NAME : 'Mock_ERC2981',
 		METHODS : {
-			// **************************************
-			// *****       CONTRACT_OWNER       *****
-			// **************************************
-				setRoyaltyInfo       : {
-					SIGNATURE          : 'setRoyaltyInfo(address,uint256)',
-					PARAMS             : [ 'recipient_', 'royaltyRate_' ],
-				},
-			// **************************************
-
-			// **************************************
-			// *****            VIEW            *****
-			// **************************************
-				royaltyInfo          : {
-					SIGNATURE          : 'royaltyInfo(uint256,uint256)',
-					PARAMS             : [ 'tokenId_', 'salePrice_' ],
-				},
-			// **************************************
+			setRoyaltyInfo       : {
+				SIGNATURE          : 'setRoyaltyInfo(address,uint256)',
+				PARAMS             : [ 'recipient_', 'royaltyRate_' ],
+			},
+			royaltyInfo          : {
+				SIGNATURE          : 'royaltyInfo(uint256,uint256)',
+				PARAMS             : [ 'tokenId_', 'salePrice_' ],
+			},
 		},
 	}
 
-	// INIT
-	const INIT_SUPPLY             = 0
-	// TARGET TOKEN
-	const FIRST_TOKEN             = 1
-	const SECOND_TOKEN            = 2
-	const TARGET_TOKEN            = 4
-	// TOKEN OWNER
-	const TOKEN_OWNER_INIT_SUPPLY = 6
-	const TOKEN_OWNER_MORE_SUPPLY = 3
-	const TOKEN_OWNER_SUPPLY      = TOKEN_OWNER_INIT_SUPPLY + TOKEN_OWNER_MORE_SUPPLY
-	const TOKEN_OWNER_FIRST       = FIRST_TOKEN
-	const TOKEN_OWNER_LAST        = TOKEN_OWNER_FIRST + TOKEN_OWNER_INIT_SUPPLY - 1
-	// OTHER OWNER
-	const OTHER_OWNER_SUPPLY      = 1
-	const OTHER_OWNER_FIRST       = TOKEN_OWNER_LAST + 1
-	const OTHER_OWNER_LAST        = OTHER_OWNER_FIRST + OTHER_OWNER_SUPPLY - 1
-	// NON EXISTENT
-	const LAST_TOKEN              = FIRST_TOKEN + TOKEN_OWNER_SUPPLY + OTHER_OWNER_SUPPLY -1
-	const UNMINTED_TOKEN          = TOKEN_OWNER_SUPPLY + OTHER_OWNER_SUPPLY + 10
 	// ROYALTIES
 	const ROYALTY_BASE            = 10000
 
 	const TEST_DATA = {
 		NAME : 'ERC2981',
-		// SUPPLY
-		INIT_SUPPLY                 : INIT_SUPPLY,
-		MINTED_SUPPLY               : INIT_SUPPLY + TOKEN_OWNER_SUPPLY + OTHER_OWNER_SUPPLY,
-		// TARGET TOKEN
-		FIRST_TOKEN                 : INIT_SUPPLY + FIRST_TOKEN,
-		SECOND_TOKEN                : INIT_SUPPLY + SECOND_TOKEN,
-		TARGET_TOKEN                : INIT_SUPPLY + TARGET_TOKEN,
-		UNMINTED_TOKEN              : INIT_SUPPLY + UNMINTED_TOKEN,
-		// TOKEN OWNER
-		TOKEN_OWNER_INIT_SUPPLY     : TOKEN_OWNER_INIT_SUPPLY,
-		TOKEN_OWNER_MORE_SUPPLY     : TOKEN_OWNER_MORE_SUPPLY,
-		TOKEN_OWNER_SUPPLY          : TOKEN_OWNER_SUPPLY,
-		TOKEN_OWNER_FIRST           : INIT_SUPPLY + FIRST_TOKEN,
-		TOKEN_OWNER_LAST            : INIT_SUPPLY + LAST_TOKEN,
-		TOKEN_OWNER_INDEX_SECOND    : FIRST_TOKEN + TOKEN_OWNER_INIT_SUPPLY + OTHER_OWNER_SUPPLY + 1,
-		// OTHER OWNER
-		OTHER_OWNER_SUPPLY          : OTHER_OWNER_SUPPLY,
-		OTHER_OWNER_FIRST           : INIT_SUPPLY + OTHER_OWNER_FIRST,
-		OTHER_OWNER_LAST            : INIT_SUPPLY + OTHER_OWNER_LAST,
+		// TARGET
+		TARGET_TOKEN                : 5,
 		// ROYALTIES
 		ROYALTY_BASE                : ROYALTY_BASE,
 		DEFAULT_ROYALTY_RATE        : 1000,
-		// CONSTRUCTOR PARAMETERS
-		PARAMS : {
-			royaltyRate_ : 1000,
-		},
 		// INTERFACES
 		INTERFACES : [
 			'IERC165',
 			'IERC2981',
 		],
 	}
-
-	let test_qty
-	let test_contract_params
 
 	let users = {}
 	let contract
@@ -135,33 +76,21 @@
 		[
 			test_contract_deployer,
 			test_user1,
-			test_user2,
-			test_proxy_user,
-			test_token_owner,
-			test_other_owner,
+			test_royalty_recipient,
 			...addrs
 		] = await ethers.getSigners()
 
 		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
-		test_contract = await contract_artifact.deploy(
-			test_contract_deployer.address,
-			TEST_DATA.PARAMS.royaltyRate_
+		const test_contract = await contract_artifact.deploy(
+			test_royalty_recipient.address,
+			TEST_DATA.DEFAULT_ROYALTY_RATE
 		)
-		// const params = [
-		// 	test_contract_deployer.address,
-		// 	TEST_DATA.PARAMS.royaltyRate_
-		// ]
-		// let test_contract = await deployContract( test_contract_deployer, ARTIFACT, params )
 		await test_contract.deployed()
 
 		return {
 			test_user1,
-			test_user2,
 			test_contract,
-			test_proxy_user,
-			test_token_owner,
-			test_other_owner,
-			test_contract_deployer,
+			test_royalty_recipient,
 		}
 	}
 // **************************************
@@ -175,21 +104,13 @@
 				beforeEach( async function () {
 					const {
 						test_user1,
-						test_user2,
 						test_contract,
-						test_proxy_user,
-						test_token_owner,
-						test_other_owner,
-						test_contract_deployer,
+						test_royalty_recipient,
 					} = await loadFixture( fixture )
 
 					contract = test_contract
-					users[ USER1             ] = test_user1
-					users[ USER2             ] = test_user2
-					users[ PROXY_USER        ] = test_proxy_user
-					users[ TOKEN_OWNER       ] = test_token_owner
-					users[ OTHER_OWNER       ] = test_other_owner
-					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
+					users[ USER1 ] = test_user1
+					users[ ROYALTY_RECIPIENT ] = test_royalty_recipient
 
 					defaultArgs = {}
 					defaultArgs [ CONTRACT.METHODS.royaltyInfo.SIGNATURE ] = {
@@ -202,8 +123,8 @@
 					defaultArgs [ CONTRACT.METHODS.setRoyaltyInfo.SIGNATURE ] = {
 						err  : null,
 						args : [
-							users[ CONTRACT_DEPLOYER ].address,
-							TEST.PARAMS.royaltyRate_,
+							users[ USER1 ].address,
+							TEST.DEFAULT_ROYALTY_RATE,
 						],
 					}
 				})
@@ -222,6 +143,62 @@
 			}
 		})
 	}
+	function shouldBehaveLikeMock_ERC2981 ( fixture, TEST, CONTRACT ) {
+		shouldBehaveLikeERC2981 ( fixture, TEST, CONTRACT )
+
+		describe( `Should behave like ERC2981`, function () {
+			beforeEach( async function () {
+				const {
+					test_user1,
+					test_contract,
+					test_royalty_recipient,
+				} = await loadFixture( fixture )
+
+				contract = test_contract
+				users[ USER1 ] = test_user1
+				users[ ROYALTY_RECIPIENT ] = test_royalty_recipient
+			})
+
+			describe( CONTRACT.METHODS.setRoyaltyInfo.SIGNATURE, function () {
+				describe( `Updating royalty rate`, function () {
+					it( `Setting royalty rate to more than 100% should revert`, async function () {
+						const newRoyaltyRecipient = users[ USER1 ].address
+						const newRoyaltyRate = TEST.ROYALTY_BASE + 1
+						await shouldRevertWhenRoyaltyRateHigherThanRoyaltyBase(
+							contract.setRoyaltyInfo( newRoyaltyRecipient, newRoyaltyRate ),
+							contract,
+							newRoyaltyRate,
+							TEST.ROYALTY_BASE
+						)
+
+						const tokenId = TEST.TARGET_TOKEN
+						const salePrice = ethers.constants.WeiPerEther
+						const expectedRecipient = users[ ROYALTY_RECIPIENT ].address
+						const expectedRate = salePrice.mul( TEST.DEFAULT_ROYALTY_RATE ).div( TEST.ROYALTY_BASE )
+
+						const royaltyInfo = await contract.royaltyInfo( tokenId, salePrice )
+						expect( royaltyInfo ).to.exist
+						expect( royaltyInfo[ 0 ] ).to.equal( expectedRecipient )
+						expect( royaltyInfo[ 1 ] ).to.equal( expectedRate )
+					})
+					it( `Royalty info for price 1 ETH should be accurate`, async function () {
+						const newRoyaltyRecipient = users[ USER1 ].address
+						const newRoyaltyRate = TEST.DEFAULT_ROYALTY_RATE + 1
+						await contract.setRoyaltyInfo( newRoyaltyRecipient, newRoyaltyRate )
+
+						const tokenId = TEST.TARGET_TOKEN
+						const salePrice = ethers.constants.WeiPerEther
+						const expectedRate = salePrice.mul( newRoyaltyRate ).div( TEST.ROYALTY_BASE )
+
+						const royaltyInfo = await contract.royaltyInfo( tokenId, salePrice )
+						expect( royaltyInfo ).to.exist
+						expect( royaltyInfo[ 0 ] ).to.equal( newRoyaltyRecipient )
+						expect( royaltyInfo[ 1 ] ).to.equal( expectedRate )
+					})
+				})
+			})
+		})
+	}
 // **************************************
 
 // **************************************
@@ -230,6 +207,6 @@
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
 		testInvalidInputs( fixture, TEST_DATA, CONTRACT_INTERFACE )
-		shouldBehaveLikeERC2981( fixture, TEST_DATA, CONTRACT_INTERFACE )
+		shouldBehaveLikeMock_ERC2981( fixture, TEST_DATA, CONTRACT_INTERFACE )
 	}
 })

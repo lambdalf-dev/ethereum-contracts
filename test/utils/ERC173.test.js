@@ -4,11 +4,6 @@
 	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
 		USER1,
-		USER2,
-		USER_NAMES,
-		PROXY_USER,
-		TOKEN_OWNER,
-		OTHER_OWNER,
 		CONTRACT_DEPLOYER,
 	} = require( `../test-var-module` )
 
@@ -16,9 +11,8 @@
 	const chaiAsPromised = require( `chai-as-promised` )
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
-
-	const { ethers } = require( `hardhat` )
 	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
+	const { ethers } = require( `hardhat` )
 
 	const {
 		getTestCasesByFunction,
@@ -56,8 +50,6 @@
 		NAME : `ERC173`,
 	}
 
-	let test_contract_params
-
 	let contract
 	let users = {}
 // **************************************
@@ -69,10 +61,6 @@
 		[
 			test_contract_deployer,
 			test_user1,
-			test_user2,
-			test_proxy_user,
-			test_token_owner,
-			test_other_owner,
 			...addrs
 		] = await ethers.getSigners()
 
@@ -82,11 +70,7 @@
 
 		return {
 			test_user1,
-			test_user2,
 			test_contract,
-			test_proxy_user,
-			test_token_owner,
-			test_other_owner,
 			test_contract_deployer,
 		}
 	}
@@ -110,11 +94,7 @@
 					} = await loadFixture( fixture )
 
 					contract = test_contract
-					users[ USER1             ] = test_user1
-					users[ USER2             ] = test_user2
-					users[ PROXY_USER        ] = test_proxy_user
-					users[ TOKEN_OWNER       ] = test_token_owner
-					users[ OTHER_OWNER       ] = test_other_owner
+					users[ USER1 ] = test_user1
 					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
 
 					defaultArgs = {}

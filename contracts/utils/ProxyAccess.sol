@@ -11,6 +11,9 @@ contract ProxyRegistry {
 }
 
 abstract contract ProxyAccess {
+	// Errors
+	error ProxyAccess_ALREADY_REGISTERED();
+	error ProxyAccess_NON_EXISTANT_PROXY();
 	// list of accepted proxy registries
 	address[] public proxyRegistries;
 
@@ -26,7 +29,7 @@ abstract contract ProxyAccess {
 				_index_ --;
 			}
 			if ( proxyRegistries[ _index_ ] == proxyRegistryAddress_ ) {
-				return;
+				revert ProxyAccess_ALREADY_REGISTERED();
 			}
 		}
 		proxyRegistries.push( proxyRegistryAddress_ );
@@ -52,10 +55,11 @@ abstract contract ProxyAccess {
 				return;
 			}
 		}
+		revert ProxyAccess_NON_EXISTANT_PROXY();
 	}
 
 	/**
-	* @dev Internal function that checks if `operator_` is a registered proxy for `tokenOwner_`.
+	* @notice Checks if `operator_` is a registered proxy for `tokenOwner_`.
 	* 
 	* Note: Use this function to allow whitelisting of registered proxy.
 	* 
@@ -64,7 +68,7 @@ abstract contract ProxyAccess {
 	* 
 	* @return bool : whether `operator_` is allowed to operate on behalf of `tokenOwner_` or not
 	*/
-	function _isRegisteredProxy( address tokenOwner_, address operator_ ) internal view returns ( bool ) {
+	function isRegisteredProxy( address tokenOwner_, address operator_ ) public view returns ( bool ) {
 		uint256 _index_ = proxyRegistries.length;
 		while ( _index_ > 0 ) {
 			unchecked {

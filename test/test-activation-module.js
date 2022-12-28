@@ -2,7 +2,6 @@ const TEST_ACTIVATION = {
 	// **************************************
 	// *****           INPUTS           *****
 	// **************************************
-		CORRECT_INPUT                 : true,
 		INVALID_INPUT                 : false,
 	// **************************************
 
@@ -15,7 +14,6 @@ const TEST_ACTIVATION = {
 		ProxyAccess                   : true,
 		Whitelist_ECDSA               : true,
 		Whitelist_Merkle              : true,
-		Whitelist_MerkleMultiple      : true,
 	// **************************************
 
 	// **************************************
@@ -42,6 +40,14 @@ const TEST_ACTIVATION = {
 	// *****     ERC1155 EXTENSIONS     *****
 	// **************************************
 		ERC1155MetadataURI            : true,
+	// **************************************
+
+	// **************************************
+	// *****          TEMPLATE          *****
+	// **************************************
+		Template721                   : false,
+		Template1155                  : false,
+		TemplateUniquePass            : false,
 	// **************************************
 }
 

@@ -1,24 +1,17 @@
 // **************************************
 // *****           IMPORT           *****
 // **************************************
-	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
 		USER1,
-		USER2,
-		USER_NAMES,
-		PROXY_USER,
-		TOKEN_OWNER,
-		OTHER_OWNER,
-		CONTRACT_DEPLOYER,
+		ROYALTY_RECIPIENT,
 	} = require( `../test-var-module` )
 
 	const chai = require( `chai` )
 	const chaiAsPromised = require( `chai-as-promised` )
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
-
-	const { ethers } = require( `hardhat` )
 	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
+	const { ethers } = require( `hardhat` )
 // **************************************
 
 // **************************************
@@ -31,6 +24,7 @@
 // **************************************
 // *****        TEST  SUITES        *****
 // **************************************
+	// Errors
 	async function shouldRevertWhenRoyaltyRateHigherThanRoyaltyBase ( promise, contract, royaltyRate, royaltyBase, error ) {
 		if ( typeof error === 'undefined' ) {
 			await expect( promise )
@@ -42,95 +36,46 @@
 				.to.be.revertedWith( error )
 		}
 	}
-
+	// Behavior
 	function shouldBehaveLikeERC2981 ( fixture, TEST, CONTRACT ) {
 		describe( `Should behave like ERC2981`, function () {
-			if ( TEST_ACTIVATION.CORRECT_INPUT ) {
-				beforeEach( async function () {
-					const {
-						test_user1,
-						test_user2,
-						test_contract,
-						test_proxy_user,
-						test_token_owner,
-						test_other_owner,
-						test_contract_deployer,
-					} = await loadFixture( fixture )
+			beforeEach( async function () {
+				const {
+					test_user1,
+					test_contract,
+					test_royalty_recipient,
+				} = await loadFixture( fixture )
 
-					contract = test_contract
-					users[ USER1             ] = test_user1
-					users[ USER2             ] = test_user2
-					users[ PROXY_USER        ] = test_proxy_user
-					users[ TOKEN_OWNER       ] = test_token_owner
-					users[ OTHER_OWNER       ] = test_other_owner
-					users[ CONTRACT_DEPLOYER ] = test_contract_deployer
+				contract = test_contract
+				users[ USER1 ] = test_user1
+				users[ ROYALTY_RECIPIENT ] = test_royalty_recipient
+			})
+
+			describe( CONTRACT.METHODS.royaltyInfo.SIGNATURE, function () {
+				it( `Royalty info for sale price 1 ETH should be accurate`, async function () {
+					const tokenId = TEST.TARGET_TOKEN
+					const salePrice = ethers.constants.WeiPerEther
+					const expectedRecipient = users[ ROYALTY_RECIPIENT ].address
+					const expectedRate = salePrice.mul( TEST.DEFAULT_ROYALTY_RATE ).div( TEST.ROYALTY_BASE )
+
+					const royaltyInfo = await contract.royaltyInfo( tokenId, salePrice )
+					expect( royaltyInfo ).to.exist
+					expect( royaltyInfo[ 0 ] ).to.equal( expectedRecipient )
+					expect( royaltyInfo[ 1 ] ).to.equal( expectedRate )
 				})
 
-				describe( CONTRACT.METHODS.royaltyInfo.SIGNATURE, function () {
-					it( `Royalty info for sale price 1 ETH should be accurate`, async function () {
-						const tokenId      = TEST.TARGET_TOKEN
-						const salePrice    = ethers.constants.WeiPerEther
-						const expectedRate = salePrice.mul( TEST.DEFAULT_ROYALTY_RATE ).div( TEST.ROYALTY_BASE )
+				it( `Royalty info for sale price 0 should be accurate`, async function () {
+					const tokenId = TEST.TARGET_TOKEN
+					const salePrice = 0
+					const expectedRecipient = users[ ROYALTY_RECIPIENT ].address
+					const expectedRate = 0
 
-						const royaltyInfo = await contract.royaltyInfo( tokenId, salePrice )
-						expect( royaltyInfo ).to.exist
-						expect( royaltyInfo[ 0 ] ).to.equal( users[ CONTRACT_DEPLOYER ].address )
-						expect( royaltyInfo[ 1 ] ).to.equal( expectedRate )
-					})
-
-					it( `Royalty info for sale price 0 should be accurate`, async function () {
-						const tokenId      = TEST.TARGET_TOKEN
-						const salePrice    = 0
-						const expectedRate = 0
-
-						const royaltyInfo = await contract.royaltyInfo( tokenId, salePrice )
-						expect( royaltyInfo ).to.exist
-						expect( royaltyInfo[ 0 ] ).to.equal( users[ CONTRACT_DEPLOYER ].address )
-						expect( royaltyInfo[ 1 ] ).to.equal( expectedRate )
-					})
+					const royaltyInfo = await contract.royaltyInfo( tokenId, salePrice )
+					expect( royaltyInfo ).to.exist
+					expect( royaltyInfo[ 0 ] ).to.equal( expectedRecipient )
+					expect( royaltyInfo[ 1 ] ).to.equal( expectedRate )
 				})
-
-				describe( CONTRACT.METHODS.setRoyaltyInfo.SIGNATURE, function () {
-					describe( `Updating royalty rate`, function () {
-						it( `Royalty info for price 1 ETH should be accurate`, async function () {
-							const royaltyRecipient = users[ USER1 ].address
-							const royaltyRate      = TEST.DEFAULT_ROYALTY_RATE + 1
-							await contract.connect( users[ CONTRACT_DEPLOYER ] )
-														.setRoyaltyInfo( royaltyRecipient, royaltyRate )
-
-							const tokenId      = TEST.TARGET_TOKEN
-							const salePrice    = ethers.constants.WeiPerEther
-							const expectedRate = salePrice.mul( royaltyRate ).div( TEST.ROYALTY_BASE )
-
-							const royaltyInfo = await contract.royaltyInfo( tokenId, salePrice )
-							expect( royaltyInfo ).to.exist
-							expect( royaltyInfo[ 0 ] ).to.equal( users[ USER1 ].address )
-							expect( royaltyInfo[ 1 ] ).to.equal( expectedRate )
-						})
-					})
-
-					it( `Setting royalty rate to more than 100% should revert`, async function () {
-						const royaltyRecipient = users[ USER1 ].address
-						const royaltyRate      = TEST.ROYALTY_BASE + 1
-						await shouldRevertWhenRoyaltyRateHigherThanRoyaltyBase(
-							contract.connect( users[ CONTRACT_DEPLOYER ] )
-											.setRoyaltyInfo( royaltyRecipient, royaltyRate ),
-							contract,
-							royaltyRate,
-							TEST.ROYALTY_BASE
-						)
-
-						const tokenId      = TEST.TARGET_TOKEN
-						const salePrice    = ethers.constants.WeiPerEther
-						const expectedRate = salePrice.mul( TEST.DEFAULT_ROYALTY_RATE ).div( TEST.ROYALTY_BASE )
-
-						const royaltyInfo = await contract.royaltyInfo( tokenId, salePrice )
-						expect( royaltyInfo ).to.exist
-						expect( royaltyInfo[ 0 ] ).to.equal( users[ CONTRACT_DEPLOYER ].address )
-						expect( royaltyInfo[ 1 ] ).to.equal( expectedRate )
-					})
-				})
-			}
+			})
 		})
 	}
 // **************************************

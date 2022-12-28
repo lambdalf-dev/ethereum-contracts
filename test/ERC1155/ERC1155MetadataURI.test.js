@@ -4,21 +4,16 @@
 	const {
 		USER1,
 		USER2,
-		USER_NAMES,
-		PROXY_USER,
 		TOKEN_OWNER,
 		OTHER_OWNER,
-		CONTRACT_DEPLOYER,
 	} = require( `../../test/test-var-module` )
 
 	const chai = require( `chai` )
 	const chaiAsPromised = require( `chai-as-promised` )
 	chai.use( chaiAsPromised )
 	const expect = chai.expect
-
-	const { ethers } = require( `hardhat` )
 	const { loadFixture } = require( `@nomicfoundation/hardhat-network-helpers` )
-	const { PANIC_CODES } = require("@nomicfoundation/hardhat-chai-matchers/panic")
+	const { ethers } = require( `hardhat` )
 
 	const {
 		INTERFACE_ID,
@@ -64,8 +59,8 @@
 			// *****           PUBLIC           *****
 			// **************************************
 				mint : {
-					SIGNATURE : `mint(uint256,address,uint256)`,
-					PARAMS    : [ `id_`, `to_`, `qty_` ],
+					SIGNATURE : `mint(address,uint256,uint256)`,
+					PARAMS    : [ `toAddress_`, `id_`, `qty_` ],
 				},
 				// ERC1155
 				safeBatchTransferFrom : {
@@ -177,10 +172,8 @@
 			test_contract_deployer,
 			test_user1,
 			test_user2,
-			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_chain_manager,
 			...addrs
 		] = await ethers.getSigners()
 
@@ -192,10 +185,8 @@
 			test_user1,
 			test_user2,
 			test_contract,
-			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 		}
 	}
 	async function mintFixture() {
@@ -203,33 +194,29 @@
 			test_user1,
 			test_user2,
 			test_contract,
-			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 		} = await loadFixture( deployFixture )
 
 		const test_id = TEST_DATA.INIT_SERIES.id_
 		test_qty = TEST_DATA.TOKEN_OWNER_INIT_SUPPLY
 		test_account = test_token_owner
-		await test_contract.mint( test_id, test_qty, test_account.address )
+		await test_contract.mint( test_account.address, test_id, test_qty )
 
 		test_qty = TEST_DATA.OTHER_OWNER_SUPPLY
 		test_account = test_other_owner
-		await test_contract.mint( test_id, test_qty, test_account.address )
+		await test_contract.mint( test_account.address, test_id, test_qty )
 
 		test_qty = TEST_DATA.TOKEN_OWNER_MORE_SUPPLY
 		test_account = test_token_owner
-		await test_contract.mint( test_id, test_qty, test_account.address )
+		await test_contract.mint( test_account.address, test_id, test_qty )
 
 		return {
 			test_user1,
 			test_user2,
 			test_contract,
-			test_proxy_user,
 			test_token_owner,
 			test_other_owner,
-			test_contract_deployer,
 		}
 	}
 // **************************************
@@ -248,19 +235,15 @@
 					test_user1,
 					test_user2,
 					test_contract,
-					test_proxy_user,
 					test_token_owner,
 					test_other_owner,
-					test_contract_deployer,
 				} = await loadFixture( fixture )
 
-				contract       = test_contract
-				users[ USER1             ] = test_user1
-				users[ USER2             ] = test_user2
-				users[ PROXY_USER        ] = test_proxy_user
-				users[ TOKEN_OWNER       ] = test_token_owner
-				users[ OTHER_OWNER       ] = test_other_owner
-				users[ CONTRACT_DEPLOYER ] = test_contract_deployer
+				contract = test_contract
+				users[ USER1 ] = test_user1
+				users[ USER2 ] = test_user2
+				users[ TOKEN_OWNER ] = test_token_owner
+				users[ OTHER_OWNER ] = test_other_owner
 			})
 
 			// **************************************
@@ -279,17 +262,16 @@
 			// *****           PUBLIC           *****
 			// **************************************
 				describe( CONTRACT.METHODS.mint.SIGNATURE, function () {
-					// it( `Should be reverted when trying to mint 0 tokens`, async function () {
-					// 	const id = TEST.INIT_SERIES.id_
-					// 	const account = users[ TOKEN_OWNER ]
-					// 	const qty = 0
-					// 	const price = TEST.INIT_SERIES.publicSalePrice_.mul( qty )
+					it( `Should be reverted when minting to the NULL address`, async function () {
+						const id = TEST.INIT_SERIES.id_
+						const account = ethers.constants.AddressZero
+						const qty = 1
 
-					// 	await shouldRevertWhenQtyIsZero(
-					// 		contract.mint( id, qty, account ),
-					// 		contract
-					// 	)
-					// })
+						await shouldRevertWhenTransferingToNullAddress(
+							contract.mint( account, id, qty ),
+							contract
+						)
+					})
 				})
 			// **************************************
 		})

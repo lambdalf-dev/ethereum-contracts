@@ -119,6 +119,9 @@ abstract contract ERC1155 is IERC1155Errors, IArrayErrors, IERC165, IERC1155 {
 		* @dev Internal function that mints `amount_` tokens from series `id_` into `account_`.
 		*/
 		function _mint( address account_, uint256 id_, uint256 amount_ ) internal isValidSeries( id_ ) {
+			if ( account_ == address( 0 ) ) {
+				revert IERC1155_INVALID_TRANSFER();
+			}
 			unchecked {
 				_balances[ id_ ][ account_ ] += amount_;
 			}

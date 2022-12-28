@@ -21,9 +21,9 @@ contract Mock_ProxyRegistry is Ownable {
    * @param _proxyForAddress  The proxy that will act on behalf of the address
    */
   function setProxy(address _address, address _proxyForAddress)
-      external
-      onlyOwner()
+    external
+    onlyOwner()
   {
-      proxies[_address] = _proxyForAddress;
+    proxies[_address] = _proxyForAddress;
   }
 }

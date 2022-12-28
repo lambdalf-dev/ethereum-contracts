@@ -14,12 +14,9 @@ contract Mock_ERC1155MetadataURI is ERC1155MetadataURI {
 		_setUri( "https://api.example.com/metadata/" );
 	}
 
-	function mint( uint256 id_, uint256 qty_, address to_ ) public isValidSeries( id_ ) {
-		if ( to_ == address( 0 ) ) {
-			revert IERC1155_INVALID_TRANSFER();
-		}
+	function mint( address toAddress_, uint256 id_, uint256 qty_ ) public {
 		if ( qty_ > 0 ) {
-			_mint( to_, id_, qty_ );
+			_mint( toAddress_, id_, qty_ );
 		}
 	}
 }
