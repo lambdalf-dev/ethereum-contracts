@@ -7,17 +7,9 @@
 pragma solidity 0.8.17;
 
 import "../interfaces/IERC2981.sol";
+import "../interfaces/IERC2981Errors.sol";
 
-abstract contract ERC2981 is IERC2981 {
-	// Errors
-  /**
-  * @dev Thrown when the desired royalty rate is higher than 10,000
-  * 
-  * @param royaltyRate : the desired royalty rate
-  * @param royaltyBase : the maximum royalty rate
-  */
-	error IERC2981_INVALID_ROYALTIES( uint256 royaltyRate, uint256 royaltyBase );
-
+abstract contract ERC2981 is IERC2981, IERC2981Errors {
 	// Royalty rate is stored out of 10,000 instead of a percentage to allow for
 	// up to two digits below the unit such as 2.5% or 1.25%.
 	uint private constant ROYALTY_BASE = 10000;

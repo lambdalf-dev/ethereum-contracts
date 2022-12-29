@@ -7,6 +7,7 @@
 pragma solidity 0.8.17;
 
 import "../interfaces/IERC173.sol";
+import "../interfaces/IERC173Errors.sol";
 
 /**
 * @dev Contract module which provides a basic access control mechanism, where
@@ -20,15 +21,7 @@ import "../interfaces/IERC173.sol";
 * `onlyOwner`, which can be applied to your functions to restrict their use to
 * the owner.
 */
-abstract contract ERC173 is IERC173 {
-	// Errors
-  /**
-  * @dev Thrown when `operator` is not the contract owner.
-  * 
-  * @param operator : address trying to use a function reserved to contract owner without authorization
-  */
-  error IERC173_NOT_OWNER( address operator );
-
+abstract contract ERC173 is IERC173, IERC173Errors {
 	// The owner of the contract
 	address private _owner;
 

@@ -1,6 +1,7 @@
 // **************************************
 // *****           IMPORT           *****
 // **************************************
+	const { TEST_ACTIVATION } = require( `../test-activation-module` )
 	const {
 		USER1,
 		USER2,
@@ -272,13 +273,15 @@
 // *****          TEST RUN          *****
 // **************************************
 describe( TEST_DATA.NAME, function () {
-	if ( true ) {
-		shouldSupportInterface( deployFixture, TEST_DATA.INTERFACES )
-	}
-	if ( true ) {
-		shouldBehaveLikeERC1155AtDeployTime( deployFixture, TEST_DATA, CONTRACT_INTERFACE )
-	}
-	if ( true ) {
-		shouldBehaveLikeERC1155AfterMint( mintFixture, TEST_DATA, CONTRACT_INTERFACE )
+	if ( TEST_ACTIVATION.ERC1155 ) {
+		if ( true ) {
+			shouldSupportInterface( deployFixture, TEST_DATA.INTERFACES )
+		}
+		if ( true ) {
+			shouldBehaveLikeERC1155AtDeployTime( deployFixture, TEST_DATA, CONTRACT_INTERFACE )
+		}
+		if ( true ) {
+			shouldBehaveLikeERC1155AfterMint( mintFixture, TEST_DATA, CONTRACT_INTERFACE )
+		}
 	}
 })

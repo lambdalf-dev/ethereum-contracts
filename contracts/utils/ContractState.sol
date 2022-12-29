@@ -6,31 +6,14 @@
 
 pragma solidity 0.8.17;
 
-abstract contract ContractState {
+import "../interfaces/IContractState.sol";
+
+abstract contract ContractState is IContractState {
 	// Enum to represent the sale state, defaults to ``PAUSED``.
 	uint8 public constant PAUSED = 0;
 
-	// Errors
-  /**
-  * @dev Thrown when a function is called with the wrong contract state.
-  * 
-  * @param currentState : the current state of the contract
-  */
-	error ContractState_INCORRECT_STATE( uint8 currentState );
-  /**
-  * @dev Thrown when trying to set the contract state to an invalid value.
-  * 
-  * @param invalidState : the invalid contract state
-  */
-	error ContractState_INVALID_STATE( uint8 invalidState );
-
 	// The current state of the contract
 	uint8 private _contractState;
-
-	/**
-	* @dev Emitted when the sale state changes
-	*/
-	event ContractStateChanged( uint8 indexed previousState, uint8 indexed newState );
 
 	/**
 	* @dev Ensures that contract state is `expectedState_`.
@@ -75,7 +58,7 @@ abstract contract ContractState {
 	* 
 	* @return uint8 : the current contract state
 	*/
-	function getContractState() public virtual view returns ( uint8 ) {
+	function getContractState() public virtual view override returns ( uint8 ) {
 		return _contractState;
 	}
 }
