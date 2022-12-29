@@ -210,6 +210,13 @@
 						).to.equal( TEST.INIT_SUPPLY )
 					})
 				})
+				describe( CONTRACT.METHODS.operatorFilterRegistry.SIGNATURE, function () {
+					it( `Should return the default operator filter registry address`, async function () {
+						expect(
+							await contract.operatorFilterRegistry()
+						).to.equal( TEST.DEFAULT_OPERATOR_FILTER_REGISTRY )
+					})
+				})
 			// **************************************
 
 			// **************************************
@@ -551,6 +558,31 @@
 								.withdraw(),
 							contract
 						)
+					})
+				})
+				describe( CONTRACT.METHODS.updateOperatorFilterRegistry.SIGNATURE, function () {
+					it( `Should be reverted when caller is not contract owner`, async function () {
+						const operator = users[ TOKEN_OWNER ]
+						const newRegistry = users[ SIGNER_WALLET ]
+						await shouldRevertWhenCallerIsNotContractOwner(
+							contract
+								.connect( operator )
+								.updateOperatorFilterRegistry( newRegistry.address ),
+							contract,
+							operator.address
+						)
+					})
+					it( `Should be fulfilled under normal conditions`, async function () {
+						const operator = users[ CONTRACT_DEPLOYER ]
+						const newRegistry = users[ SIGNER_WALLET ]
+						await expect(
+							contract
+								.connect( operator )
+								.updateOperatorFilterRegistry( newRegistry.address )
+						).to.be.fulfilled
+						expect(
+							await contract.operatorFilterRegistry()
+						).to.equal( newRegistry )
 					})
 				})
 			// **************************************

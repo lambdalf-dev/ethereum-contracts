@@ -134,6 +134,11 @@
 					SIGNATURE : `transferOwnership(address)`,
 					PARAMS    : [ `newOwner_` ],
 				},
+				// OPERATOR FILTER REGISTRY (OS COMPLIANCE)
+				updateOperatorFilterRegistry : {
+					SIGNATURE : `updateOperatorFilterRegistry(address)`,
+					PARAMS    : [ `newRegistry` ],
+				},
 			// **************************************
 
 			// **************************************
@@ -247,6 +252,11 @@
 				royaltyInfo : {
 					SIGNATURE : 'royaltyInfo(uint256,uint256)',
 					PARAMS    : [ `tokenId_`, `salePrice_` ],
+				},
+				// OPERATOR FILTER REGISTRY (OS COMPLIANCE)
+				operatorFilterRegistry : {
+					SIGNATURE : `operatorFilterRegistry()`,
+					PARAMS    : [],
 				},
 			// **************************************
 		},
