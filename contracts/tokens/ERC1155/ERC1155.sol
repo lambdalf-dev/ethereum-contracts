@@ -8,14 +8,13 @@ pragma solidity 0.8.17;
 
 import '../../interfaces/IArrayErrors.sol';
 import '../../interfaces/IERC1155Errors.sol';
-import '../../interfaces/IERC165.sol';
 import '../../interfaces/IERC1155.sol';
 import '../../interfaces/IERC1155Receiver.sol';
 
 /**
 * @dev Implementation of https://eips.ethereum.org/EIPS/eip-1155[ERC1155] Semi-Fungible Token Standard.
 */
-abstract contract ERC1155 is IERC1155Errors, IArrayErrors, IERC165, IERC1155 {
+abstract contract ERC1155 is IERC1155Errors, IArrayErrors, IERC1155 {
 	uint256 public constant DEFAULT_SERIES = 1;
 	// List of valid series ID
 	mapping( uint256 => bool ) internal _validSeries;
@@ -313,17 +312,5 @@ abstract contract ERC1155 is IERC1155Errors, IArrayErrors, IERC165, IERC1155 {
 				return _operatorApprovals[ owner_ ][ operator_ ];
 			}
 		// ************
-
-    // ***********
-    // * IERC165 *
-    // ***********
-      /**
-      * @dev See {IERC165-supportsInterface}.
-      */
-      function supportsInterface( bytes4 interfaceId_ ) public pure virtual override returns ( bool ) {
-        return interfaceId_ == type( IERC1155 ).interfaceId ||
-               interfaceId_ == type( IERC165 ).interfaceId;
-      }
-    // ***********
 	// **************************************
 }

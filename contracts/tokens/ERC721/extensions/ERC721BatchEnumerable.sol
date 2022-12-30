@@ -87,17 +87,5 @@ abstract contract ERC721BatchEnumerable is ERC721Batch, IERC721Enumerable {
         return _totalSupply();
       }
     // *********************
-
-    // ***********
-    // * IERC165 *
-    // ***********
-      /**
-      * @dev See {IERC165-supportsInterface}.
-      */
-      function supportsInterface( bytes4 interfaceId_ ) public pure virtual override returns ( bool ) {
-        return interfaceId_ == type( IERC721Enumerable ).interfaceId ||
-               super.supportsInterface( interfaceId_ );
-      }
-    // ***********
   // **************************************
 }

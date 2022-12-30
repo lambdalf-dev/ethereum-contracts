@@ -17,10 +17,9 @@ abstract contract ERC721BatchMetadata is ERC721Batch, IERC721Metadata {
   /**
   * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
   */
-  function __init_ERC721Metadata( string memory name_, string memory symbol_, string memory baseUri_ ) internal {
+  function __init_ERC721Metadata( string memory name_, string memory symbol_ ) internal {
     name     = name_;
     symbol   = symbol_;
-    _baseUri = baseUri_;
   }
 
   // **************************************
@@ -82,17 +81,5 @@ abstract contract ERC721BatchMetadata is ERC721Batch, IERC721Metadata {
         return bytes( _baseUri ).length > 0 ? string( abi.encodePacked( _baseUri, _toString( tokenId_ ) ) ) : _toString( tokenId_ );
       }
     // *******************
-
-    // ***********
-    // * IERC165 *
-    // ***********
-      /**
-      * @dev See {IERC165-supportsInterface}.
-      */
-      function supportsInterface( bytes4 interfaceId_ ) public pure virtual override returns ( bool ) {
-        return interfaceId_ == type( IERC721Metadata ).interfaceId ||
-               super.supportsInterface( interfaceId_ );
-      }
-    // ***********
   // **************************************
 }

@@ -7,8 +7,9 @@
 pragma solidity 0.8.17;
 
 import "../../../tokens/ERC721/extensions/ERC721BatchEnumerable.sol";
+import "../../../interfaces/IERC165.sol";
 
-contract Mock_ERC721BatchEnumerable is ERC721BatchEnumerable {
+contract Mock_ERC721BatchEnumerable is ERC721BatchEnumerable, IERC165 {
 	constructor() {}
 
 	function mint( address to_, uint256 qty_ ) public {
@@ -22,4 +23,17 @@ contract Mock_ERC721BatchEnumerable is ERC721BatchEnumerable {
 			_mint2309( to_, qty_ );
 		}
 	}
+
+  // ***********
+  // * IERC165 *
+  // ***********
+    /**
+    * @dev See {IERC165-supportsInterface}.
+    */
+    function supportsInterface( bytes4 interfaceId_ ) public pure virtual override returns ( bool ) {
+      return interfaceId_ == type( IERC721Enumerable ).interfaceId ||
+      			 interfaceId_ == type( IERC721 ).interfaceId ||
+             interfaceId_ == type( IERC165 ).interfaceId;
+    }
+  // ***********
 }

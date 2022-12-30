@@ -83,17 +83,5 @@ abstract contract ERC1155MetadataURI is IERC1155MetadataURI, ERC1155 {
         return bytes( _baseUri ).length > 0 ? string( abi.encodePacked( _baseUri, _toString( tokenId_ ) ) ) : _toString( tokenId_ );
       }
     // *******************
-
-    // ***********
-    // * IERC165 *
-    // ***********
-      /**
-      * @dev See {IERC165-supportsInterface}.
-      */
-      function supportsInterface( bytes4 interfaceId_ ) public pure virtual override returns ( bool ) {
-        return interfaceId_ == type( IERC1155MetadataURI ).interfaceId ||
-               super.supportsInterface( interfaceId_ );
-      }
-    // ***********
   // **************************************
 }

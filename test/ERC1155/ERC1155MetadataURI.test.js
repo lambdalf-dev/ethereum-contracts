@@ -286,7 +286,7 @@
 // *****          TEST RUN          *****
 // **************************************
 describe( TEST_DATA.NAME, function () {
-	if ( TEST_ACTIVATION.IERC1155MetadataURI ) {
+	if ( TEST_ACTIVATION.ERC1155MetadataURI ) {
 		if ( true ) {
 			shouldSupportInterface( deployFixture, TEST_DATA.INTERFACES )
 		}

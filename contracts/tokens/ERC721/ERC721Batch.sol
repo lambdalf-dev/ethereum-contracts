@@ -8,7 +8,6 @@ pragma solidity 0.8.17;
 
 import '../../interfaces/IERC721Errors.sol';
 import '../../interfaces/IERC2309.sol';
-import '../../interfaces/IERC165.sol';
 import '../../interfaces/IERC721.sol';
 import '../../interfaces/IERC721Receiver.sol';
 
@@ -21,7 +20,7 @@ import '../../interfaces/IERC721Receiver.sol';
 * Note: This implementation imposes a very expensive `balanceOf()` and `ownerOf()`.
 * It is not recommended to interract with those from another contract.
 */
-abstract contract ERC721Batch is IERC721Errors, IERC165, IERC721, IERC2309 {
+abstract contract ERC721Batch is IERC721Errors, IERC721, IERC2309 {
   uint256 private _nextId = 1;
 
   // Mapping from token ID to approved address
@@ -435,18 +434,6 @@ abstract contract ERC721Batch is IERC721Errors, IERC165, IERC721, IERC2309 {
       */
       function ownerOf( uint256 tokenId_ ) public view virtual exists( tokenId_ ) returns ( address ) {
         return _ownerOf( tokenId_ );
-      }
-    // ***********
-
-    // ***********
-    // * IERC165 *
-    // ***********
-      /**
-      * @dev See {IERC165-supportsInterface}.
-      */
-      function supportsInterface( bytes4 interfaceId_ ) public pure virtual override returns ( bool ) {
-        return interfaceId_ == type( IERC721 ).interfaceId ||
-               interfaceId_ == type( IERC165 ).interfaceId;
       }
     // ***********
   // **************************************
