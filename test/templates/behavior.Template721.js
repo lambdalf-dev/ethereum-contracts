@@ -50,14 +50,11 @@
 	} = require( `../ERC721/behavior.ERC721BatchMetadata` )
 
 	const {
-		CONTRACT_STATE,
 		shouldBehaveLikeContractState,
 		shouldEmitContractStateChangedEvent,
 		shouldRevertWhenContractStateIsIncorrect,
 		shouldRevertWhenContractStateIsInvalid,
 	} = require( `../utils/behavior.ContractState` )
-	CONTRACT_STATE.PRIVATE_SALE = 1
-	CONTRACT_STATE.PUBLIC_SALE = 2
 
 	const {
 		shouldBehaveLikeERC173,
@@ -177,26 +174,26 @@
 					it( `Should return the value of the PRIVATE_SALE identifier`, async function () {
 						expect(
 							await contract.PRIVATE_SALE()
-						).to.equal( CONTRACT_STATE.PRIVATE_SALE )
+						).to.equal( TEST.CONTRACT_STATE.PRIVATE_SALE )
 					})
 				})
 				describe( CONTRACT.METHODS.PUBLIC_SALE.SIGNATURE, function () {
 					it( `Should return the value of the PUBLIC_SALE identifier`, async function () {
 						expect(
 							await contract.PUBLIC_SALE()
-						).to.equal( CONTRACT_STATE.PUBLIC_SALE )
+						).to.equal( TEST.CONTRACT_STATE.PUBLIC_SALE )
 					})
 				})
 				describe( CONTRACT.METHODS.salePrice.SIGNATURE, function () {
 					it( `Should return the sale price of the PRIVATE_SALE`, async function () {
-						const contractState = CONTRACT_STATE.PRIVATE_SALE
+						const contractState = TEST.CONTRACT_STATE.PRIVATE_SALE
 						const expectedPrice = TEST.SALE_PRICE.PRIVATE_SALE
 						expect(
 							await contract.salePrice( contractState )
 						).to.equal( expectedPrice )
 					})
 					it( `Should return the sale price of the PUBLIC_SALE`, async function () {
-						const contractState = CONTRACT_STATE.PUBLIC_SALE
+						const contractState = TEST.CONTRACT_STATE.PUBLIC_SALE
 						const expectedPrice = TEST.SALE_PRICE.PUBLIC_SALE
 						expect(
 							await contract.salePrice( contractState )
@@ -208,6 +205,14 @@
 						expect(
 							await contract.supplyMinted()
 						).to.equal( TEST.INIT_SUPPLY )
+					})
+				})
+				describe( CONTRACT.METHODS.treasury.SIGNATURE, function () {
+					it( `Should return the treasury address`, async function () {
+						const expectedTreasury = users[ TREASURY ].address
+						expect(
+							await contract.treasury()
+						).to.equal( expectedTreasury )
 					})
 				})
 				describe( CONTRACT.METHODS.operatorFilterRegistry.SIGNATURE, function () {
@@ -225,7 +230,7 @@
 				describe( CONTRACT.METHODS.mintPrivate.SIGNATURE, function () {
 					it( `Should be reverted when contract state is PAUSED`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PAUSED
+						const currentState = TEST.CONTRACT_STATE.PAUSED
 						const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const account = users[ TOKEN_OWNER ]
@@ -235,7 +240,7 @@
 						const tx_params = { value : price }
 						const hashBuffer = generateHashBuffer(
 							[ 'uint8', 'uint256', 'address' ],
-							[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+							[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 						)
 						const proof = serializeProof(
 							createProof( hashBuffer, users[ SIGNER_WALLET ] )
@@ -252,7 +257,7 @@
 				describe( CONTRACT.METHODS.mintPublic.SIGNATURE, function () {
 					it( `Should be reverted when contract state is PAUSED`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PAUSED
+						const currentState = TEST.CONTRACT_STATE.PAUSED
 						const tokenPrice = TEST.SALE_PRICE.PUBLIC_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const expected = tokenPrice.mul( qty )
@@ -314,12 +319,12 @@
 						const firstAmount = TEST.AIRDROP1
 						const secondAmount = TEST.AIRDROP2
 						const accounts = [
-							firstAccount.address,
 							secondAccount.address,
+							firstAccount.address,
 						]
 						const amounts = [
-							firstAmount,
 							secondAmount,
+							firstAmount,
 						]
 						await shouldEmitTransferEvent(
 							contract
@@ -331,10 +336,10 @@
 							firstAmount
 						)
 						expect(
-							await contract.balanceOf( firstAccount )
+							await contract.balanceOf( firstAccount.address )
 						).to.equal( firstAmount )
 						expect(
-							await contract.balanceOf( secondAccount )
+							await contract.balanceOf( secondAccount.address )
 						).to.equal( secondAmount )
 					})
 				})
@@ -373,14 +378,14 @@
 						).to.equal( newSupply )
 					})
 				})
-				describe( CONTRACT.METHODS.setBaseURI.SIGNATURE, function () {
+				describe( CONTRACT.METHODS.setBaseUri.SIGNATURE, function () {
 					it( `Should be reverted when caller is not contract owner`, async function () {
 						const operator = users[ TOKEN_OWNER ]
 						const newURI = TEST.NEW_BASE_URI
 						await shouldRevertWhenCallerIsNotContractOwner(
 							contract
 								.connect( operator )
-								.setBaseURI( newURI ),
+								.setBaseUri( newURI ),
 							contract,
 							operator.address
 						)
@@ -389,8 +394,8 @@
 				describe( CONTRACT.METHODS.setContractState.SIGNATURE, function () {
 					it( `Should be reverted when caller is not contract owner`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const previousState = CONTRACT_STATE.PAUSED
-						const newState = CONTRACT_STATE.PUBLIC_SALE
+						const previousState = TEST.CONTRACT_STATE.PAUSED
+						const newState = TEST.CONTRACT_STATE.PUBLIC_SALE
 						await shouldRevertWhenCallerIsNotContractOwner(
 							contract
 								.connect( operator )
@@ -401,8 +406,8 @@
 					})
 					it( `Should be reverted when new state is invalid`, async function () {
 						const operator = users[ CONTRACT_DEPLOYER ]
-						const previousState = CONTRACT_STATE.PAUSED
-						const newState = CONTRACT_STATE.PUBLIC_SALE + 1
+						const previousState = TEST.CONTRACT_STATE.PAUSED
+						const newState = TEST.CONTRACT_STATE.PUBLIC_SALE + 1
 						await shouldRevertWhenContractStateIsInvalid(
 							contract
 								.connect( operator )
@@ -413,8 +418,8 @@
 					})
 					it( `Should be fulfilled under normal conditions`, async function () {
 						const operator = users[ CONTRACT_DEPLOYER ]
-						const previousState = CONTRACT_STATE.PAUSED
-						const newState = CONTRACT_STATE.PUBLIC_SALE
+						const previousState = TEST.CONTRACT_STATE.PAUSED
+						const newState = TEST.CONTRACT_STATE.PUBLIC_SALE
 						await shouldEmitContractStateChangedEvent(
 							contract
 								.connect( operator )
@@ -451,10 +456,10 @@
 								.setPrices( newPrivatePrice, newPublicPrice )
 						).to.be.fulfilled
 						expect(
-							await contract.salePrice( CONTRACT_STATE.PRIVATE_SALE )
+							await contract.salePrice( TEST.CONTRACT_STATE.PRIVATE_SALE )
 						).to.equal( newPrivatePrice )
 						expect(
-							await contract.salePrice( CONTRACT_STATE.PUBLIC_SALE )
+							await contract.salePrice( TEST.CONTRACT_STATE.PUBLIC_SALE )
 						).to.equal( newPublicPrice )
 					})
 				})
@@ -515,6 +520,9 @@
 								.connect( operator )
 								.setTreasury( newTreasury )
 						).to.be.fulfilled
+						expect(
+							await contract.treasury()
+						).to.equal( newTreasury )
 					})
 				})
 				describe( CONTRACT.METHODS.setWhitelist.SIGNATURE, function () {
@@ -560,16 +568,17 @@
 						)
 					})
 				})
-				describe( CONTRACT.METHODS.updateOperatorFilterRegistry.SIGNATURE, function () {
+				describe( CONTRACT.METHODS.updateOperatorFilterRegistryAddress.SIGNATURE, function () {
 					it( `Should be reverted when caller is not contract owner`, async function () {
 						const operator = users[ TOKEN_OWNER ]
 						const newRegistry = users[ SIGNER_WALLET ]
 						await shouldRevertWhenCallerIsNotContractOwner(
 							contract
 								.connect( operator )
-								.updateOperatorFilterRegistry( newRegistry.address ),
+								.updateOperatorFilterRegistryAddress( newRegistry.address ),
 							contract,
-							operator.address
+							operator.address,
+							'custom'
 						)
 					})
 					it( `Should be fulfilled under normal conditions`, async function () {
@@ -578,11 +587,11 @@
 						await expect(
 							contract
 								.connect( operator )
-								.updateOperatorFilterRegistry( newRegistry.address )
+								.updateOperatorFilterRegistryAddress( newRegistry.address )
 						).to.be.fulfilled
 						expect(
 							await contract.operatorFilterRegistry()
-						).to.equal( newRegistry )
+						).to.equal( newRegistry.address )
 					})
 				})
 			// **************************************
@@ -622,7 +631,7 @@
 				describe( CONTRACT.METHODS.mintPrivate.SIGNATURE, function () {
 					it( `Should be reverted when whitelist is not set`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PRIVATE_SALE
+						const currentState = TEST.CONTRACT_STATE.PRIVATE_SALE
 						const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const account = users[ TOKEN_OWNER ]
@@ -632,7 +641,7 @@
 						const tx_params = { value : price }
 						const hashBuffer = generateHashBuffer(
 							[ 'uint8', 'uint256', 'address' ],
-							[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+							[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 						)
 						const proof = serializeProof(
 							createProof( hashBuffer, users[ SIGNER_WALLET ] )
@@ -648,7 +657,7 @@
 				describe( CONTRACT.METHODS.mintPublic.SIGNATURE, function () {
 					it( `Should be reverted when contract state is PRIVATE_SALE`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PRIVATE_SALE
+						const currentState = TEST.CONTRACT_STATE.PRIVATE_SALE
 						const tokenPrice = TEST.SALE_PRICE.PUBLIC_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const expected = tokenPrice.mul( qty )
@@ -700,7 +709,7 @@
 				describe( CONTRACT.METHODS.mintPrivate.SIGNATURE, function () {
 					it( `Should be reverted when trying to mint 0 tokens`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PRIVATE_SALE
+						const currentState = TEST.CONTRACT_STATE.PRIVATE_SALE
 						const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 						const qty = 0
 						const account = users[ TOKEN_OWNER ]
@@ -710,7 +719,7 @@
 						const tx_params = { value : price }
 						const hashBuffer = generateHashBuffer(
 							[ 'uint8', 'uint256', 'address' ],
-							[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+							[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 						)
 						const proof = serializeProof(
 							createProof( hashBuffer, users[ SIGNER_WALLET ] )
@@ -724,7 +733,7 @@
 					})
 					it( `Should be reverted when trying to use an invalid proof`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PRIVATE_SALE
+						const currentState = TEST.CONTRACT_STATE.PRIVATE_SALE
 						const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const account = users[ TOKEN_OWNER ]
@@ -734,7 +743,7 @@
 						const tx_params = { value : price }
 						const hashBuffer = generateHashBuffer(
 							[ 'uint8', 'uint256', 'address' ],
-							[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+							[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 						)
 						const proof = serializeProof(
 							createProof( hashBuffer, users[ FAKE_SIGNER ] )
@@ -749,7 +758,7 @@
 					})
 					it( `Should be reverted when trying to mint more than alloted`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PRIVATE_SALE
+						const currentState = TEST.CONTRACT_STATE.PRIVATE_SALE
 						const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 						const qty = TEST.WHITELIST_AMOUNT + 1
 						const account = users[ TOKEN_OWNER ]
@@ -759,7 +768,7 @@
 						const tx_params = { value : price }
 						const hashBuffer = generateHashBuffer(
 							[ 'uint8', 'uint256', 'address' ],
-							[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+							[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 						)
 						const proof = serializeProof(
 							createProof( hashBuffer, users[ SIGNER_WALLET ] )
@@ -774,7 +783,7 @@
 					})
 					it( `Should be reverted when trying to mint without paying enough`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PRIVATE_SALE
+						const currentState = TEST.CONTRACT_STATE.PRIVATE_SALE
 						const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const account = users[ TOKEN_OWNER ]
@@ -784,7 +793,7 @@
 						const tx_params = { value : price }
 						const hashBuffer = generateHashBuffer(
 							[ 'uint8', 'uint256', 'address' ],
-							[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+							[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 						)
 						const proof = serializeProof(
 							createProof( hashBuffer, users[ SIGNER_WALLET ] )
@@ -800,7 +809,7 @@
 					})
 					it( `Should be reverted when paying too much`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PRIVATE_SALE
+						const currentState = TEST.CONTRACT_STATE.PRIVATE_SALE
 						const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const account = users[ TOKEN_OWNER ]
@@ -810,7 +819,7 @@
 						const tx_params = { value : price }
 						const hashBuffer = generateHashBuffer(
 							[ 'uint8', 'uint256', 'address' ],
-							[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+							[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 						)
 						const proof = serializeProof(
 							createProof( hashBuffer, users[ SIGNER_WALLET ] )
@@ -827,7 +836,7 @@
 					describe( `Should be fulfilled under normal conditions`, function () {
 						beforeEach( async function () {
 							const operator = users[ TOKEN_OWNER ]
-							const currentState = CONTRACT_STATE.PRIVATE_SALE
+							const currentState = TEST.CONTRACT_STATE.PRIVATE_SALE
 							const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 							const qty = TEST.WHITELIST_AMOUNT
 							const newToken = TEST.FIRST_TOKEN
@@ -838,7 +847,7 @@
 							const tx_params = { value : price }
 							const hashBuffer = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+								[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 							)
 							const proof = serializeProof(
 								createProof( hashBuffer, users[ SIGNER_WALLET ] )
@@ -864,7 +873,7 @@
 						})
 						it( `Should be reverted when whitelist has been consumed`, async function () {
 							const operator = users[ TOKEN_OWNER ]
-							const currentState = CONTRACT_STATE.PRIVATE_SALE
+							const currentState = TEST.CONTRACT_STATE.PRIVATE_SALE
 							const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 							const qty = TEST.WHITELIST_AMOUNT
 							const account = users[ TOKEN_OWNER ]
@@ -874,7 +883,7 @@
 							const tx_params = { value : price }
 							const hashBuffer = generateHashBuffer(
 								[ 'uint8', 'uint256', 'address' ],
-								[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+								[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 							)
 							const proof = serializeProof(
 								createProof( hashBuffer, users[ SIGNER_WALLET ] )
@@ -926,7 +935,7 @@
 				describe( CONTRACT.METHODS.mintPrivate.SIGNATURE, function () {
 					it( `Should be reverted when contract state is PUBLIC_SALE`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PUBLIC_SALE
+						const currentState = TEST.CONTRACT_STATE.PUBLIC_SALE
 						const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const account = users[ TOKEN_OWNER ]
@@ -936,7 +945,7 @@
 						const tx_params = { value : price }
 						const hashBuffer = generateHashBuffer(
 							[ 'uint8', 'uint256', 'address' ],
-							[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+							[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 						)
 						const proof = serializeProof(
 							createProof( hashBuffer, users[ SIGNER_WALLET ] )
@@ -953,7 +962,7 @@
 				describe( CONTRACT.METHODS.mintPublic.SIGNATURE, function () {
 					it( `Should be reverted when trying to mint 0 tokens`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PUBLIC_SALE
+						const currentState = TEST.CONTRACT_STATE.PUBLIC_SALE
 						const tokenPrice = TEST.SALE_PRICE.PUBLIC_SALE
 						const qty = 0
 						const expected = tokenPrice.mul( qty )
@@ -968,7 +977,7 @@
 					})
 					it( `Should be reverted when trying to mint more tokens than the max allowed per transaction`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PUBLIC_SALE
+						const currentState = TEST.CONTRACT_STATE.PUBLIC_SALE
 						const tokenPrice = TEST.SALE_PRICE.PUBLIC_SALE
 						const qty = TEST.MAX_BATCH + 1
 						const expected = tokenPrice.mul( qty )
@@ -985,7 +994,7 @@
 					})
 					it( `Should be reverted when trying to mint without paying enough`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PUBLIC_SALE
+						const currentState = TEST.CONTRACT_STATE.PUBLIC_SALE
 						const tokenPrice = TEST.SALE_PRICE.PUBLIC_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const expected = tokenPrice.mul( qty )
@@ -1002,7 +1011,7 @@
 					})
 					it( `Should be reverted when paying too much`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PUBLIC_SALE
+						const currentState = TEST.CONTRACT_STATE.PUBLIC_SALE
 						const tokenPrice = TEST.SALE_PRICE.PUBLIC_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const expected = tokenPrice.mul( qty )
@@ -1019,7 +1028,7 @@
 					})
 					it( `Should be fulfilled under normal conditions`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PUBLIC_SALE
+						const currentState = TEST.CONTRACT_STATE.PUBLIC_SALE
 						const tokenPrice = TEST.SALE_PRICE.PUBLIC_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const newToken = TEST.FIRST_TOKEN
@@ -1109,7 +1118,7 @@
 						)
 					})
 				})
-				describe( CONTRACT.METHODS.setBaseURI.SIGNATURE, function () {
+				describe( CONTRACT.METHODS.setBaseUri.SIGNATURE, function () {
 					it( `Should be fulfilled under normal conditions`, async function () {
 						const operator = users[ CONTRACT_DEPLOYER ]
 						const newURI = TEST.NEW_BASE_URI
@@ -1117,7 +1126,7 @@
 						await expect(
 							contract
 								.connect( operator )
-								.setBaseURI( newURI )
+								.setBaseUri( newURI )
 						).to.be.fulfilled
 						expect(
 							await contract.tokenURI( tokenId )
@@ -1211,7 +1220,7 @@
 				describe( CONTRACT.METHODS.mintPrivate.SIGNATURE, function () {
 					it( `Should be reverted when minting with no remaining supply`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PRIVATE_SALE
+						const currentState = TEST.CONTRACT_STATE.PRIVATE_SALE
 						const tokenPrice = TEST.SALE_PRICE.PRIVATE_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const account = users[ TOKEN_OWNER ]
@@ -1221,7 +1230,7 @@
 						const tx_params = { value : price }
 						const hashBuffer = generateHashBuffer(
 							[ 'uint8', 'uint256', 'address' ],
-							[ CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
+							[ TEST.CONTRACT_STATE.PRIVATE_SALE, TEST.WHITELIST_AMOUNT, account.address ]
 						)
 						const proof = serializeProof(
 							createProof( hashBuffer, users[ SIGNER_WALLET ] )
@@ -1242,7 +1251,7 @@
 				describe( CONTRACT.METHODS.mintPublic.SIGNATURE, function () {
 					it( `Should be reverted when minting with no remaining supply`, async function () {
 						const operator = users[ TOKEN_OWNER ]
-						const currentState = CONTRACT_STATE.PUBLIC_SALE
+						const currentState = TEST.CONTRACT_STATE.PUBLIC_SALE
 						const tokenPrice = TEST.SALE_PRICE.PUBLIC_SALE
 						const qty = TEST.WHITELIST_AMOUNT
 						const expected = tokenPrice.mul( qty )
@@ -1291,7 +1300,6 @@
 // *****           EXPORT           *****
 // **************************************
 module.exports = {
-	CONTRACT_STATE,
 	shouldBehaveLikeTemplate721AtDeploy,
 	shouldBehaveLikeTemplate721NoWhitelist,
 	shouldBehaveLikeTemplate721WithWhitelist,

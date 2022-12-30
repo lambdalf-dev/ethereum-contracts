@@ -37,7 +37,6 @@
 	} = require( `../utils/behavior.Whitelist` )
 
 	const {
-		CONTRACT_STATE,
 		shouldBehaveLikeTemplate721AtDeploy,
 		shouldBehaveLikeTemplate721NoWhitelist,
 		shouldBehaveLikeTemplate721WithWhitelist,
@@ -101,9 +100,9 @@
 					SIGNATURE : `reduceSupply(uint256)`,
 					PARAMS    : [ `newMaxSupply_` ],
 				},
-				setBaseURI : {
-					SIGNATURE : `setBaseURI(string)`,
-					PARAMS    : [ `newBaseURI_` ],
+				setBaseUri : {
+					SIGNATURE : `setBaseUri(string)`,
+					PARAMS    : [ `newBaseUri_` ],
 				},
 				setContractState : {
 					SIGNATURE : `setContractState(uint8)`,
@@ -135,8 +134,8 @@
 					PARAMS    : [ `newOwner_` ],
 				},
 				// OPERATOR FILTER REGISTRY (OS COMPLIANCE)
-				updateOperatorFilterRegistry : {
-					SIGNATURE : `updateOperatorFilterRegistry(address)`,
+				updateOperatorFilterRegistryAddress : {
+					SIGNATURE : `updateOperatorFilterRegistryAddress(address)`,
 					PARAMS    : [ `newRegistry` ],
 				},
 			// **************************************
@@ -336,19 +335,25 @@
 		MAX_SUPPLY                  : 500,
 		NEW_MAX_SUPPLY              : 300,
 		INVALID_SUPPLY              : 1000,
-		RESERVE                     : 50,
+		RESERVE                     : 100,
 		MAX_BATCH                   : 20,
 		MINT_QTY                    : 2,
+		// CONTRACT STATE
+		CONTRACT_STATE : {
+			PAUSED       : 0,
+			PRIVATE_SALE : 1,
+			PUBLIC_SALE  : 2,
+		},
 		// PRICE
 		SALE_PRICE : {
-			PAUSED : 0,
+			PAUSED       : 0,
 			PRIVATE_SALE : ethers.BigNumber.from( `50000000000000000` ), // 0.05 ether
-			PUBLIC_SALE : ethers.BigNumber.from( `80000000000000000` ), // 0.08 ether
+			PUBLIC_SALE  : ethers.BigNumber.from( `80000000000000000` ), // 0.08 ether
 		},
 		NEW_SALE_PRICE : {
-			PAUSED : 0,
+			PAUSED       : 0,
 			PRIVATE_SALE : ethers.BigNumber.from( `10000000000000000` ), // 0.01 ether
-			PUBLIC_SALE : ethers.BigNumber.from( `30000000000000000` ), // 0.03 ether
+			PUBLIC_SALE  : ethers.BigNumber.from( `30000000000000000` ), // 0.03 ether
 		},
 		// INTERFACES
 		INTERFACES : [
@@ -381,7 +386,18 @@
 		] = await ethers.getSigners()
 
 		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
-		const test_contract = await contract_artifact.deploy()
+		const test_contract = await contract_artifact.deploy(
+			TEST_DATA.MAX_BATCH,
+			TEST_DATA.MAX_SUPPLY,
+			TEST_DATA.RESERVE,
+			TEST_DATA.SALE_PRICE.PRIVATE_SALE,
+			TEST_DATA.SALE_PRICE.PUBLIC_SALE,
+			TEST_DATA.DEFAULT_ROYALTY_RATE,
+			test_royalty_recipient.address,
+			test_treasury.address,
+			TEST_DATA.TOKEN_NAME,
+			TEST_DATA.TOKEN_SYMBOL
+		)
 		await test_contract.deployed()
 
 		const test_signer_wallet = getSignerWallet()
@@ -414,7 +430,7 @@
 			test_contract_deployer,
 		} = await loadFixture( deployFixture )
 
-		const test_newState = CONTRACT_STATE.PRIVATE_SALE
+		const test_newState = TEST_DATA.CONTRACT_STATE.PRIVATE_SALE
 		await test_contract
 			.connect( test_contract_deployer )
 			.setContractState( test_newState )
@@ -477,7 +493,7 @@
 			test_contract_deployer,
 		} = await loadFixture( withWhitelistFixture )
 
-		const test_newState = CONTRACT_STATE.PUBLIC_SALE
+		const test_newState = TEST_DATA.CONTRACT_STATE.PUBLIC_SALE
 		await test_contract
 			.connect( test_contract_deployer )
 			.setContractState( test_newState )
@@ -566,11 +582,24 @@
 		let test_qty = TEST_DATA.MAX_BATCH
 		let test_value = test_token_price.mul( test_qty )
 		let test_tx_params = { value : test_value }
-		for ( let i = 0; i < TEST_DATA.MAX_SUPPLY; i += TEST_DATA.MAX_BATCH ) {
+		for ( let i = 0; i < TEST_DATA.MAX_SUPPLY - TEST_DATA.RESERVE; i += TEST_DATA.MAX_BATCH ) {
 			await test_contract
 				.connect( test_operator )
 				.mintPublic( test_qty, test_tx_params )
 		}
+		const test_accounts = [
+			test_token_owner.address,
+			test_other_owner.address,
+			test_user1.address,
+		]
+		const test_amounts = [
+			50,
+			30,
+			20,
+		]
+		await test_contract
+			.connect( test_contract_deployer )
+      .airdrop( test_accounts, test_amounts )
 
 		return {
 			test_user1,

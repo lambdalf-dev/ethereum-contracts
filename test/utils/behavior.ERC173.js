@@ -36,6 +36,10 @@
 				.to.be.revertedWithCustomError( contract, `IERC173_NOT_OWNER` )
 				.withArgs( operator )
 		}
+		else if ( error == 'custom' ) {
+			await expect( promise )
+				.to.be.revertedWithCustomError( contract, 'OnlyOwner' )
+		}
 		else {
 			await expect( promise )
 				.to.be.revertedWith( error )
