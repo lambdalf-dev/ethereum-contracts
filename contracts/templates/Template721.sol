@@ -30,12 +30,12 @@ abstract contract Template721 is
     address public constant DEFAULT_OPERATOR_FILTER_REGISTRY = address( 0x000000000000AAeB6D7670E522A718067333cd4E );
     uint8 public constant PRIVATE_SALE = 1;
     uint8 public constant PUBLIC_SALE = 2;
-    uint256 public immutable MAX_BATCH;
   // **************************************
 
   // **************************************
   // *****     STORAGE VARIABLES      *****
   // **************************************
+    uint256 public maxBatch;
     uint256 public maxSupply;
     address public treasury;
     uint256 private _reserve;
@@ -44,7 +44,7 @@ abstract contract Template721 is
     mapping( uint8 => uint256 ) private _salePrice;
   // **************************************
 
-  constructor(
+  function __init_Template721(
     uint256 maxBatch_,
     uint256 maxSupply_,
     uint256 reserve_,
@@ -55,8 +55,8 @@ abstract contract Template721 is
     address treasury_,
     string memory collectionName_,
     string memory collectionSymbol_
-  ) {
-    MAX_BATCH = maxBatch_;
+  ) internal {
+    maxBatch = maxBatch_;
     maxSupply = maxSupply_;
     _reserve = reserve_;
     _salePrice[ PRIVATE_SALE ] = privateSalePrice_;
@@ -66,16 +66,6 @@ abstract contract Template721 is
     __init_ERC721Metadata( collectionName_, collectionSymbol_ );
     _setRoyaltyInfo( royaltyRecipient_, royaltyRate_ );
   }
-
-  // **************************************
-  // *****          MODIFIER          *****
-  // **************************************
-  // **************************************
-
-  // **************************************
-  // *****          INTERNAL          *****
-  // **************************************
-  // **************************************
 
   // **************************************
   // *****           PUBLIC           *****
@@ -123,8 +113,8 @@ abstract contract Template721 is
       if ( qty_ == 0 ) {
         revert NFT_INVALID_QTY();
       }
-      if ( qty_ > MAX_BATCH ) {
-        revert NFT_MAX_BATCH( qty_, MAX_BATCH );
+      if ( qty_ > maxBatch ) {
+        revert NFT_MAX_BATCH( qty_, maxBatch );
       }
       uint256 _remainingSupply_ = maxSupply - _reserve - supplyMinted();
       if ( qty_ > _remainingSupply_ ) {
@@ -218,6 +208,18 @@ abstract contract Template721 is
         revert ContractState_INVALID_STATE( newState_ );
       }
       _setContractState( newState_ );
+    }
+    /**
+    * @notice Updates the max batch size.
+    * 
+    * @param newMaxBatch_ : the new max batch size.
+    * 
+    * Requirements:
+    * 
+    * - Caller must be the contract owner.
+    */
+    function setMaxBatch( uint256 newMaxBatch_ ) external onlyOwner {
+      maxBatch = newMaxBatch_;
     }
     /**
     * @notice Updates the royalty recipient and rate.

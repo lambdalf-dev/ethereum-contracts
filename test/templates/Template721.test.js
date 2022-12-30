@@ -108,6 +108,10 @@
 					SIGNATURE : `setContractState(uint8)`,
 					PARAMS    : [ `newState_` ],
 				},
+				setMaxBatch : {
+					SIGNATURE : `setMaxBatch(uint256)`,
+					PARAMS    : [ `newMaxBatch_` ],
+				},
 				setPrices : {
 					SIGNATURE : `setPrices(uint256,uint256)`,
 					PARAMS    : [ `newPrivatePrice_`, `newPublicPrice_` ],
@@ -152,8 +156,8 @@
 					SIGNATURE : `DEFAULT_OPERATOR_FILTER_REGISTRY()`,
 					PARAMS    : [],
 				},
-				MAX_BATCH : {
-					SIGNATURE : `MAX_BATCH()`,
+				maxBatch : {
+					SIGNATURE : `maxBatch()`,
 					PARAMS    : [],
 				},
 				maxSupply : {
@@ -337,6 +341,7 @@
 		INVALID_SUPPLY              : 1000,
 		RESERVE                     : 100,
 		MAX_BATCH                   : 20,
+		NEW_MAX_BATCH               : 10,
 		MINT_QTY                    : 2,
 		// CONTRACT STATE
 		CONTRACT_STATE : {

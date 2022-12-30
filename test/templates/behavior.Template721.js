@@ -156,10 +156,10 @@
 						).to.equal( TEST.DEFAULT_OPERATOR_FILTER_REGISTRY )
 					})
 				})
-				describe( CONTRACT.METHODS.MAX_BATCH.SIGNATURE, function () {
+				describe( CONTRACT.METHODS.maxBatch.SIGNATURE, function () {
 					it( `Should return the max amount that can be minted in PUBLIC_SALE`, async function () {
 						expect(
-							await contract.MAX_BATCH()
+							await contract.maxBatch()
 						).to.equal( TEST.MAX_BATCH )
 					})
 				})
@@ -431,6 +431,31 @@
 						expect(
 							await contract.getContractState()
 						).to.equal( newState )
+					})
+				})
+				describe( CONTRACT.METHODS.setMaxBatch.SIGNATURE, function () {
+					it( `Should be reverted when caller is not contract owner`, async function () {
+						const operator = users[ TOKEN_OWNER ]
+						const newMaxBatch = TEST.NEW_MAX_BATCH
+						await shouldRevertWhenCallerIsNotContractOwner(
+							contract
+								.connect( operator )
+								.setMaxBatch( newMaxBatch ),
+							contract,
+							operator.address
+						)
+					})
+					it( `Should be fulfilled under normal conditions`, async function () {
+						const operator = users[ CONTRACT_DEPLOYER ]
+						const newMaxBatch = TEST.NEW_MAX_BATCH
+						await expect(
+							contract
+								.connect( operator )
+								.setMaxBatch( newMaxBatch )
+						).to.be.fulfilled
+						expect(
+							await contract.maxBatch()
+						).to.equal( newMaxBatch )
 					})
 				})
 				describe( CONTRACT.METHODS.setPrices.SIGNATURE, function () {
