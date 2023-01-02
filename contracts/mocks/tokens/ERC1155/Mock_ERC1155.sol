@@ -6,8 +6,8 @@
 
 pragma solidity 0.8.17;
 
-import "../../../tokens/ERC1155/ERC1155.sol";
-import "../../../interfaces/IERC165.sol";
+import '../../../tokens/ERC1155/ERC1155.sol';
+import '../../../interfaces/IERC165.sol';
 
 contract Mock_ERC1155 is ERC1155, IERC165 {
 	constructor() {

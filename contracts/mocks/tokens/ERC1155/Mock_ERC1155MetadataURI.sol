@@ -6,13 +6,13 @@
 
 pragma solidity 0.8.17;
 
-import "../../../tokens/ERC1155/extensions/ERC1155MetadataURI.sol";
-import "../../../interfaces/IERC165.sol";
+import '../../../tokens/ERC1155/extensions/ERC1155MetadataURI.sol';
+import '../../../interfaces/IERC165.sol';
 
 contract Mock_ERC1155MetadataURI is ERC1155MetadataURI, IERC165 {
 	constructor() {
 		_validSeries[ DEFAULT_SERIES ] = true;
-		_setUri( "https://api.example.com/metadata/" );
+		_setUri( 'https://api.example.com/metadata/' );
 	}
 
 	function mint( address toAddress_, uint256 id_, uint256 qty_ ) public {

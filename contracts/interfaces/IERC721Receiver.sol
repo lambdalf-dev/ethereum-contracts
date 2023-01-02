@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
 
+/**
+* Author: Lambdalf the White
+*/
+
 pragma solidity 0.8.17;
 
 /// @dev Note: the ERC-165 identifier for this interface is 0x150b7a02.

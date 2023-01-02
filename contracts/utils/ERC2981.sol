@@ -6,8 +6,8 @@
 
 pragma solidity 0.8.17;
 
-import "../interfaces/IERC2981.sol";
-import "../interfaces/IERC2981Errors.sol";
+import '../interfaces/IERC2981.sol';
+import '../interfaces/IERC2981Errors.sol';
 
 abstract contract ERC2981 is IERC2981, IERC2981Errors {
 	// Royalty rate is stored out of 10,000 instead of a percentage to allow for

@@ -6,7 +6,7 @@
 
 pragma solidity 0.8.17;
 
-import "../ERC721Batch.sol";
+import '../ERC721Batch.sol';
 
 abstract contract ERC721BatchBurnable is ERC721Batch {
   // List of burned tokens

@@ -1,5 +1,12 @@
 // SPDX-License-Identifier: MIT
+
+/**
+* Author: Lambdalf the White
+*/
+
 pragma solidity 0.8.17;
+
+// import './IERC165.sol';
 
 ///
 /// @dev Interface for the NFT Royalty Standard

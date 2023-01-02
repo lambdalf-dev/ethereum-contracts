@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (token/ERC721/IERC721.sol)
+
+/**
+* Author: Lambdalf the White
+*/
 
 pragma solidity 0.8.17;
+
+// import './IERC165.sol';
 
 /// @title ERC-721 Non-Fungible Token Standard
 /// @dev See https://eips.ethereum.org/EIPS/eip-721

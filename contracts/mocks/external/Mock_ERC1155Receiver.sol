@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts/interfaces/IERC1155Receiver.sol";
+import '../../interfaces/IERC1155Receiver.sol';
 
 contract Mock_ERC1155Receiver is IERC1155Receiver {
     enum Error {

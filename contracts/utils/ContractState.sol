@@ -6,7 +6,7 @@
 
 pragma solidity 0.8.17;
 
-import "../interfaces/IContractState.sol";
+import '../interfaces/IContractState.sol';
 
 abstract contract ContractState is IContractState {
 	// Enum to represent the sale state, defaults to ``PAUSED``.

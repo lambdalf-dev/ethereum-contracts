@@ -6,8 +6,8 @@
 
 pragma solidity 0.8.17;
 
-import "../../../tokens/ERC721/extensions/ERC721BatchBurnable.sol";
-import "../../../interfaces/IERC165.sol";
+import '../../../tokens/ERC721/extensions/ERC721BatchBurnable.sol';
+import '../../../interfaces/IERC165.sol';
 
 contract Mock_ERC721BatchBurnable is ERC721BatchBurnable, IERC165 {
 	constructor() {}

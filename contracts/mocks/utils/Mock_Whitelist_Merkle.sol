@@ -6,7 +6,7 @@
 
 pragma solidity 0.8.17;
 
-import "../../utils/Whitelist_Merkle.sol";
+import '../../utils/Whitelist_Merkle.sol';
 
 contract Mock_Whitelist_Merkle is Whitelist_Merkle {
 	constructor() {}

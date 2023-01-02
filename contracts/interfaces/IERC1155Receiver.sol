@@ -1,11 +1,8 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (token/ERC1155/IERC1155Receiver.sol)
+// Copied from OpenZeppelin Contracts v4.4.1 (token/ERC1155/IERC1155Receiver.sol)
 
 pragma solidity 0.8.17;
 
-/**
- * @dev _Available since v3.1._
- */
 interface IERC1155Receiver {
     /**
         @dev Handles the receipt of a single ERC1155 token type. This function is

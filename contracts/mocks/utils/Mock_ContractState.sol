@@ -6,7 +6,7 @@
 
 pragma solidity 0.8.17;
 
-import "../../utils/ContractState.sol";
+import '../../utils/ContractState.sol';
 
 contract Mock_ContractState is ContractState {
 	uint8 public constant PUBLIC_SALE = 1;

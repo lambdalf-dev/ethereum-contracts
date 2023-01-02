@@ -6,8 +6,8 @@
 
 pragma solidity 0.8.17;
 
-import "../../../tokens/ERC721/extensions/ERC721BatchEnumerable.sol";
-import "../../../interfaces/IERC165.sol";
+import '../../../tokens/ERC721/extensions/ERC721BatchEnumerable.sol';
+import '../../../interfaces/IERC165.sol';
 
 contract Mock_ERC721BatchEnumerable is ERC721BatchEnumerable, IERC165 {
 	constructor() {}

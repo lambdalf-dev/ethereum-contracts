@@ -7,7 +7,7 @@
 
 pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
 
 abstract contract Whitelist_Merkle {
 	// Errors

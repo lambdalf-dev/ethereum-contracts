@@ -7,7 +7,7 @@
 pragma solidity 0.8.17;
 
 import '../../templates/Template721.sol';
-import "../../interfaces/IERC165.sol";
+import '../../interfaces/IERC165.sol';
 
 contract Mock_Template721 is Template721, IERC165 {
   constructor(

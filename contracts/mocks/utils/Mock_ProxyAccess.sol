@@ -6,7 +6,7 @@
 
 pragma solidity 0.8.17;
 
-import "../../utils/ProxyAccess.sol";
+import '../../utils/ProxyAccess.sol';
 
 contract Mock_ProxyAccess is ProxyAccess {
 	constructor() {}

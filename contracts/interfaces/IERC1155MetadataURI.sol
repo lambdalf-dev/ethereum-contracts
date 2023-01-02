@@ -3,6 +3,8 @@
 
 pragma solidity 0.8.17;
 
+// import './IERC1155.sol';
+
 /**
 * @dev Interface of the optional ERC1155MetadataExtension interface, as defined
 * in the https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[EIP].

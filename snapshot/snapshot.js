@@ -1,5 +1,5 @@
-require("dotenv").config()
-require("@nomiclabs/hardhat-ethers")
+require('dotenv').config()
+require('@nomiclabs/hardhat-ethers')
 
 const fs = require( 'fs' )
 

@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import '../../utils/ERC173.sol';
 
 /**
  * @dev A simple mock ProxyRegistry for use in local tests with minimal security
