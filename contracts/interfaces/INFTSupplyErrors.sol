@@ -18,22 +18,22 @@ interface INFTSupplyErrors {
   /**
   * @dev Thrown when trying to mint more tokens than the max allowed per transaction.
   * 
-  * @param qtyRequested : the amount of tokens requested
-  * @param maxBatch     : the maximum amount that can be minted per transaction
+  * @param qtyRequested the amount of tokens requested
+  * @param maxBatch the maximum amount that can be minted per transaction
   */
-  error NFT_MAX_BATCH( uint256 qtyRequested, uint256 maxBatch );
+  error NFT_MAX_BATCH(uint256 qtyRequested, uint256 maxBatch);
   /**
   * @dev Thrown when trying to mint more tokens from the reserve than the amount left.
   * 
-  * @param qtyRequested : the amount of tokens requested
-  * @param reserveLeft  : the amount of tokens left in the reserve
+  * @param qtyRequested the amount of tokens requested
+  * @param reserveLeft the amount of tokens left in the reserve
   */
-  error NFT_MAX_RESERVE( uint256 qtyRequested, uint256 reserveLeft );
+  error NFT_MAX_RESERVE(uint256 qtyRequested, uint256 reserveLeft);
   /**
   * @dev Thrown when trying to mint more tokens than the amount left to be minted (except reserve).
   * 
-  * @param qtyRequested    : the amount of tokens requested
-  * @param remainingSupply : the amount of tokens left in the reserve
+  * @param qtyRequested the amount of tokens requested
+  * @param remainingSupply the amount of tokens left in the reserve
   */
-  error NFT_MAX_SUPPLY( uint256 qtyRequested, uint256 remainingSupply );
+  error NFT_MAX_SUPPLY(uint256 qtyRequested, uint256 remainingSupply);
 }

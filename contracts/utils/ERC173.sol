@@ -6,8 +6,8 @@
 
 pragma solidity 0.8.17;
 
-import '../interfaces/IERC173.sol';
-import '../interfaces/IERC173Errors.sol';
+import "../interfaces/IERC173.sol";
+import "../interfaces/IERC173Errors.sol";
 
 /**
 * @dev Contract module which provides a basic access control mechanism, where
@@ -22,53 +22,68 @@ import '../interfaces/IERC173Errors.sol';
 * the owner.
 */
 abstract contract ERC173 is IERC173, IERC173Errors {
-	// The owner of the contract
-	address private _owner;
+  // The owner of the contract
+  address private _owner;
 
-	/**
-	* @dev Throws if called by any account other than the owner.
-	*/
-	modifier onlyOwner() {
-		address _sender_ = msg.sender;
-		if ( owner() != _sender_ ) {
-			revert IERC173_NOT_OWNER( _sender_ );
-		}
-		_;
-	}
+  // **************************************
+  // *****          MODIFIER          *****
+  // **************************************
+    /**
+    * @dev Throws if called by any account other than the owner.
+    */
+    modifier onlyOwner() {
+      if (owner() != msg.sender) {
+        revert IERC173_NOT_OWNER(msg.sender);
+      }
+      _;
+    }
+  // **************************************
 
-	/**
-	* @dev Sets the contract owner.
-	* 
-	* Note: This function needs to be called in the contract constructor to initialize the contract owner, 
-	* if it is not, then parts of the contract might be non functional
-	* 
-	* @param owner_ : address that owns the contract
-	*/
-	function _setOwner( address owner_ ) internal {
-		_owner = owner_;
-	}
+  // **************************************
+  // *****          INTERNAL          *****
+  // **************************************
+    /**
+    * @dev Sets the contract owner.
+    * 
+    * Note: This function needs to be called in the contract constructor to initialize the contract owner, 
+    * if it is not, then parts of the contract might be non functional
+    * 
+    * @param owner_ : address that owns the contract
+    */
+    function _setOwner(address owner_) internal {
+      _owner = owner_;
+    }
+  // **************************************
 
-	/**
-	* @dev Returns the address of the current contract owner.
-	* 
-	* @return address : the current contract owner
-	*/
-	function owner() public view virtual returns ( address ) {
-		return _owner;
-	}
+  // **************************************
+  // *****       CONTRACT OWNER       *****
+  // **************************************
+    /**
+    * @dev Transfers ownership of the contract to `newOwner_`.
+    * 
+    * @param newOwner_ : address of the new contract owner
+    * 
+    * Requirements:
+    * 
+    * - Caller must be the contract owner.
+    */
+    function transferOwnership(address newOwner_) public virtual onlyOwner {
+      address _oldOwner_ = _owner;
+      _owner = newOwner_;
+      emit OwnershipTransferred(_oldOwner_, newOwner_);
+    }
+  // **************************************
 
-	/**
-	* @dev Transfers ownership of the contract to `newOwner_`.
-	* 
-	* @param newOwner_ : address of the new contract owner
-	* 
-	* Requirements:
-	* 
-  * - Caller must be the contract owner.
-	*/
-	function transferOwnership( address newOwner_ ) public virtual onlyOwner {
-		address _oldOwner_ = _owner;
-		_owner = newOwner_;
-		emit OwnershipTransferred( _oldOwner_, newOwner_ );
-	}
+  // **************************************
+  // *****            VIEW            *****
+  // **************************************
+    /**
+    * @dev Returns the address of the current contract owner.
+    * 
+    * @return address : the current contract owner
+    */
+    function owner() public view virtual returns (address) {
+      return _owner;
+    }
+  // **************************************
 }

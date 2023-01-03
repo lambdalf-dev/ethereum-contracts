@@ -1,18 +1,18 @@
-require("dotenv").config()
-
-require("@nomiclabs/hardhat-etherscan")
-require("@nomicfoundation/hardhat-chai-matchers")
-require("hardhat-gas-reporter")
-require("solidity-coverage")
-require("./snapshot/snapshot")
-require("./snapshot/snapshotOS")
-require("./create-wallet/create-wallet")
-require("./generate-proofs/generate-proofs")
-require("./generate-proofs/generate-single-proof")
+require('dotenv').config()
+require('@nomiclabs/hardhat-solhint');
+require('@nomiclabs/hardhat-etherscan')
+require('@nomicfoundation/hardhat-chai-matchers')
+require('hardhat-gas-reporter')
+require('solidity-coverage')
+require('./snapshot/snapshot')
+require('./snapshot/snapshotOS')
+require('./create-wallet/create-wallet')
+require('./generate-proofs/generate-proofs')
+require('./generate-proofs/generate-single-proof')
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
+task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners()
 
   for (const account of accounts) {

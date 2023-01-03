@@ -6,8 +6,8 @@
 
 pragma solidity 0.8.17;
 
-import '../../templates/Template721.sol';
-import '../../interfaces/IERC165.sol';
+import "../../templates/Template721.sol";
+import "../../interfaces/IERC165.sol";
 
 contract Mock_Template721 is Template721, IERC165 {
   constructor(
@@ -56,14 +56,14 @@ contract Mock_Template721 is Template721, IERC165 {
     * 
     * - This function must use less than 30,000 gas.
     */
-    function supportsInterface( bytes4 interfaceId_ ) public pure override returns ( bool ) {
+    function supportsInterface(bytes4 interfaceId_) public pure override returns (bool) {
       return 
-        interfaceId_ == type( IERC721 ).interfaceId ||
-        interfaceId_ == type( IERC721Enumerable ).interfaceId ||
-        interfaceId_ == type( IERC721Metadata ).interfaceId ||
-        interfaceId_ == type( IERC173 ).interfaceId ||
-        interfaceId_ == type( IERC165 ).interfaceId ||
-        interfaceId_ == type( IERC2981 ).interfaceId;
+        interfaceId_ == type(IERC721).interfaceId ||
+        interfaceId_ == type(IERC721Enumerable).interfaceId ||
+        interfaceId_ == type(IERC721Metadata).interfaceId ||
+        interfaceId_ == type(IERC173).interfaceId ||
+        interfaceId_ == type(IERC165).interfaceId ||
+        interfaceId_ == type(IERC2981).interfaceId;
     }
   // ***********
 }

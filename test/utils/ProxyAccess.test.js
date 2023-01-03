@@ -72,7 +72,11 @@
 
 		const proxy_artifact = await ethers.getContractFactory( `Mock_ProxyRegistry` )
 		const test_proxy_contract = await proxy_artifact.deploy()
+		const test_proxy_contract1 = await proxy_artifact.deploy()
+		const test_proxy_contract2 = await proxy_artifact.deploy()
 		await test_proxy_contract.deployed()
+		await test_proxy_contract1.deployed()
+		await test_proxy_contract2.deployed()
 		await test_proxy_contract.setProxy( test_token_owner.address, test_proxy_user.address )
 
 		const contract_artifact = await ethers.getContractFactory( CONTRACT_INTERFACE.NAME )
@@ -84,6 +88,8 @@
 			test_proxy_user,
 			test_token_owner,
 			test_proxy_contract,
+			test_proxy_contract1,
+			test_proxy_contract2,
 		}
 	}
 	async function proxyFixture () {
@@ -92,15 +98,21 @@
 			test_proxy_user,
 			test_token_owner,
 			test_proxy_contract,
+			test_proxy_contract1,
+			test_proxy_contract2,
 		} = await loadFixture( noProxyFixture )
 
+		await test_contract.addProxyRegistry( test_proxy_contract1.address )
 		await test_contract.addProxyRegistry( test_proxy_contract.address )
+		await test_contract.addProxyRegistry( test_proxy_contract2.address )
 
 		return {
 			test_contract,
 			test_proxy_user,
 			test_token_owner,
 			test_proxy_contract,
+			test_proxy_contract1,
+			test_proxy_contract2,
 		}
 	}
 // **************************************
@@ -229,6 +241,12 @@
 					await expect(
 						contract.removeProxyRegistry( proxyRegistryAddress )
 					).to.be.fulfilled
+					await expect(
+						contract.addProxyRegistry( proxyRegistryAddress )
+					).to.be.fulfilled
+					await expect(
+						contract.removeProxyRegistry( proxyRegistryAddress )
+					).to.be.fulfilled
 					const tokenOwner = users[ TOKEN_OWNER ].address
 					const operator = users[ PROXY_USER ].address
 					expect(
@@ -245,8 +263,14 @@
 // **************************************
 describe( TEST_DATA.NAME, function () {
 	if ( TEST_ACTIVATION[ TEST_DATA.NAME ] ) {
-		testInvalidInputs( noProxyFixture, TEST_DATA, CONTRACT_INTERFACE )
-		shouldBehaveLikeMock_ProxyAccessBeforeProxy( noProxyFixture, TEST_DATA, CONTRACT_INTERFACE )
-		shouldBehaveLikeMock_ProxyAccessAfterProxy( proxyFixture, TEST_DATA, CONTRACT_INTERFACE )
+		if ( true ) {
+			testInvalidInputs( noProxyFixture, TEST_DATA, CONTRACT_INTERFACE )
+		}
+		if ( true ) {
+			shouldBehaveLikeMock_ProxyAccessBeforeProxy( noProxyFixture, TEST_DATA, CONTRACT_INTERFACE )
+		}
+		if ( true ) {
+			shouldBehaveLikeMock_ProxyAccessAfterProxy( proxyFixture, TEST_DATA, CONTRACT_INTERFACE )
+		}
 	}
 })
