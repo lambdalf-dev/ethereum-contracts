@@ -1,24 +1,27 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.17;
+pragma solidity ^0.8.4;
 
 // import "./IERC165.sol";
 
 /**
-* @dev Interface for the NFT Royalty Standard
+* @dev Required interface of an ERC2981 compliant contract, as defined in the
+* https://eips.ethereum.org/EIPS/eip-2981[EIP].
+*   Note: the ERC-165 identifier for this interface is 0x2a55205a.
 */
 interface IERC2981 /* is IERC165 */ {
-  /**
-  * ERC165 bytes to add to interface array - set in parent contract implementing this standard
-  *
-  * bytes4(keccak256("royaltyInfo(uint256,uint256)")) == 0x2a55205a
-  * bytes4 private constant _INTERFACE_ID_ERC2981 = 0x2a55205a;
-  * _registerInterface(_INTERFACE_ID_ERC2981);
-  * 
-  * @notice Called with the sale price to determine how much royalty is owed and to whom.
-  */
-  function royaltyInfo(
-    uint256 tokenId_,
-    uint256 salePrice_
-  ) external view returns (address receiver, uint256 royaltyAmount);
+  // **************************************
+  // *****           ERRORS           *****
+  // **************************************
+    /// @dev Thrown when the desired royalty rate is higher than 10,000
+    error IERC2981_INVALID_ROYALTIES();
+  // **************************************
+
+  // **************************************
+  // *****            VIEW            *****
+  // **************************************
+    /// @dev Called with the sale price to determine how much royalty is owed and to whom.
+    function royaltyInfo(uint256 tokenId_, uint256 salePrice_)
+    external view returns (address receiver, uint256 royaltyAmount);
+  // **************************************
 }

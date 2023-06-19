@@ -1,17 +1,12 @@
 // SPDX-License-Identifier: MIT
 
-/**
-* Author: Lambdalf the White
-*/
+pragma solidity 0.8.20;
 
-pragma solidity 0.8.17;
+import { ProxyAccess } from "../../utils/ProxyAccess.sol";
 
-import "../../utils/ProxyAccess.sol";
-
+/* solhint-disable */
 contract Mock_ProxyAccess is ProxyAccess {
-  /* solhint-disable */
   constructor() {}
-  /* solhint-enable */
 
   function addProxyRegistry(address proxyRegistryAddress_) public {
     _addProxyRegistry(proxyRegistryAddress_);
@@ -20,3 +15,4 @@ contract Mock_ProxyAccess is ProxyAccess {
     _removeProxyRegistry(proxyRegistryAddress_);
   }
 }
+/* solhint-enable */

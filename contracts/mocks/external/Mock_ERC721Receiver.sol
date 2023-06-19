@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.17;
+pragma solidity 0.8.20;
 
-import "../../interfaces/IERC721Receiver.sol";
+import { IERC721Receiver } from "../../interfaces/IERC721Receiver.sol";
 
 /* solhint-disable */
 contract Mock_ERC721Receiver is IERC721Receiver {

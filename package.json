@@ -1,31 +1,30 @@
 {
   "name": "@lambdalf-dev/ethereum-contracts",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "An alternative to Open Zeppelin contracts for deployment with cheaper gas cost",
   "main": "index.js",
   "repository": "https://github.com/lambdalf-dev/ethereum-contracts.git",
   "author": "Lambdalf the White <silvereh@protonmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@openzeppelin/contracts": "^4.3.2",
+    "operator-filter-registry": "^1.3.1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
     "@nomiclabs/hardhat-etherscan": "^3.1.2",
-    "@openzeppelin/contracts": "^4.3.2",
-    "axios": "^1.1.3",
+    "@nomiclabs/hardhat-solhint": "^3.0.0",
+    "axios": "^1.4.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "dotenv": "^16.0.3",
     "ethereumjs-utils": "^5.2.5",
     "ethers": "^5.7.2",
-    "hardhat": "^2.12.2",
+    "hardhat": "^2.12.1-ir.0",
     "hardhat-gas-reporter": "^1.0.4",
     "hardhat-watcher": "^2.5.0",
-    "merkletreejs": "^0.3.8",
-    "operator-filter-registry": "^1.3.1",
-    "solidity-coverage": "^0.7.22"
-  },
-  "devDependencies": {
-    "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
-    "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
-    "@nomiclabs/hardhat-solhint": "^3.0.0"
+    "solidity-coverage": "^0.8.2"
   }
 }

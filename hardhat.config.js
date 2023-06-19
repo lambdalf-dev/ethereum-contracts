@@ -28,7 +28,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 */
 module.exports = {
   solidity: {
-    version: "0.8.17",
+    version: "0.8.20",
     settings: {
       // viaIR: true,
       optimizer: {
@@ -44,14 +44,16 @@ module.exports = {
   },
   networks: {
     hardhat: {
-      hardfork: "london",
-      initialBaseFeePerGas: 0, // workaround from https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136 . Remove when that issue is closed.
+      chainId: 1337,
     },
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
+    // goerli: {
+    //   url: `https://eth-goerli.g.alchemy.com/v2/${ process.env.ALCHEMY_API_KEY }`,
+    //   accounts: [ process.env.TEST_PRIVATE_KEY ],
+    // },
+    // mainnet: {
+    //   url: `https://eth-mainnet.g.alchemy.com/v2/${ process.env.ALCHEMY_API_KEY }`,
+    //   accounts: [ process.env.PRIVATE_KEY ],
+    // }
   },
   gasReporter: {
     enabled: true,

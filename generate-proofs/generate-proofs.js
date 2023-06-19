@@ -77,20 +77,20 @@ const recordProofJSON = async ( account, whitelistType, maxQty, proof ) => {
 	})
 }
 
-const generateProofs = async ( accesslist, signer, whitelistType, listName = 'whitelist' ) => {
+const generateProofs = async ( accesslist, signer ) => {
 	let _normalized_ = {}
-	fs.appendFileSync( `proofs.js`, `const ${ listName } = {\n`, function ( err ) {
+	fs.appendFileSync( `proofs.js`, `const whitelist = {\n`, function ( err ) {
 		if ( err ) {
 			console.debug( err )
 		}
 	})
 	const values = Object.entries( accesslist ).map(
-		async ( [ account, maxQty ] ) => {
+		async ( [ account, whitelistInfo ] ) => {
 			const { addr, pass } = normalize( account )
 			if ( pass ) {
 				const _hashBuffer_ = generateHashBuffer(
 					[ 'uint8', 'uint256', 'address' ],
-					[ whitelistType, maxQty, addr ]
+					[ whitelistInfo.type, whitelistInfo.amount, addr ]
 				)
 				const _proof_ = serializeProof(
 					createProof( _hashBuffer_, signer )
@@ -98,9 +98,9 @@ const generateProofs = async ( accesslist, signer, whitelistType, listName = 'wh
 
 				_normalized_[ addr ] = _proof_
 				console.log( addr + ',' + printProof( _proof_ ) )
-				await recordProofJSON( addr, whitelistType, maxQty, _proof_ )
+				await recordProofJSON( addr, whitelistInfo.type, whitelistInfo.amount, _proof_ )
 			}
-			// await recordProofCSV( addr, whitelistType, maxQty, _proof_ )
+			// await recordProofCSV( addr, whitelistInfo.type, whitelistInfo.amount, _proof_ )
 			return addr
 		}
 	)
@@ -155,7 +155,7 @@ task( 'generate-proofs', 'generate proofs for the signature based whitelist' )
 
 		const signer = typeof signerkey === 'undefined' || typeof signeraddress === 'undefined' ? getSignerWallet() : { privateKey: signerkey, address: signeraddress}
 
-		await generateProofs( whitelist, signer, whitelistTypes.WHITELIST, 'whitelist' )
+		await generateProofs( whitelist, signer )
 		// await generateProofs( waitlist, signer, whitelistTypes.WAITLIST, 'waitlist' )
 		// await generateProofs( claimlist, signer, whitelistTypes.CLAIM, 'claimlist' )
 

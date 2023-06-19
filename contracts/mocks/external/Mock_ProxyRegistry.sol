@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.17;
+pragma solidity 0.8.20;
 
 /**
 * @dev A simple mock ProxyRegistry for use in local tests with minimal security

@@ -30,7 +30,7 @@ task( 'snapshot', 'Takes a snapshot of the list of holders of a NFT token at the
 				params: [
 					{
 						forking: {
-							jsonRpcUrl: process.env.ALCHEMY_API_KEY,
+							jsonRpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
 							blockNumber: blockNumber,
 						},
 					},
