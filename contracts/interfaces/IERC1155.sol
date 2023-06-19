@@ -13,8 +13,6 @@ interface IERC1155 /* is IERC165 */ {
   // **************************************
   // *****           ERRORS           *****
   // **************************************
-    /// @dev Thrown when two related arrays have different lengths.
-    error ARRAY_LENGTH_MISMATCH();
     /// @dev Thrown when `operator` has not been approved to manage `tokenId` on behalf of `tokenOwner`.
     /// 
     /// @param from address owning the token

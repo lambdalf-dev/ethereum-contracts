@@ -6,6 +6,7 @@
 
 pragma solidity 0.8.20;
 
+import { IArrays } from "../../interfaces/IArrays.sol";
 import { IERC1155 } from "../../interfaces/IERC1155.sol";
 import { IERC1155MetadataURI } from "../../interfaces/IERC1155MetadataURI.sol";
 import { IERC1155Receiver } from "../../interfaces/IERC1155Receiver.sol";
@@ -16,7 +17,7 @@ import { DefaultOperatorFilterer } from "operator-filter-registry/src/DefaultOpe
 * @dev Implementation of https://eips.ethereum.org/EIPS/eip-1155[ERC1155] Semi-Fungible Token Standard.
 */
 abstract contract ERC1155 is
-IERC1155, IERC1155MetadataURI, DefaultOperatorFilterer {
+IERC1155, IERC1155MetadataURI, IArrays, DefaultOperatorFilterer {
   // **************************************
   // *****    BYTECODE  VARIABLES     *****
   // **************************************
@@ -396,9 +397,6 @@ IERC1155, IERC1155MetadataURI, DefaultOperatorFilterer {
       /// @param id_ the type of tokens being transferred
       /// @param amount_ the amount of tokens being transferred
       function _mint(address account_, uint256 id_, uint256 amount_) internal isValidSeries(id_) {
-        if (account_ == address(0)) {
-          revert IERC1155_INVALID_RECEIVER(account_);
-        }
         unchecked {
           _balances[id_][account_] += amount_;
         }

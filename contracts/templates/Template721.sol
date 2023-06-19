@@ -6,20 +6,21 @@
 
 pragma solidity 0.8.20;
 
+import { IArrays } from "../interfaces/IArrays.sol";
 import { IERC721 } from "../interfaces/IERC721.sol";
 import { IERC721Enumerable } from "../interfaces/IERC721Enumerable.sol";
 import { IERC721Metadata } from "../interfaces/IERC721Metadata.sol";
 import { IERC173 } from "../interfaces/IERC173.sol";
 import { IERC165 } from "../interfaces/IERC165.sol";
 import { IERC2981 } from "../interfaces/IERC2981.sol";
-import { ITemplate721 } from "../interfaces/ITemplate721.sol";
+import { ITemplate } from "../interfaces/ITemplate.sol";
 import { ERC721Batch } from "../tokens/ERC721/ERC721Batch.sol";
 import { ERC173 } from "../utils/ERC173.sol";
 import { ERC2981 } from "../utils/ERC2981.sol";
 import { Whitelist } from "../utils/Whitelist.sol";
 
 contract Template721 is 
-IERC165, ERC721Batch, ERC173, ERC2981, Whitelist, ITemplate721 {
+IERC165, ERC721Batch, ERC173, ERC2981, Whitelist, IArrays, ITemplate {
   // **************************************
   // *****         DATA TYPES         *****
   // **************************************

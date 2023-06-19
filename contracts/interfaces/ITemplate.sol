@@ -7,12 +7,10 @@
 
 pragma solidity ^0.8.4;
 
-interface ITemplate721 {
+interface ITemplate {
   // **************************************
   // *****           ERRORS           *****
   // **************************************
-    /// @dev Thrown when two related arrays have different lengths.
-    error ARRAY_LENGTH_MISMATCH();
     /// @dev Thrown when a function is called with the wrong contract state.
     error CONTRACT_STATE_INCORRECT();
     /// @dev Thrown when trying to set the contract state to an invalid value.
