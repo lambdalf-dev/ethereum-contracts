@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.17;
+pragma solidity 0.8.20;
 
-import "../../interfaces/IERC1155Receiver.sol";
+import { IERC1155Receiver } from "../../interfaces/IERC1155Receiver.sol";
 
 /* solhint-disable */
 contract Mock_ERC1155Receiver is IERC1155Receiver {

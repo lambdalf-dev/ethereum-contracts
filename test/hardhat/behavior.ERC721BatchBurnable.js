@@ -132,6 +132,14 @@
 						)
 					})
 				})
+				describe(CONTRACT.METHODS.totalSupply.SIGNATURE, function () {
+					it(`Total supply should be updated accurately`, async function () {
+						const expected = TEST.MINTED_SUPPLY - 1
+						expect(
+							await contract.totalSupply()
+						).to.equal(expected)
+					})
+				})
 			// **************************************
 
 			// **************************************
