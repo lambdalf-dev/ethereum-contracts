@@ -4,7 +4,7 @@
 * Author: Lambdalf the White
 */
 
-pragma solidity 0.8.20;
+pragma solidity ^0.8.17;
 
 import { IERC721 } from "../../interfaces/IERC721.sol";
 import { IERC721Metadata } from "../../interfaces/IERC721Metadata.sol";
@@ -276,10 +276,10 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309, DefaultOperatorFilterer {
       /// 
       /// - `index_` must be less than {totalSupply()}
       function tokenByIndex(uint256 index_) public view virtual override returns (uint256) {
-        if (index_ > _nextId) {
+        if (index_ >= _nextId - 1) {
           revert IERC721Enumerable_INDEX_OUT_OF_BOUNDS(index_);
         }
-        return index_;
+        return index_ + 1;
       }
       /// @dev Enumerate NFTs assigned to an owner
       /// 
@@ -455,7 +455,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309, DefaultOperatorFilterer {
         while (_firstToken_ < _nextStart_) {
           emit Transfer(address(0), toAddress_, _firstToken_);
           unchecked {
-            _firstToken_ ++;
+            ++_firstToken_;
           }
         }
       }

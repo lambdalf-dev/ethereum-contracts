@@ -8,7 +8,7 @@ import { ERC173 } from "../../utils/ERC173.sol";
 
 /* solhint-disable */
 contract Mock_ERC173 is ERC173, IERC165 {
-	constructor() {}
+	constructor() ERC173(msg.sender) {}
 
   function supportsInterface(bytes4 interfaceId_) public pure override returns (bool) {
     return 

@@ -31,3 +31,8 @@ typechain
 
 proofs.*
 snapshot.*
+
+# Forge files
+out
+forge-cache
+lcov.info

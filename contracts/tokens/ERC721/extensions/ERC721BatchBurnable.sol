@@ -4,7 +4,7 @@
 * Author: Lambdalf the White
 */
 
-pragma solidity 0.8.20;
+pragma solidity ^0.8.17;
 
 import { ERC721Batch } from "../ERC721Batch.sol";
 import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";

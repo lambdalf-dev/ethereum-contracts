@@ -23,6 +23,10 @@ contract Mock_ERC721BatchBurnable is ERC721BatchBurnable, IERC165 {
     _mint2309(msg.sender, qty_);
   }
 
+  function setBaseUri(string memory newBaseUri_) public {
+    _setBaseUri(newBaseUri_);
+  }
+
   // ***********
   // * IERC165 *
   // ***********

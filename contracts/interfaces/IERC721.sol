@@ -18,7 +18,7 @@ interface IERC721 /* is IERC165 */ {
     /// @param operator address trying to manage the token
     /// @param tokenId identifier of the NFT being referenced
     error IERC721_CALLER_NOT_APPROVED(address operator, uint256 tokenId);
-    /// @dev Thrown whenuser tries to approve themselves for managing a token they own.
+    /// @dev Thrown when user tries to approve themselves for managing a token they own.
     error IERC721_INVALID_APPROVAL();
     /// @dev Thrown when a token is being transferred to a contract unable to handle it or the zero address.
     /// 

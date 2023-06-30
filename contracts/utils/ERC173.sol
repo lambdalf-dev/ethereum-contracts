@@ -4,7 +4,7 @@
 * Author: Lambdalf the White
 */
 
-pragma solidity 0.8.20;
+pragma solidity ^0.8.17;
 
 import { IERC173 } from "../interfaces/IERC173.sol";
 
@@ -16,8 +16,8 @@ abstract contract ERC173 is IERC173 {
     address private _owner;
   // **************************************
 
-  constructor() {
-    _owner = msg.sender;
+  constructor(address owner_) {
+    _owner = owner_;
   }
 
   // **************************************

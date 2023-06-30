@@ -66,6 +66,7 @@ IERC165, ERC721Batch, ERC173, ERC2981, Whitelist, IArrays, ITemplate {
     address adminSigner_
   )
   ERC721Batch("NFT Collection", "NFT")
+  ERC173(msg.sender)
   ERC2981(royaltyRecipient_, royaltyRate_) {
     maxSupply = maxSupply_;
     reserve = reserve_;
