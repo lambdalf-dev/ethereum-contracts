@@ -30,7 +30,7 @@ contract Deployed is Constants {
 }
 
 contract CheckWhitelistAllowance is Deployed {
-  function test_revert_when_whitelist_is_not_set(
+  function test_whitelist_revert_when_whitelist_is_not_set(
     address account,
     uint8 whitelistId,
     uint256 alloted
@@ -47,7 +47,7 @@ contract CheckWhitelistAllowance is Deployed {
       )
     );
   }
-  function test_return_zero_when_checking_allowance_with_other_user_proof(
+  function test_whitelist_return_zero_when_checking_allowance_with_other_user_proof(
     address account,
     uint8 whitelistId,
     uint256 alloted
@@ -61,7 +61,7 @@ contract CheckWhitelistAllowance is Deployed {
       "invalid allowance"
     );
   }
-  function test_return_zero_when_checking_allowance_with_forged_proof(
+  function test_whitelist_return_zero_when_checking_allowance_with_forged_proof(
     address account,
     uint8 whitelistId,
     uint256 alloted
@@ -74,7 +74,7 @@ contract CheckWhitelistAllowance is Deployed {
       "invalid allowance"
     );
   }
-  function test_return_zero_when_checking_allowance_for_different_whitelist_than_allocated(
+  function test_whitelist_return_zero_when_checking_allowance_for_different_whitelist_than_allocated(
     address account,
     uint8 whitelistId,
     uint256 alloted
@@ -88,7 +88,7 @@ contract CheckWhitelistAllowance is Deployed {
       "invalid allowance"
     );
   }
-  function test_return_zero_when_checking_allowance_for_more_than_allocated(
+  function test_whitelist_return_zero_when_checking_allowance_for_more_than_allocated(
     address account,
     uint8 whitelistId,
     uint256 alloted
@@ -102,7 +102,7 @@ contract CheckWhitelistAllowance is Deployed {
       "invalid allowance"
     );
   }
-  function test_allowance_is_accurate_when_whitelist_allocation_has_not_been_consumed(
+  function test_whitelist_allowance_is_accurate_when_whitelist_allocation_has_not_been_consumed(
     address account,
     uint8 whitelistId,
     uint256 alloted
@@ -115,7 +115,7 @@ contract CheckWhitelistAllowance is Deployed {
       "invalid allowance"
     );
   }
-  function test_allowance_is_accurate_when_whitelist_allocation_has_been_partially_consumed(
+  function test_whitelist_allowance_is_accurate_when_whitelist_allocation_has_been_partially_consumed(
     address account,
     uint8 whitelistId,
     uint256 alloted
@@ -130,7 +130,7 @@ contract CheckWhitelistAllowance is Deployed {
       "invalid allowance"
     );
   }
-  function test_allowance_is_accurate_when_whitelist_allocation_has_been_fully_consumed(
+  function test_whitelist_allowance_is_accurate_when_whitelist_allocation_has_been_fully_consumed(
     address account,
     uint8 whitelistId,
     uint256 alloted
@@ -148,7 +148,7 @@ contract CheckWhitelistAllowance is Deployed {
 }
 
 contract ConsumeWhitelist is Deployed {
-  function test_revert_when_whitelist_is_not_set(
+  function test_whitelist_revert_when_whitelist_is_not_set(
     address account,
     uint8 whitelistId,
     uint256 amount,
@@ -167,7 +167,7 @@ contract ConsumeWhitelist is Deployed {
       )
     );
   }
-  function test_revert_when_not_whitelisted(
+  function test_whitelist_revert_when_not_whitelisted(
     address account,
     uint8 whitelistId,
     uint256 amount,
@@ -188,7 +188,7 @@ contract ConsumeWhitelist is Deployed {
       account
     );
   }
-  function test_revert_when_consuming_more_than_allocated(
+  function test_whitelist_revert_when_consuming_more_than_allocated(
     address account,
     uint8 whitelistId,
     uint256 amount,

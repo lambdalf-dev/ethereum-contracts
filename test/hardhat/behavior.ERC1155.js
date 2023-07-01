@@ -70,7 +70,7 @@
 	async function shouldRevertWhenApprovingTokenOwner(promise, contract, error) {
 		if (typeof error === 'undefined') {
 			await expect(promise)
-				.to.be.revertedWithCustomError(contract, `IERC1155_INVALID_CALLER_APPROVAL`)
+				.to.be.revertedWithCustomError(contract, `IERC1155_INVALID_APPROVAL`)
 		}
 		else {
 			await expect(promise)
@@ -139,7 +139,7 @@
 		if (typeof error === 'undefined') {
 			await expect(promise)
 				.to.be.revertedWithCustomError(contract, `IERC1155_INSUFFICIENT_BALANCE`)
-				.withArgs(from, id, amount)
+				.withArgs(from, id)
 		}
 		else {
 			await expect(promise)

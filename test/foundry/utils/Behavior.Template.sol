@@ -7,10 +7,28 @@ import {ITemplate} from "../../../contracts/interfaces/ITemplate.sol";
 contract Behavior_Template is TestHelper {
   event ContractStateChanged(uint8 indexed previousState, uint8 indexed newState);
   // EVENTS
-  function emitContractStateChangedEvent(address callee, bytes memory signature, address emitter, uint8 previousState, uint8 newState) internal {
+  function emitContractStateChangedEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    uint8 previousState,
+    uint8 newState
+  ) internal {
     vm.expectEmit(emitter);
     emit ContractStateChanged(previousState, newState);
     (bool success,) = callee.call(signature);
+  }
+  function emitContractStateChangedEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    uint8 previousState,
+    uint8 newState,
+    uint256 valueSent
+  ) internal {
+    vm.expectEmit(emitter);
+    emit ContractStateChanged(previousState, newState);
+    (bool success,) = callee.call{value: valueSent}(signature);
   }
   // REVERTS
   function revertWhenContractStateIsIncorrect(address callee, bytes memory signature) internal {

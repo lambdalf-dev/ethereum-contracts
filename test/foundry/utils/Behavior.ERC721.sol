@@ -14,56 +14,131 @@ contract Behavior_ERC721 is TestHelper {
   event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
   event ConsecutiveTransfer(uint256 indexed fromTokenId, uint256 toTokenId, address indexed fromAddress, address indexed toAddress);
   // EVENTS
-  function emitTransferEvent(address callee, bytes memory signature, address emitter, address sender, address recipient, uint256 tokenId) internal {
+  function emitTransferEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    address sender,
+    address recipient,
+    uint256 tokenId
+  ) internal {
     vm.expectEmit(emitter);
     emit Transfer(sender, recipient, tokenId);
     (bool success,) = callee.call(signature);
   }
-  function emitTransferEvent(address callee, bytes memory signature, address emitter, address sender, address recipient, uint256 tokenId, uint256 valueSent) internal {
+  function emitTransferEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    address sender,
+    address recipient,
+    uint256 tokenId,
+    uint256 valueSent
+  ) internal {
     vm.expectEmit(emitter);
     emit Transfer(sender, recipient, tokenId);
     (bool success,) = callee.call{value:valueSent}(signature);
   }
-  function emitMintEvent(address callee, bytes memory signature, address emitter, uint256 firstToken, uint256 amount, address recipient) internal {
+  function emitMintEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    uint256 firstToken,
+    uint256 amount,
+    address recipient
+  ) internal {
     for (uint256 i = firstToken; i < firstToken + amount; ++i) {
       vm.expectEmit(emitter);
       emit Transfer(address(0), recipient, i);
     }
     (bool success,) = callee.call(signature);
   }
-  function emitMintEvent(address callee, bytes memory signature, address emitter, uint256 firstToken, uint256 amount, address recipient, uint256 valueSent) internal {
+  function emitMintEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    uint256 firstToken,
+    uint256 amount,
+    address recipient,
+    uint256 valueSent
+  ) internal {
     for (uint256 i = firstToken; i < firstToken + amount; ++i) {
       vm.expectEmit(emitter);
       emit Transfer(address(0), recipient, i);
     }
     (bool success,) = callee.call{value:valueSent}(signature);
   }
-  function emitConsecutiveMintEvent(address callee, bytes memory signature, address emitter, uint256 firstToken, uint256 amount, address recipient) internal {
+  function emitConsecutiveMintEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    uint256 firstToken,
+    uint256 amount,
+    address recipient
+  ) internal {
     vm.expectEmit(emitter);
     emit ConsecutiveTransfer(firstToken, firstToken + amount - 1, address(0), recipient);
     (bool success,) = callee.call(signature);
   }
-  function emitConsecutiveMintEvent(address callee, bytes memory signature, address emitter, uint256 firstToken, uint256 amount, address recipient, uint256 valueSent) internal {
+  function emitConsecutiveMintEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    uint256 firstToken,
+    uint256 amount,
+    address recipient,
+    uint256 valueSent
+  ) internal {
     vm.expectEmit(emitter);
     emit ConsecutiveTransfer(firstToken, firstToken + amount - 1, address(0), recipient);
     (bool success,) = callee.call{value:valueSent}(signature);
   }
-  function emitApprovalEvent(address callee, bytes memory signature, address emitter, address tokenOwner, address operator, uint256 tokenId) internal {
+  function emitApprovalEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    address tokenOwner,
+    address operator,
+    uint256 tokenId
+  ) internal {
     vm.expectEmit(emitter);
     emit Approval(tokenOwner, operator, tokenId);
     (bool success,) = callee.call(signature);
   }
-  function emitApprovalEvent(address callee, bytes memory signature, address emitter, address tokenOwner, address operator, uint256 tokenId, uint256 valueSent) internal {
+  function emitApprovalEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    address tokenOwner,
+    address operator,
+    uint256 tokenId,
+    uint256 valueSent
+  ) internal {
     vm.expectEmit(emitter);
     emit Approval(tokenOwner, operator, tokenId);
     (bool success,) = callee.call{value:valueSent}(signature);
   }
-  function emitApprovalForAllEvent(address callee, bytes memory signature, address emitter, address tokenOwner, address operator, bool isApproved) internal {
+  function emitApprovalForAllEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    address tokenOwner,
+    address operator,
+    bool isApproved
+  ) internal {
     vm.expectEmit(emitter);
     emit ApprovalForAll(tokenOwner, operator, isApproved);
     (bool success,) = callee.call(signature);
   }
-  function emitApprovalForAllEvent(address callee, bytes memory signature, address emitter, address tokenOwner, address operator, bool isApproved, uint256 valueSent) internal {
+  function emitApprovalForAllEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    address tokenOwner,
+    address operator,
+    bool isApproved,
+    uint256 valueSent
+  ) internal {
     vm.expectEmit(emitter);
     emit ApprovalForAll(tokenOwner, operator, isApproved);
     (bool success,) = callee.call{value:valueSent}(signature);

@@ -123,7 +123,7 @@ contract Deployed is Constants {
   // * Template721 *
   // ***************
 		contract PrivateMint is Deployed {
-			function test_revert_when_contract_state_is_paused(uint256 amount, address account, uint256 alloted) public {
+			function test_template721_revert_when_contract_state_is_paused(uint256 amount, address account, uint256 alloted) public {
 				vm.assume(account != address(0));
 				alloted = bound(alloted, 1, 4094);
 				amount = bound(amount, 1, alloted);
@@ -142,7 +142,7 @@ contract Deployed is Constants {
 					price
 				);
 			}
-			function test_revert_when_contract_state_is_public_sale(uint256 amount, address account, uint256 alloted) public {
+			function test_template721_revert_when_contract_state_is_public_sale(uint256 amount, address account, uint256 alloted) public {
 				setPublicSale();
 				vm.assume(account != address(0));
 				alloted = bound(alloted, 1, 4094);
@@ -162,7 +162,7 @@ contract Deployed is Constants {
 					price
 				);
 			}
-			function test_revert_when_quantity_requested_is_zero(address account, uint256 alloted) public {
+			function test_template721_revert_when_quantity_requested_is_zero(address account, uint256 alloted) public {
 				setPrivateSale();
 				vm.assume(account != address(0));
 				vm.assume(alloted > 0);
@@ -178,7 +178,7 @@ contract Deployed is Constants {
 					)
 				);
 			}
-			function test_revert_when_supply_is_depleted(uint256 amount, address account, uint256 alloted) public {
+			function test_template721_revert_when_supply_is_depleted(uint256 amount, address account, uint256 alloted) public {
 				depleteSupply();
 				setPrivateSale();
 				vm.assume(account != address(0));
@@ -201,7 +201,7 @@ contract Deployed is Constants {
 					price
 				);
 			}
-			function test_revert_when_incorrect_amount_of_ether_sent(uint256 amount, address account, uint256 alloted) public {
+			function test_template721_revert_when_incorrect_amount_of_ether_sent(uint256 amount, address account, uint256 alloted) public {
 				setPrivateSale();
 				vm.assume(account != address(0));
 				alloted = bound(alloted, 1, 4094);
@@ -221,7 +221,7 @@ contract Deployed is Constants {
 					price
 				);
 			}
-			function test_revert_when_requesting_more_than_allocated(uint256 amount, address account, uint256 alloted) public {
+			function test_template721_revert_when_requesting_more_than_allocated(uint256 amount, address account, uint256 alloted) public {
 				setPrivateSale();
 				amount = bound(amount, 1, MAX_SUPPLY - RESERVE);
 				vm.assume(amount > alloted);
@@ -241,7 +241,7 @@ contract Deployed is Constants {
 					price
 				);
 			}
-			function test_emit_Transfer_events(uint256 amount, address account, uint256 alloted) public {
+			function test_template721_emit_Transfer_events(uint256 amount, address account, uint256 alloted) public {
 				setPrivateSale();
 				vm.assume(account != address(0));
 				alloted = bound(alloted, 1, 4094);
@@ -274,7 +274,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract PublicMint is Deployed {
-			function test_revert_when_contract_state_is_paused(uint256 amount, address account) public {
+			function test_template721_revert_when_contract_state_is_paused(uint256 amount, address account) public {
 				vm.assume(account != address(0));
 				amount = bound(amount, 1, MAX_BATCH);
 				uint256 price = amount * PUBLIC_SALE_PRICE;
@@ -289,7 +289,7 @@ contract Deployed is Constants {
 					price
 				);
 			}
-			function test_revert_when_contract_state_is_private_sale(uint256 amount, address account) public {
+			function test_template721_revert_when_contract_state_is_private_sale(uint256 amount, address account) public {
 				setPrivateSale();
 				vm.assume(account != address(0));
 				amount = bound(amount, 1, MAX_BATCH);
@@ -305,7 +305,7 @@ contract Deployed is Constants {
 					price
 				);
 			}
-			function test_revert_when_quantity_requested_is_zero(address account) public {
+			function test_template721_revert_when_quantity_requested_is_zero(address account) public {
 				setPublicSale();
 				vm.assume(account != address(0));
 				vm.prank(account);
@@ -317,7 +317,7 @@ contract Deployed is Constants {
 					)
 				);
 			}
-			function test_revert_when_requesting_more_than_max_batch(uint256 amount, address account) public {
+			function test_template721_revert_when_requesting_more_than_max_batch(uint256 amount, address account) public {
 				setPublicSale();
 				vm.assume(account != address(0));
 				amount = bound(amount, MAX_BATCH, 4094);
@@ -335,7 +335,7 @@ contract Deployed is Constants {
 					price
 				);
 			}
-			function test_revert_when_supply_is_depleted(uint256 amount, address account) public {
+			function test_template721_revert_when_supply_is_depleted(uint256 amount, address account) public {
 				depleteSupply();
 				setPublicSale();
 				vm.assume(account != address(0));
@@ -354,7 +354,7 @@ contract Deployed is Constants {
 					price
 				);
 			}
-			function test_revert_when_incorrect_amount_of_ether_sent(uint256 amount, address account) public {
+			function test_template721_revert_when_incorrect_amount_of_ether_sent(uint256 amount, address account) public {
 				setPublicSale();
 				vm.assume(account != address(0));
 				amount = bound(amount, 1, MAX_BATCH);
@@ -370,7 +370,7 @@ contract Deployed is Constants {
 					price
 				);
 			}
-			function test_emit_Transfer_events(uint256 amount, address account) public {
+			function test_template721_emit_Transfer_events(uint256 amount, address account) public {
 				setPublicSale();
 				vm.assume(account != address(0));
 				amount = bound(amount, 1, MAX_BATCH);
@@ -400,7 +400,7 @@ contract Deployed is Constants {
   // * IERC721 *
   // ***********
     contract Approve is Deployed {
-      function test_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
+      function test_template721_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.assume(tokenId > MINTED_SUPPLY);
@@ -415,7 +415,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_revert_when_operator_not_approved(address operator) public {
+      function test_template721_revert_when_operator_not_approved(address operator) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -433,7 +433,7 @@ contract Deployed is Constants {
           TARGET_TOKEN
         );
       }
-      function test_revert_when_approving_token_owner() public {
+      function test_template721_revert_when_approving_token_owner() public {
         mintFixture();
         vm.prank(TOKEN_OWNER);
         revertWhenInvalidApproval(
@@ -445,7 +445,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_emit_Approval_event_when_caller_is_token_owner(address operator) public {
+      function test_template721_emit_Approval_event_when_caller_is_token_owner(address operator) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.prank(TOKEN_OWNER);
@@ -467,7 +467,7 @@ contract Deployed is Constants {
           "invalid approval"
         );
       }
-      function test_emit_Approval_event_when_caller_is_individually_approved(address operator, address secondOperator) public {
+      function test_template721_emit_Approval_event_when_caller_is_individually_approved(address operator, address secondOperator) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.assume(secondOperator != TOKEN_OWNER);
@@ -492,7 +492,7 @@ contract Deployed is Constants {
           "invalid approval"
         );
       }
-      function test_emit_Approval_event_when_caller_is_approved_for_all(address operator, address secondOperator) public {
+      function test_template721_emit_Approval_event_when_caller_is_approved_for_all(address operator, address secondOperator) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.assume(secondOperator != TOKEN_OWNER);
@@ -519,7 +519,7 @@ contract Deployed is Constants {
       }
     }
     contract SafeTransferFrom is Deployed {
-      function test_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
+      function test_template721_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(tokenId > MINTED_SUPPLY);
@@ -535,7 +535,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_revert_when_to_is_address_zero() public {
+      function test_template721_revert_when_to_is_address_zero() public {
         mintFixture();
         vm.prank(TOKEN_OWNER);
         revertWhenInvalidReceiver(
@@ -549,7 +549,7 @@ contract Deployed is Constants {
           address(0)
         );
       }
-      function test_revert_when_from_dont_own_token(address from, address to) public {
+      function test_template721_revert_when_from_dont_own_token(address from, address to) public {
         mintFixture();
         vm.assume(from != TOKEN_OWNER);
         vm.assume(to != address(0));
@@ -564,7 +564,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_revert_when_operator_not_approved(address operator, address to) public {
+      function test_template721_revert_when_operator_not_approved(address operator, address to) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -585,7 +585,7 @@ contract Deployed is Constants {
           TARGET_TOKEN
         );
       }
-      function test_revert_when_receiver_is_non_receiver_contract() public {
+      function test_template721_revert_when_receiver_is_non_receiver_contract() public {
         mintFixture();
         Mock_NonERC721Receiver nonReceiver = new Mock_NonERC721Receiver();
         vm.prank(TOKEN_OWNER);
@@ -600,7 +600,7 @@ contract Deployed is Constants {
           address(nonReceiver)
         );
       }
-      function test_revert_when_receiver_contract_returns_unexpected_value(bytes4 retval) public {
+      function test_template721_revert_when_receiver_contract_returns_unexpected_value(bytes4 retval) public {
         mintFixture();
         vm.assume(retval != type(IERC721Receiver).interfaceId);
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.None);
@@ -616,7 +616,7 @@ contract Deployed is Constants {
           address(receiver)
         );
       }
-      function test_revert_when_receiver_contract_reverts_with_custom_error() public {
+      function test_template721_revert_when_receiver_contract_reverts_with_custom_error() public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithError);
@@ -632,7 +632,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithError
         );
       }
-      function test_revert_when_receiver_contract_reverts_with_message() public {
+      function test_template721_revert_when_receiver_contract_reverts_with_message() public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithMessage);
@@ -648,7 +648,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithMessage
         );
       }
-      function test_revert_when_receiver_contract_reverts_without_message() public {
+      function test_template721_revert_when_receiver_contract_reverts_without_message() public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithoutMessage);
@@ -664,7 +664,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithoutMessage
         );
       }
-      function test_revert_when_receiver_contract_panics() public {
+      function test_template721_revert_when_receiver_contract_panics() public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.Panic);
@@ -680,7 +680,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.Panic
         );
       }
-      function test_emit_Transfer_event_when_caller_is_contract_owner(uint256 tokenId) public {
+      function test_template721_emit_Transfer_event_when_caller_is_contract_owner(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, 1, 6); 
         vm.prank(TOKEN_OWNER);
@@ -703,7 +703,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId) public {
+      function test_template721_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -730,7 +730,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId) public {
+      function test_template721_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -759,7 +759,7 @@ contract Deployed is Constants {
       }
     }
     contract SafeTransferFromWithData is Deployed {
-      function test_revert_when_token_dont_exist(address operator, uint256 tokenId, bytes memory data) public {
+      function test_template721_revert_when_token_dont_exist(address operator, uint256 tokenId, bytes memory data) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(tokenId > MINTED_SUPPLY);
@@ -776,7 +776,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_revert_when_to_is_address_zero(bytes memory data) public {
+      function test_template721_revert_when_to_is_address_zero(bytes memory data) public {
         mintFixture();
         vm.prank(TOKEN_OWNER);
         revertWhenInvalidReceiver(
@@ -791,7 +791,7 @@ contract Deployed is Constants {
           address(0)
         );
       }
-      function test_revert_when_from_dont_own_token(address from, address to, bytes memory data) public {
+      function test_template721_revert_when_from_dont_own_token(address from, address to, bytes memory data) public {
         mintFixture();
         vm.assume(from != TOKEN_OWNER);
         vm.assume(to != address(0));
@@ -807,7 +807,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_revert_when_operator_not_approved(address operator, address to, bytes memory data) public {
+      function test_template721_revert_when_operator_not_approved(address operator, address to, bytes memory data) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -829,7 +829,7 @@ contract Deployed is Constants {
           TARGET_TOKEN
         );
       }
-      function test_revert_when_receiver_is_non_receiver_contract(bytes memory data) public {
+      function test_template721_revert_when_receiver_is_non_receiver_contract(bytes memory data) public {
         mintFixture();
         Mock_NonERC721Receiver nonReceiver = new Mock_NonERC721Receiver();
         vm.prank(TOKEN_OWNER);
@@ -845,7 +845,7 @@ contract Deployed is Constants {
           address(nonReceiver)
         );
       }
-      function test_revert_when_receiver_contract_returns_unexpected_value(bytes4 retval, bytes memory data) public {
+      function test_template721_revert_when_receiver_contract_returns_unexpected_value(bytes4 retval, bytes memory data) public {
         mintFixture();
         vm.assume(retval != type(IERC721Receiver).interfaceId);
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.None);
@@ -862,7 +862,7 @@ contract Deployed is Constants {
           address(receiver)
         );
       }
-      function test_revert_when_receiver_contract_reverts_with_custom_error(bytes memory data) public {
+      function test_template721_revert_when_receiver_contract_reverts_with_custom_error(bytes memory data) public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithError);
@@ -879,7 +879,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithError
         );
       }
-      function test_revert_when_receiver_contract_reverts_with_message(bytes memory data) public {
+      function test_template721_revert_when_receiver_contract_reverts_with_message(bytes memory data) public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithMessage);
@@ -896,7 +896,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithMessage
         );
       }
-      function test_revert_when_receiver_contract_reverts_without_message(bytes memory data) public {
+      function test_template721_revert_when_receiver_contract_reverts_without_message(bytes memory data) public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithoutMessage);
@@ -913,7 +913,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithoutMessage
         );
       }
-      function test_revert_when_receiver_contract_panics(bytes memory data) public {
+      function test_template721_revert_when_receiver_contract_panics(bytes memory data) public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.Panic);
@@ -930,7 +930,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.Panic
         );
       }
-      function test_emit_Transfer_event_when_caller_is_contract_owner(uint256 tokenId, bytes memory data) public {
+      function test_template721_emit_Transfer_event_when_caller_is_contract_owner(uint256 tokenId, bytes memory data) public {
         mintFixture();
         tokenId = bound(tokenId, 1, 6); 
         vm.prank(TOKEN_OWNER);
@@ -954,7 +954,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId, bytes memory data) public {
+      function test_template721_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId, bytes memory data) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -982,7 +982,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId, bytes memory data) public {
+      function test_template721_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId, bytes memory data) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -1012,7 +1012,7 @@ contract Deployed is Constants {
       }
     }
     contract SetApprovalForAll is Deployed {
-      function test_revert_when_approving_self() public {
+      function test_template721_revert_when_approving_self() public {
         mintFixture();
         vm.prank(TOKEN_OWNER);
         revertWhenInvalidApproval(
@@ -1025,7 +1025,7 @@ contract Deployed is Constants {
         );
         assertFalse(testContract.isApprovedForAll(TOKEN_OWNER, TOKEN_OWNER), "invalid approval");
       }
-      function test_emit_ApprovalForAll_when_approving_other(address operator) public {
+      function test_template721_emit_ApprovalForAll_when_approving_other(address operator) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.assume(operator != address(0));
@@ -1047,7 +1047,7 @@ contract Deployed is Constants {
           "invalid approval"
         );
       }
-      function test_emit_ApprovalForAll_when_disproving_other(address operator) public {
+      function test_template721_emit_ApprovalForAll_when_disproving_other(address operator) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.assume(operator != address(0));
@@ -1073,7 +1073,7 @@ contract Deployed is Constants {
       }
     }
     contract TransferFrom is Deployed {
-      function test_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
+      function test_template721_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(tokenId > MINTED_SUPPLY);
@@ -1089,7 +1089,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_revert_when_to_is_address_zero() public {
+      function test_template721_revert_when_to_is_address_zero() public {
         mintFixture();
         vm.prank(TOKEN_OWNER);
         revertWhenInvalidReceiver(
@@ -1103,7 +1103,7 @@ contract Deployed is Constants {
           address(0)
         );
       }
-      function test_revert_when_from_dont_own_token(address from, address to) public {
+      function test_template721_revert_when_from_dont_own_token(address from, address to) public {
         mintFixture();
         vm.assume(from != TOKEN_OWNER);
         vm.assume(to != address(0));
@@ -1118,7 +1118,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_revert_when_operator_not_approved(address operator, address to) public {
+      function test_template721_revert_when_operator_not_approved(address operator, address to) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -1139,7 +1139,7 @@ contract Deployed is Constants {
           TARGET_TOKEN
         );
       }
-      function test_emit_Transfer_event_when_caller_is_contract_owner(uint256 tokenId) public {
+      function test_template721_emit_Transfer_event_when_caller_is_contract_owner(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, 1, 6); 
         vm.prank(TOKEN_OWNER);
@@ -1162,7 +1162,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId) public {
+      function test_template721_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -1189,7 +1189,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId) public {
+      function test_template721_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -1227,7 +1227,7 @@ contract Deployed is Constants {
   // * Template721 *
   // ***************
 		contract Airdrop is Deployed {
-			function test_revert_when_caller_is_not_contract_owner(address operator) public {
+			function test_template721_revert_when_caller_is_not_contract_owner(address operator) public {
 				vm.assume(operator != address(this));
 				address[] memory addresses = new address[](1);
 				addresses[0] = user1.publicKey;
@@ -1244,7 +1244,7 @@ contract Deployed is Constants {
 					operator
 				);
 			}
-			function test_revert_when_array_lengths_dont_match() public {
+			function test_template721_revert_when_array_lengths_dont_match() public {
 				address[] memory addresses = new address[](1);
 				addresses[0] = user1.publicKey;
 				uint256[] memory amounts = new uint256[](2);
@@ -1259,7 +1259,7 @@ contract Deployed is Constants {
 					)
 				);
 			}
-			function test_revert_when_airdropping_more_than_the_reserve_to_one_user(uint256 amount) public {
+			function test_template721_revert_when_airdropping_more_than_the_reserve_to_one_user(uint256 amount) public {
 				amount = bound(amount, RESERVE, 4094);
 				address[] memory addresses = new address[](1);
 				addresses[0] = user1.publicKey;
@@ -1276,7 +1276,7 @@ contract Deployed is Constants {
 					RESERVE
 				);
 			}
-			function test_revert_when_airdropping_more_than_the_reserve_to_several_users() public {
+			function test_template721_revert_when_airdropping_more_than_the_reserve_to_several_users() public {
 				address[] memory addresses = new address[](2);
 				uint256[] memory amounts = new uint256[](2);
 				addresses[0] = user1.publicKey;
@@ -1294,7 +1294,7 @@ contract Deployed is Constants {
 					RESERVE
 				);
 			}
-			function test_emit_Transfer_events(address account1, address account2, uint256 amount1, uint256 amount2) public {
+			function test_template721_emit_Transfer_events(address account1, address account2, uint256 amount1, uint256 amount2) public {
 				vm.assume(account1 != address(0));
 				vm.assume(account2 != address(0));
 				amount1 = bound(amount1, 1, RESERVE - 1);
@@ -1327,7 +1327,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract ReduceReserve is Deployed {
-			function test_revert_when_caller_is_not_contract_owner(address operator) public {
+			function test_template721_revert_when_caller_is_not_contract_owner(address operator) public {
 				vm.assume(operator != address(this));
 				vm.prank(operator);
 				revertWhenCallerNotContractOwner(
@@ -1339,7 +1339,7 @@ contract Deployed is Constants {
 					operator
 				);
 			}
-			function test_revert_when_increasing_reserve(uint256 amount) public {
+			function test_template721_revert_when_increasing_reserve(uint256 amount) public {
 				vm.assume(amount > RESERVE);
 				revertWhenInvalidReserve(
 					address(testContract),
@@ -1349,7 +1349,7 @@ contract Deployed is Constants {
 					)
 				);
 			}
-			function test_decrease_reserve_successfully(uint256 amount) public {
+			function test_template721_decrease_reserve_successfully(uint256 amount) public {
 				amount = bound(amount, 0, RESERVE - 1);
 				testContract.reduceReserve(amount);
 				assertEq(
@@ -1360,7 +1360,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract ReduceSupply is Deployed {
-			function test_revert_when_caller_is_not_contract_owner(address operator) public {
+			function test_template721_revert_when_caller_is_not_contract_owner(address operator) public {
 				vm.assume(operator != address(this));
 				vm.prank(operator);
 				revertWhenCallerNotContractOwner(
@@ -1372,7 +1372,7 @@ contract Deployed is Constants {
 					operator
 				);
 			}
-			function test_revert_when_increasing_supply(uint256 amount) public {
+			function test_template721_revert_when_increasing_supply(uint256 amount) public {
 				vm.assume(amount > MAX_SUPPLY);
 				revertWhenInvalidSupply(
 					address(testContract),
@@ -1382,7 +1382,7 @@ contract Deployed is Constants {
 					)
 				);
 			}
-			function test_revert_when_decreasing_supply_below_reserve(uint256 amount) public {
+			function test_template721_revert_when_decreasing_supply_below_reserve(uint256 amount) public {
 				vm.assume(amount < RESERVE);
 				revertWhenInvalidSupply(
 					address(testContract),
@@ -1392,7 +1392,7 @@ contract Deployed is Constants {
 					)
 				);
 			}
-			function test_decrease_supply_successfully(uint256 amount) public {
+			function test_template721_decrease_supply_successfully(uint256 amount) public {
 				amount = bound(amount, RESERVE, MAX_SUPPLY - 1);
 				testContract.reduceSupply(amount);
 				assertEq(
@@ -1403,7 +1403,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract SetContractState is Deployed {
-			function test_revert_when_caller_is_not_contract_owner(address operator) public {
+			function test_template721_revert_when_caller_is_not_contract_owner(address operator) public {
 				vm.assume(operator != address(this));
 				vm.prank(operator);
 				revertWhenCallerNotContractOwner(
@@ -1420,7 +1420,7 @@ contract Deployed is Constants {
 					"invalid state"
 				);
 			}
-			function test_revert_when_new_state_is_invalid(uint8 newState) public {
+			function test_template721_revert_when_new_state_is_invalid(uint8 newState) public {
 				vm.assume(newState > uint8(Template721.ContractState.PUBLIC_SALE));
 				revertWhenContractStateIsInvalid(
 					address(testContract),
@@ -1435,7 +1435,7 @@ contract Deployed is Constants {
 					"invalid state"
 				);
 			}
-			function test_emit_ContractStateChanged_event(uint8 newState) public {
+			function test_template721_emit_ContractStateChanged_event(uint8 newState) public {
 				vm.assume(newState < uint8(Template721.ContractState.PUBLIC_SALE) + 1);
 				emitContractStateChangedEvent(
 					address(testContract),
@@ -1455,7 +1455,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract SetPrices is Deployed {
-			function test_revert_when_caller_is_not_contract_owner(address operator) public {
+			function test_template721_revert_when_caller_is_not_contract_owner(address operator) public {
 				vm.assume(operator != address(this));
 				vm.prank(operator);
 				revertWhenCallerNotContractOwner(
@@ -1468,7 +1468,7 @@ contract Deployed is Constants {
 					operator
 				);
 			}
-			function test_update_prices_accurately(uint256 newPrivatePrice, uint256 newPublicPrice) public {
+			function test_template721_update_prices_accurately(uint256 newPrivatePrice, uint256 newPublicPrice) public {
 				testContract.setPrices(newPrivatePrice, newPublicPrice);
 				assertEq(
 					testContract.salePrice(Template721.ContractState.PRIVATE_SALE),
@@ -1483,7 +1483,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract SetTreasury is Deployed {
-			function test_revert_when_caller_is_not_contract_owner(address operator) public {
+			function test_template721_revert_when_caller_is_not_contract_owner(address operator) public {
 				vm.assume(operator != address(this));
 				vm.prank(operator);
 				revertWhenCallerNotContractOwner(
@@ -1495,7 +1495,7 @@ contract Deployed is Constants {
 					operator
 				);
 			}
-			function test_update_treasury_successfully(address newTreasury) public {
+			function test_template721_update_treasury_successfully(address newTreasury) public {
 				vm.assume(newTreasury != TREASURY);
 				testContract.setTreasury(newTreasury);
 				assertEq(
@@ -1506,7 +1506,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract Withdraw is Deployed {
-			function test_revert_when_caller_is_not_contract_owner(address operator) public {
+			function test_template721_revert_when_caller_is_not_contract_owner(address operator) public {
 				vm.assume(operator != address(this));
 				vm.prank(operator);
 				revertWhenCallerNotContractOwner(
@@ -1517,7 +1517,7 @@ contract Deployed is Constants {
 					operator
 				);
 			}
-			function test_revert_when_contract_holds_no_eth() public {
+			function test_template721_revert_when_contract_holds_no_eth() public {
 				revertWhenNoEtherBalance(
 					address(testContract),
 					abi.encodeWithSignature(
@@ -1525,7 +1525,7 @@ contract Deployed is Constants {
 					)
 				);
 			}
-			function test_revert_when_treasury_cant_receive_eth() public {
+			function test_template721_revert_when_treasury_cant_receive_eth() public {
 				mintFixture();
 				Mock_Invalid_Eth_Receiver newTreasury = new Mock_Invalid_Eth_Receiver();
 				testContract.setTreasury(address(newTreasury));
@@ -1538,7 +1538,7 @@ contract Deployed is Constants {
 					MINTED_SUPPLY * PUBLIC_SALE_PRICE
 				);
 			}
-			function test_eth_balance_transferred_successfully() public {
+			function test_template721_eth_balance_transferred_successfully() public {
 				mintFixture();
 				testContract.withdraw();
 				assertEq(
@@ -1559,7 +1559,7 @@ contract Deployed is Constants {
   // * IERC173 *
   // ***********
 		contract TransferOwnership is Deployed {
-		  function test_cannot_transfer_ownership_when_not_owner(address operator) public {
+		  function test_template721_cannot_transfer_ownership_when_not_owner(address operator) public {
 		    vm.assume(operator != address(this));
 		    vm.prank(operator);
 		    revertWhenCallerNotContractOwner(
@@ -1571,7 +1571,7 @@ contract Deployed is Constants {
 		      operator
 		    );
 		  }
-		  function test_emit_transfer_ownership_when_owner(address newOwner) public {
+		  function test_template721_emit_transfer_ownership_when_owner(address newOwner) public {
 		    vm.assume(newOwner != address(this));
 		    emitOwnershipTransferredEvent(
 		      address(testContract),
@@ -1589,7 +1589,7 @@ contract Deployed is Constants {
 		      "invalid owner"
 		    );
 		  }
-		  function test_renounce_ownership() public {
+		  function test_template721_renounce_ownership() public {
 		    emitOwnershipTransferredEvent(
 		      address(testContract),
 		      abi.encodeWithSignature(
@@ -1613,7 +1613,7 @@ contract Deployed is Constants {
   // * IERC2981 *
   // ************
 		contract SetRoyaltyInfo is Deployed {
-			function test_revert_when_caller_is_not_contract_owner(address operator) public {
+			function test_template721_revert_when_caller_is_not_contract_owner(address operator) public {
 				vm.assume(operator != address(this));
 				vm.prank(operator);
 				revertWhenCallerNotContractOwner(
@@ -1626,7 +1626,7 @@ contract Deployed is Constants {
 					operator
 				);
 			}
-		  function test_revert_when_new_royalty_rate_is_higher_than_royalty_base(uint96 newRate) public {
+		  function test_template721_revert_when_new_royalty_rate_is_higher_than_royalty_base(uint96 newRate) public {
 		    vm.assume(newRate > ROYALTY_BASE);
 		    revertWhenInvalidRoyalties(
 		      address(testContract),
@@ -1637,7 +1637,7 @@ contract Deployed is Constants {
 		      )
 		    );
 		  }
-		  function test_setting_royalties(address newRecipient, uint96 newRate, uint256 tokenId, uint256 price) public {
+		  function test_template721_setting_royalties(address newRecipient, uint96 newRate, uint256 tokenId, uint256 price) public {
 		    vm.assume(newRate > 0);
 		    vm.assume(newRate <= ROYALTY_BASE);
 		    vm.assume(newRecipient != address(0));
@@ -1655,7 +1655,7 @@ contract Deployed is Constants {
 		      "invalid royalty amount"
 		    );
 		  }
-		  function test_removing_royalty_recipient(uint96 newRate, uint256 tokenId, uint256 price) public {
+		  function test_template721_removing_royalty_recipient(uint96 newRate, uint256 tokenId, uint256 price) public {
 		    vm.assume(newRate > 0);
 		    vm.assume(newRate <= ROYALTY_BASE);
 		    testContract.setRoyaltyInfo(address(0), newRate);
@@ -1672,7 +1672,7 @@ contract Deployed is Constants {
 		      "invalid royalty amount"
 		    );
 		  }
-		  function test_removing_royalty_rate(address newRecipient, uint256 tokenId, uint256 price) public {
+		  function test_template721_removing_royalty_rate(address newRecipient, uint256 tokenId, uint256 price) public {
 		    vm.assume(newRecipient != address(0));
 		    testContract.setRoyaltyInfo(address(0), 0);
 		    price = bound(price, 100, 1e36); 
@@ -1695,7 +1695,7 @@ contract Deployed is Constants {
   // * IERC721Metadata *
   // *******************
 		contract SetBaseUri is Deployed {
-			function test_revert_when_caller_is_not_contract_owner(address operator) public {
+			function test_template721_revert_when_caller_is_not_contract_owner(address operator) public {
 				vm.assume(operator != address(this));
 				vm.prank(operator);
 				revertWhenCallerNotContractOwner(
@@ -1707,7 +1707,7 @@ contract Deployed is Constants {
 					operator
 				);
 			}
-      function test_set_base_uri_successfully(uint256 tokenId, string memory newBaseUri) public {
+      function test_template721_set_base_uri_successfully(uint256 tokenId, string memory newBaseUri) public {
         mintFixture();
         testContract.setBaseUri(newBaseUri);
         tokenId = bound(tokenId, FIRST_TOKEN, MINTED_SUPPLY);
@@ -1724,7 +1724,7 @@ contract Deployed is Constants {
   // * Whitelist *
   // *************
 		contract SetWhitelist is Deployed {
-			function test_revert_when_caller_is_not_contract_owner(address operator) public {
+			function test_template721_revert_when_caller_is_not_contract_owner(address operator) public {
 				vm.assume(operator != address(this));
 				vm.prank(operator);
 				revertWhenCallerNotContractOwner(
@@ -1747,7 +1747,7 @@ contract Deployed is Constants {
   // * Template721 *
   // ***************
 		contract MaxBatch is Deployed {
-			function test_max_batch_is_accurate() public {
+			function test_template721_max_batch_is_accurate() public {
 				assertEq(
 					testContract.MAX_BATCH(),
 					MAX_BATCH,
@@ -1756,7 +1756,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract ContractState is Deployed {
-			function test_contract_state_is_paused() public {
+			function test_template721_contract_state_is_paused() public {
 				assertEq(
 					uint8(testContract.contractState()),
 					uint8(Template721.ContractState.PAUSED),
@@ -1765,7 +1765,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract MaxSupply is Deployed {
-			function test_max_supply_is_accurate() public {
+			function test_template721_max_supply_is_accurate() public {
 				assertEq(
 					testContract.maxSupply(),
 					MAX_SUPPLY,
@@ -1774,7 +1774,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract Reserve is Deployed {
-			function test_reserve_is_accurate() public {
+			function test_template721_reserve_is_accurate() public {
 				assertEq(
 					testContract.reserve(),
 					RESERVE,
@@ -1783,7 +1783,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract Treasury is Deployed {
-			function test_treasury_is_accurate() public {
+			function test_template721_treasury_is_accurate() public {
 				assertEq(
 					testContract.treasury(),
 					TREASURY,
@@ -1792,7 +1792,7 @@ contract Deployed is Constants {
 			}
 		}
 		contract SalePrice is Deployed {
-			function test_sale_prices_are_accurate() public {
+			function test_template721_sale_prices_are_accurate() public {
 				assertEq(
 					testContract.salePrice(Template721.ContractState.PRIVATE_SALE),
 					PRIVATE_SALE_PRICE,
@@ -1811,7 +1811,7 @@ contract Deployed is Constants {
   // * Whitelist *
   // *************
 		contract CheckWhitelistAllowance is Deployed {
-		  function test_revert_when_whitelist_is_not_set(
+		  function test_template721_revert_when_whitelist_is_not_set(
 		    address account,
 		    uint256 alloted
 		  ) public {
@@ -1828,7 +1828,7 @@ contract Deployed is Constants {
 		      )
 		    );
 		  }
-		  function test_return_zero_when_checking_allowance_with_other_user_proof(
+		  function test_template721_return_zero_when_checking_allowance_with_other_user_proof(
 		    address account,
 		    uint256 alloted
 		  ) public {
@@ -1840,7 +1840,7 @@ contract Deployed is Constants {
 		      "invalid allowance"
 		    );
 		  }
-		  function test_return_zero_when_checking_allowance_with_forged_proof(
+		  function test_template721_return_zero_when_checking_allowance_with_forged_proof(
 		    address account,
 		    uint256 alloted
 		  ) public {
@@ -1851,7 +1851,7 @@ contract Deployed is Constants {
 		      "invalid allowance"
 		    );
 		  }
-		  function test_return_zero_when_checking_allowance_for_different_whitelist_than_allocated(
+		  function test_template721_return_zero_when_checking_allowance_for_different_whitelist_than_allocated(
 		    address account,
 		    uint8 whitelistId,
 		    uint256 alloted
@@ -1864,7 +1864,7 @@ contract Deployed is Constants {
 		      "invalid allowance"
 		    );
 		  }
-		  function test_return_zero_when_checking_allowance_for_more_than_allocated(
+		  function test_template721_return_zero_when_checking_allowance_for_more_than_allocated(
 		    address account,
 		    uint256 alloted
 		  ) public {
@@ -1876,7 +1876,7 @@ contract Deployed is Constants {
 		      "invalid allowance"
 		    );
 		  }
-		  function test_allowance_is_accurate_when_whitelist_allocation_has_not_been_consumed(
+		  function test_template721_allowance_is_accurate_when_whitelist_allocation_has_not_been_consumed(
 		    address account,
 		    uint256 alloted
 		  ) public {
@@ -1887,7 +1887,7 @@ contract Deployed is Constants {
 		      "invalid allowance"
 		    );
 		  }
-		  function test_allowance_is_accurate_when_whitelist_allocation_has_been_partially_consumed(
+		  function test_template721_allowance_is_accurate_when_whitelist_allocation_has_been_partially_consumed(
 		    address account,
 		    uint256 alloted
 		  ) public {
@@ -1900,7 +1900,7 @@ contract Deployed is Constants {
 		      "invalid allowance"
 		    );
 		  }
-		  function test_allowance_is_accurate_when_whitelist_allocation_has_been_fully_consumed(
+		  function test_template721_allowance_is_accurate_when_whitelist_allocation_has_been_fully_consumed(
 		    address account,
 		    uint256 alloted
 		  ) public {
@@ -1920,7 +1920,7 @@ contract Deployed is Constants {
   // * IERC173 *
   // ***********
 		contract Owner is Deployed {
-		  function test_owner_is_correct() public {
+		  function test_template721_owner_is_correct() public {
 		    assertEq(
 		      testContract.owner(),
 		      address(this),
@@ -1934,7 +1934,7 @@ contract Deployed is Constants {
   // * IERC2981 *
   // ************
 		contract RoyaltyBase is Deployed {
-		  function test_royalty_base_is_correct() public {
+		  function test_template721_royalty_base_is_correct() public {
 		    assertEq(
 		      testContract.ROYALTY_BASE(),
 		      ROYALTY_BASE,
@@ -1944,7 +1944,7 @@ contract Deployed is Constants {
 		}
 
 		contract RoyaltyInfo is Deployed {
-		  function test_no_royalties_when_price_is_zero(uint256 tokenId) public {
+		  function test_template721_no_royalties_when_price_is_zero(uint256 tokenId) public {
 		    (address recipient, uint256 royaltyAmount) = testContract.royaltyInfo(tokenId, 0);
 		    assertEq(
 		      recipient,
@@ -1957,7 +1957,7 @@ contract Deployed is Constants {
 		      "invalid royalty amount"
 		    );
 		  }
-		  function test_royalty_info_is_accurate(uint256 tokenId, uint256 price) public {
+		  function test_template721_royalty_info_is_accurate(uint256 tokenId, uint256 price) public {
 		    price = bound(price, 100, 1e36); 
 		    (address recipient, uint256 royaltyAmount) = testContract.royaltyInfo(tokenId, price);
 		    assertEq(
@@ -1978,7 +1978,7 @@ contract Deployed is Constants {
   // * IERC721 *
   // ***********
     contract BalanceOf is Deployed {
-      function test_revert_when_checking_balance_of_zero_address() public {
+      function test_template721_revert_when_checking_balance_of_zero_address() public {
         mintFixture();
         revertWhenInvalidTokenOwner(
           address(testContract),
@@ -1988,7 +1988,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_balance_of_non_token_owner_is_zero(address nonOwner) public {
+      function test_template721_balance_of_non_token_owner_is_zero(address nonOwner) public {
         mintFixture();
         vm.assume(nonOwner != address(0));
         vm.assume(nonOwner != TOKEN_OWNER);
@@ -1999,7 +1999,7 @@ contract Deployed is Constants {
           "invalide balance"
         );
       }
-      function test_balance_of_token_owners_is_accurate() public {
+      function test_template721_balance_of_token_owners_is_accurate() public {
         mintFixture();
         assertEq(
           testContract.balanceOf(TOKEN_OWNER),
@@ -2014,7 +2014,7 @@ contract Deployed is Constants {
       }
     }
     contract GetApproved is Deployed {
-      function test_revert_when_requesting_approval_status_of_token_zero() public {
+      function test_template721_revert_when_requesting_approval_status_of_token_zero() public {
         mintFixture();
         revertWhenTokenDontExist(
           address(testContract),
@@ -2024,7 +2024,7 @@ contract Deployed is Constants {
           0
         );
       }
-      function test_revert_when_requesting_approval_status_of_non_existant_token(uint256 tokenId) public {
+      function test_template721_revert_when_requesting_approval_status_of_non_existant_token(uint256 tokenId) public {
         mintFixture();
         vm.assume(tokenId > MINTED_SUPPLY);
         revertWhenTokenDontExist(
@@ -2035,7 +2035,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_individual_approval_status_of_freshly_minted_token_is_address_zero(uint256 tokenId) public {
+      function test_template721_individual_approval_status_of_freshly_minted_token_is_address_zero(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, FIRST_TOKEN, MINTED_SUPPLY);
         assertEq(
@@ -2046,7 +2046,7 @@ contract Deployed is Constants {
       }
     }
     contract IsApprovedForAll is Deployed {
-      function test_approval_for_all_status_is_false_by_default(address tokenOwner, address operator) public {
+      function test_template721_approval_for_all_status_is_false_by_default(address tokenOwner, address operator) public {
         mintFixture();
         assertFalse(
           testContract.isApprovedForAll(tokenOwner, operator),
@@ -2055,7 +2055,7 @@ contract Deployed is Constants {
       }
     }
     contract OwnerOf is Deployed {
-      function test_revert_when_requesting_ownership_of_token_zero() public {
+      function test_template721_revert_when_requesting_ownership_of_token_zero() public {
         mintFixture();
         revertWhenTokenDontExist(
           address(testContract),
@@ -2065,7 +2065,7 @@ contract Deployed is Constants {
           0
         );
       }
-      function test_revert_when_requesting_ownership_of_non_existant_token(uint256 tokenId) public {
+      function test_template721_revert_when_requesting_ownership_of_non_existant_token(uint256 tokenId) public {
         mintFixture();
         vm.assume(tokenId > MINTED_SUPPLY);
         revertWhenTokenDontExist(
@@ -2076,7 +2076,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_ownership_of_existing_tokens_is_accurate(uint256 tokenId) public {
+      function test_template721_ownership_of_existing_tokens_is_accurate(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, FIRST_TOKEN, MINTED_SUPPLY);
         if (tokenId == 7) {
@@ -2101,7 +2101,7 @@ contract Deployed is Constants {
   // * IERC721Enumerable *
   // *********************
     contract TokenByIndex is Deployed {
-      function test_revert_when_requesting_token_at_non_existant_index(uint256 index) public {
+      function test_template721_revert_when_requesting_token_at_non_existant_index(uint256 index) public {
         mintFixture();
         vm.assume(index > MINTED_SUPPLY - FIRST_TOKEN);
         revertWhenIndexOutOfBounds(
@@ -2113,7 +2113,7 @@ contract Deployed is Constants {
           index
         );
       }
-      function test_token_by_index_is_accurate(uint256 index) public {
+      function test_template721_token_by_index_is_accurate(uint256 index) public {
         mintFixture();
         vm.assume(index < MINTED_SUPPLY);
         assertEq(
@@ -2124,7 +2124,7 @@ contract Deployed is Constants {
       }
     }
     contract TokenOfOwnerByIndex is Deployed {
-      function test_revert_when_requesting_index_of_token_owned_by_address_zero(uint256 index) public {
+      function test_template721_revert_when_requesting_index_of_token_owned_by_address_zero(uint256 index) public {
         mintFixture();
         revertWhenInvalidTokenOwner(
           address(testContract),
@@ -2135,7 +2135,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_revert_when_requesting_index_of_non_owned_token(uint256 index, address tokenOwner) public {
+      function test_template721_revert_when_requesting_index_of_non_owned_token(uint256 index, address tokenOwner) public {
         mintFixture();
         vm.assume(index > 9);
         vm.assume(tokenOwner != address(0));
@@ -2149,7 +2149,7 @@ contract Deployed is Constants {
           index
         );
       }
-      function test_token_of_owner_by_index_is_accurate(uint256 index) public {
+      function test_template721_token_of_owner_by_index_is_accurate(uint256 index) public {
         mintFixture();
         assertEq(
           testContract.tokenOfOwnerByIndex(OTHER_OWNER, 0),
@@ -2174,14 +2174,14 @@ contract Deployed is Constants {
       }
     }
     contract TotalSupply is Deployed {
-      function test_initial_total_supply_is_accurate() public {
+      function test_template721_initial_total_supply_is_accurate() public {
         assertEq(
           testContract.totalSupply(),
           0,
           "invalid total supply"
         );
       }
-      function test_total_supply_is_accurate_after_minting_some_tokens() public {
+      function test_template721_total_supply_is_accurate_after_minting_some_tokens() public {
         mintFixture();
         assertEq(
           testContract.totalSupply(),
@@ -2196,7 +2196,7 @@ contract Deployed is Constants {
   // * IERC721Metadata *
   // *******************
     contract Name is Deployed {
-      function test_name_is_accurate() public {
+      function test_template721_name_is_accurate() public {
         assertEq(
           testContract.name(),
           NAME,
@@ -2205,7 +2205,7 @@ contract Deployed is Constants {
       }
     }
     contract Symbol is Deployed {
-      function test_symbol_is_accurate() public {
+      function test_template721_symbol_is_accurate() public {
         assertEq(
           testContract.symbol(),
           SYMBOL,
@@ -2214,7 +2214,7 @@ contract Deployed is Constants {
       }
     }
     contract TokenURI is Deployed {
-      function test_revert_when_requesting_uri_of_token_zero() public {
+      function test_template721_revert_when_requesting_uri_of_token_zero() public {
         revertWhenTokenDontExist(
           address(testContract),
           abi.encodeWithSignature(
@@ -2224,7 +2224,7 @@ contract Deployed is Constants {
           0
         );
       }
-      function test_revert_when_requesting_uri_of_non_existant_token(uint256 tokenId) public {
+      function test_template721_revert_when_requesting_uri_of_non_existant_token(uint256 tokenId) public {
         revertWhenTokenDontExist(
           address(testContract),
           abi.encodeWithSignature(
@@ -2234,7 +2234,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_token_uri_is_accurate(uint256 tokenId) public {
+      function test_template721_token_uri_is_accurate(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, FIRST_TOKEN, MINTED_SUPPLY);
         assertEq(
@@ -2250,7 +2250,7 @@ contract Deployed is Constants {
   // * IERC165 *
   // ***********
 		contract SupportsInterface is Deployed {
-		  function test_supports_the_expected_interfaces() public {
+		  function test_template721_supports_the_expected_interfaces() public {
 		  	for (uint256 i; i < INTERFACES.length; ++i) {
 			    assertEq(
 			      testContract.supportsInterface(INTERFACES[i]),

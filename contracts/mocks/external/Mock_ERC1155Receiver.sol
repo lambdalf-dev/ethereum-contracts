@@ -24,11 +24,11 @@ contract Mock_ERC1155Receiver is IERC1155Receiver {
   }
 
   function onERC1155BatchReceived(
-    address operator_,
-    address from_,
-    uint256[] memory ids_,
-    uint256[] memory amounts_,
-    bytes memory data_
+    address,
+    address,
+    uint256[] memory,
+    uint256[] memory,
+    bytes memory
   ) public override returns (bytes4) {
     if (_error == Error.RevertWithError) {
       revert ERC1155ReceiverError();
@@ -46,11 +46,11 @@ contract Mock_ERC1155Receiver is IERC1155Receiver {
   }
 
   function onERC1155Received(
-    address operator_,
-    address from_,
-    uint256 id_,
-    uint256 amount_,
-    bytes memory data_
+    address,
+    address,
+    uint256,
+    uint256,
+    bytes memory
   ) public override returns (bytes4) {
     if (_error == Error.RevertWithError) {
       revert ERC1155ReceiverError();

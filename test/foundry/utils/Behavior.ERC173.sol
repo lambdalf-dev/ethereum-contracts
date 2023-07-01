@@ -7,12 +7,25 @@ import {IERC173} from "../../../contracts/interfaces/IERC173.sol";
 contract Behavior_ERC173 is TestHelper {
   event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
   // EVENTS
-  function emitOwnershipTransferredEvent(address callee, bytes memory signature, address emitter, address previousOwner, address newOwner) internal {
+  function emitOwnershipTransferredEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    address previousOwner,
+    address newOwner
+  ) internal {
     vm.expectEmit(emitter);
     emit OwnershipTransferred(previousOwner, newOwner);
     (bool success,) = callee.call(signature);
   }
-  function emitOwnershipTransferredEvent(address callee, bytes memory signature, address emitter, address previousOwner, address newOwner, uint256 valueSent) internal {
+  function emitOwnershipTransferredEvent(
+    address callee,
+    bytes memory signature,
+    address emitter,
+    address previousOwner,
+    address newOwner,
+    uint256 valueSent
+  ) internal {
     vm.expectEmit(emitter);
     emit OwnershipTransferred(previousOwner, newOwner);
     (bool success,) = callee.call{value:valueSent}(signature);

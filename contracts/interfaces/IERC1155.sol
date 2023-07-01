@@ -13,7 +13,7 @@ interface IERC1155 /* is IERC165 */ {
   // **************************************
   // *****           ERRORS           *****
   // **************************************
-    /// @dev Thrown when `operator` has not been approved to manage `tokenId` on behalf of `tokenOwner`.
+    /// @dev Thrown when `operator` has not been approved to manage tokens on behalf of `tokenOwner`.
     /// 
     /// @param from address owning the token
     /// @param operator address trying to manage the token
@@ -26,10 +26,9 @@ interface IERC1155 /* is IERC165 */ {
     /// 
     /// @param from address that the NFT are being transferred from
     /// @param id identifier of the NFT being referenced
-    /// @param balance amount of tokens that the address owns
-    error IERC1155_INSUFFICIENT_BALANCE(address from, uint256 id, uint256 balance);
+    error IERC1155_INSUFFICIENT_BALANCE(address from, uint256 id);
     /// @dev Thrown when operator tries to approve themselves for managing a token they own.
-    error IERC1155_INVALID_CALLER_APPROVAL();
+    error IERC1155_INVALID_APPROVAL();
     /// @dev Thrown when a token is being safely transferred to an address unable to handle it.
     /// 
     /// @param receiver address unable to receive the token

@@ -21,7 +21,7 @@ contract Deployed is Constants {
 }
 
 contract ContractConstants is Deployed {
-  function test_royalty_base_is_correct() public {
+  function test_erc2981_royalty_base_is_correct() public {
     assertEq(
       testContract.ROYALTY_BASE(),
       ROYALTY_BASE,
@@ -31,7 +31,7 @@ contract ContractConstants is Deployed {
 }
 
 contract RoyaltyInfo is Deployed {
-  function test_no_royalties_when_price_is_zero(uint256 tokenId) public {
+  function test_erc2981_no_royalties_when_price_is_zero(uint256 tokenId) public {
     (address recipient, uint256 royaltyAmount) = testContract.royaltyInfo(tokenId, 0);
     assertEq(
       recipient,
@@ -44,7 +44,7 @@ contract RoyaltyInfo is Deployed {
       "invalid royalty amount"
     );
   }
-  function test_royalty_info_is_accurate(uint256 tokenId, uint256 price) public {
+  function test_erc2981_royalty_info_is_accurate(uint256 tokenId, uint256 price) public {
     price = bound(price, 100, 1e36); 
     (address recipient, uint256 royaltyAmount) = testContract.royaltyInfo(tokenId, price);
     assertEq(
@@ -61,7 +61,7 @@ contract RoyaltyInfo is Deployed {
 }
 
 contract SetRoyalties is Deployed {
-  function test_revert_when_new_royalty_rate_is_higher_than_royalty_base(uint96 newRate) public {
+  function test_erc2981_revert_when_new_royalty_rate_is_higher_than_royalty_base(uint96 newRate) public {
     vm.assume(newRate > ROYALTY_BASE);
     revertWhenInvalidRoyalties(
       address(testContract),
@@ -72,7 +72,7 @@ contract SetRoyalties is Deployed {
       )
     );
   }
-  function test_setting_royalties(address newRecipient, uint96 newRate, uint256 tokenId, uint256 price) public {
+  function test_erc2981_setting_royalties(address newRecipient, uint96 newRate, uint256 tokenId, uint256 price) public {
     vm.assume(newRate > 0);
     vm.assume(newRate <= ROYALTY_BASE);
     vm.assume(newRecipient != address(0));
@@ -90,7 +90,7 @@ contract SetRoyalties is Deployed {
       "invalid royalty amount"
     );
   }
-  function test_removing_royalty_recipient(uint96 newRate, uint256 tokenId, uint256 price) public {
+  function test_erc2981_removing_royalty_recipient(uint96 newRate, uint256 tokenId, uint256 price) public {
     vm.assume(newRate > 0);
     vm.assume(newRate <= ROYALTY_BASE);
     testContract.setRoyaltyInfo(address(0), newRate);
@@ -107,7 +107,7 @@ contract SetRoyalties is Deployed {
       "invalid royalty amount"
     );
   }
-  function test_removing_royalty_rate(address newRecipient, uint256 tokenId, uint256 price) public {
+  function test_erc2981_removing_royalty_rate(address newRecipient, uint256 tokenId, uint256 price) public {
     vm.assume(newRecipient != address(0));
     testContract.setRoyaltyInfo(address(0), 0);
     price = bound(price, 100, 1e36); 

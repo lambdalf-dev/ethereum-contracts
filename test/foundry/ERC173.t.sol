@@ -15,7 +15,7 @@ contract Deployed is Behavior_ERC173 {
 }
 
 contract Owner is Deployed {
-  function test_owner_is_correct() public {
+  function test_erc173_owner_is_correct() public {
     assertEq(
       testContract.owner(),
       address(this),
@@ -25,7 +25,7 @@ contract Owner is Deployed {
 }
 
 contract TransferOwnership is Deployed {
-  function test_cannot_transfer_ownership_when_not_owner(address operator) public {
+  function test_erc173_cannot_transfer_ownership_when_not_owner(address operator) public {
     vm.assume(operator != address(this));
     vm.prank(operator);
     revertWhenCallerNotContractOwner(
@@ -37,7 +37,7 @@ contract TransferOwnership is Deployed {
       operator
     );
   }
-  function test_emit_transfer_ownership_when_owner(address newOwner) public {
+  function test_erc173_emit_transfer_ownership_when_owner(address newOwner) public {
     vm.assume(newOwner != address(this));
     emitOwnershipTransferredEvent(
       address(testContract),
@@ -55,7 +55,7 @@ contract TransferOwnership is Deployed {
       "invalid owner"
     );
   }
-  function test_renounce_ownership() public {
+  function test_erc173_renounce_ownership() public {
     emitOwnershipTransferredEvent(
       address(testContract),
       abi.encodeWithSignature(

@@ -4,7 +4,7 @@
 * Author: Lambdalf the White
 */
 
-pragma solidity 0.8.20;
+pragma solidity ^0.8.17;
 
 import { IArrays } from "../../interfaces/IArrays.sol";
 import { IERC1155 } from "../../interfaces/IERC1155.sol";
@@ -125,7 +125,7 @@ IERC1155, IERC1155MetadataURI, IArrays, DefaultOperatorFilterer {
           }
           uint256 _balance_ = _balances[ids_[i]][from_];
           if (_balance_ < amounts_[i]) {
-            revert IERC1155_INSUFFICIENT_BALANCE(from_, ids_[i], _balance_);
+            revert IERC1155_INSUFFICIENT_BALANCE(from_, ids_[i]);
           }
           unchecked {
             _balances[ids_[i]][from_] = _balance_ - amounts_[i];
@@ -176,7 +176,7 @@ IERC1155, IERC1155MetadataURI, IArrays, DefaultOperatorFilterer {
         }
         uint256 _balance_ = _balances[id_][from_];
         if (_balance_ < amount_) {
-          revert IERC1155_INSUFFICIENT_BALANCE(from_, id_, _balance_);
+          revert IERC1155_INSUFFICIENT_BALANCE(from_, id_);
         }
         unchecked {
           _balances[id_][from_] = _balance_ - amount_;
@@ -196,7 +196,7 @@ IERC1155, IERC1155MetadataURI, IArrays, DefaultOperatorFilterer {
       function setApprovalForAll(address operator_, bool approved_) external override onlyAllowedOperatorApproval(operator_) {
         address _tokenOwner_ = msg.sender;
         if (_tokenOwner_ == operator_) {
-          revert IERC1155_INVALID_CALLER_APPROVAL();
+          revert IERC1155_INVALID_APPROVAL();
         }
         _operatorApprovals[_tokenOwner_][operator_] = approved_;
         emit ApprovalForAll(_tokenOwner_, operator_, approved_);

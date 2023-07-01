@@ -57,7 +57,7 @@ contract Deployed is Constants {
   // * Mock_ERC721Batch *
   // ********************
     contract Mint is Deployed {
-      function test_emit_Transfer_event_when_minting_via_mint(uint256 amount) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_minting_via_mint(uint256 amount) public {
         amount = bound(amount, 1, 4147);
         vm.prank(TOKEN_OWNER);
         emitMintEvent(
@@ -79,7 +79,7 @@ contract Deployed is Constants {
       }
     }
     contract Mint2309 is Deployed {
-      function test_emit_ConsecutiveTransfer_event_when_minting_via_mint2309(uint256 amount) public {
+      function test_erc721BatchBurnable_emit_ConsecutiveTransfer_event_when_minting_via_mint2309(uint256 amount) public {
         amount = bound(amount, 1, 11515);
         // uint256 amount = 11514;
         vm.prank(TOKEN_OWNER);
@@ -102,7 +102,7 @@ contract Deployed is Constants {
       }
     }
     contract SetBaseUri is Deployed {
-      function test_set_base_uri(uint256 tokenId, string memory newBaseUri) public {
+      function test_erc721BatchBurnable_set_base_uri(uint256 tokenId, string memory newBaseUri) public {
         mintFixture();
         testContract.setBaseUri(newBaseUri);
         tokenId = bound(tokenId, FIRST_TOKEN, MINTED_SUPPLY);
@@ -119,7 +119,7 @@ contract Deployed is Constants {
   // * IERC721 *
   // ***********
     contract Approve is Deployed {
-      function test_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
+      function test_erc721BatchBurnable_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.assume(tokenId > MINTED_SUPPLY);
@@ -134,7 +134,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_revert_when_operator_not_approved(address operator) public {
+      function test_erc721BatchBurnable_revert_when_operator_not_approved(address operator) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -152,7 +152,7 @@ contract Deployed is Constants {
           TARGET_TOKEN
         );
       }
-      function test_revert_when_approving_token_owner() public {
+      function test_erc721BatchBurnable_revert_when_approving_token_owner() public {
         mintFixture();
         vm.prank(TOKEN_OWNER);
         revertWhenInvalidApproval(
@@ -164,7 +164,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_emit_Approval_event_when_caller_is_token_owner(address operator) public {
+      function test_erc721BatchBurnable_emit_Approval_event_when_caller_is_token_owner(address operator) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.prank(TOKEN_OWNER);
@@ -186,7 +186,7 @@ contract Deployed is Constants {
           "invalid approval"
         );
       }
-      function test_emit_Approval_event_when_caller_is_individually_approved(address operator, address secondOperator) public {
+      function test_erc721BatchBurnable_emit_Approval_event_when_caller_is_individually_approved(address operator, address secondOperator) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.assume(secondOperator != TOKEN_OWNER);
@@ -211,7 +211,7 @@ contract Deployed is Constants {
           "invalid approval"
         );
       }
-      function test_emit_Approval_event_when_caller_is_approved_for_all(address operator, address secondOperator) public {
+      function test_erc721BatchBurnable_emit_Approval_event_when_caller_is_approved_for_all(address operator, address secondOperator) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.assume(secondOperator != TOKEN_OWNER);
@@ -238,7 +238,7 @@ contract Deployed is Constants {
       }
     }
     contract SafeTransferFrom is Deployed {
-      function test_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
+      function test_erc721BatchBurnable_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(tokenId > MINTED_SUPPLY);
@@ -254,7 +254,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_revert_when_to_is_address_zero() public {
+      function test_erc721BatchBurnable_revert_when_to_is_address_zero() public {
         mintFixture();
         vm.prank(TOKEN_OWNER);
         revertWhenInvalidReceiver(
@@ -268,7 +268,7 @@ contract Deployed is Constants {
           address(0)
         );
       }
-      function test_revert_when_from_dont_own_token(address from, address to) public {
+      function test_erc721BatchBurnable_revert_when_from_dont_own_token(address from, address to) public {
         mintFixture();
         vm.assume(from != TOKEN_OWNER);
         vm.assume(to != address(0));
@@ -283,7 +283,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_revert_when_operator_not_approved(address operator, address to) public {
+      function test_erc721BatchBurnable_revert_when_operator_not_approved(address operator, address to) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -304,7 +304,7 @@ contract Deployed is Constants {
           TARGET_TOKEN
         );
       }
-      function test_revert_when_receiver_is_non_receiver_contract() public {
+      function test_erc721BatchBurnable_revert_when_receiver_is_non_receiver_contract() public {
         mintFixture();
         Mock_NonERC721Receiver nonReceiver = new Mock_NonERC721Receiver();
         vm.prank(TOKEN_OWNER);
@@ -319,7 +319,7 @@ contract Deployed is Constants {
           address(nonReceiver)
         );
       }
-      function test_revert_when_receiver_contract_returns_unexpected_value(bytes4 retval) public {
+      function test_erc721BatchBurnable_revert_when_receiver_contract_returns_unexpected_value(bytes4 retval) public {
         mintFixture();
         vm.assume(retval != type(IERC721Receiver).interfaceId);
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.None);
@@ -335,7 +335,7 @@ contract Deployed is Constants {
           address(receiver)
         );
       }
-      function test_revert_when_receiver_contract_reverts_with_custom_error() public {
+      function test_erc721BatchBurnable_revert_when_receiver_contract_reverts_with_custom_error() public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithError);
@@ -351,7 +351,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithError
         );
       }
-      function test_revert_when_receiver_contract_reverts_with_message() public {
+      function test_erc721BatchBurnable_revert_when_receiver_contract_reverts_with_message() public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithMessage);
@@ -367,7 +367,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithMessage
         );
       }
-      function test_revert_when_receiver_contract_reverts_without_message() public {
+      function test_erc721BatchBurnable_revert_when_receiver_contract_reverts_without_message() public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithoutMessage);
@@ -383,7 +383,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithoutMessage
         );
       }
-      function test_revert_when_receiver_contract_panics() public {
+      function test_erc721BatchBurnable_revert_when_receiver_contract_panics() public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.Panic);
@@ -399,7 +399,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.Panic
         );
       }
-      function test_emit_Transfer_event_when_caller_is_token_owner(uint256 tokenId) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_token_owner(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, 1, 6); 
         vm.prank(TOKEN_OWNER);
@@ -422,7 +422,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -449,7 +449,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -476,7 +476,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_revert_when_trying_to_transfer_burned_token(address operator) public {
+      function test_erc721BatchBurnable_revert_when_trying_to_transfer_burned_token(address operator) public {
         burnFixture();
         vm.assume(operator != address(0));
         vm.prank(operator);
@@ -493,7 +493,7 @@ contract Deployed is Constants {
       }
     }
     contract SafeTransferFromWithData is Deployed {
-      function test_revert_when_token_dont_exist(address operator, uint256 tokenId, bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_token_dont_exist(address operator, uint256 tokenId, bytes memory data) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(tokenId > MINTED_SUPPLY);
@@ -510,7 +510,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_revert_when_to_is_address_zero(bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_to_is_address_zero(bytes memory data) public {
         mintFixture();
         vm.prank(TOKEN_OWNER);
         revertWhenInvalidReceiver(
@@ -525,7 +525,7 @@ contract Deployed is Constants {
           address(0)
         );
       }
-      function test_revert_when_from_dont_own_token(address from, address to, bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_from_dont_own_token(address from, address to, bytes memory data) public {
         mintFixture();
         vm.assume(from != TOKEN_OWNER);
         vm.assume(to != address(0));
@@ -541,7 +541,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_revert_when_operator_not_approved(address operator, address to, bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_operator_not_approved(address operator, address to, bytes memory data) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -563,7 +563,7 @@ contract Deployed is Constants {
           TARGET_TOKEN
         );
       }
-      function test_revert_when_receiver_is_non_receiver_contract(bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_receiver_is_non_receiver_contract(bytes memory data) public {
         mintFixture();
         Mock_NonERC721Receiver nonReceiver = new Mock_NonERC721Receiver();
         vm.prank(TOKEN_OWNER);
@@ -579,7 +579,7 @@ contract Deployed is Constants {
           address(nonReceiver)
         );
       }
-      function test_revert_when_receiver_contract_returns_unexpected_value(bytes4 retval, bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_receiver_contract_returns_unexpected_value(bytes4 retval, bytes memory data) public {
         mintFixture();
         vm.assume(retval != type(IERC721Receiver).interfaceId);
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.None);
@@ -596,7 +596,7 @@ contract Deployed is Constants {
           address(receiver)
         );
       }
-      function test_revert_when_receiver_contract_reverts_with_custom_error(bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_receiver_contract_reverts_with_custom_error(bytes memory data) public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithError);
@@ -613,7 +613,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithError
         );
       }
-      function test_revert_when_receiver_contract_reverts_with_message(bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_receiver_contract_reverts_with_message(bytes memory data) public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithMessage);
@@ -630,7 +630,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithMessage
         );
       }
-      function test_revert_when_receiver_contract_reverts_without_message(bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_receiver_contract_reverts_without_message(bytes memory data) public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.RevertWithoutMessage);
@@ -647,7 +647,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.RevertWithoutMessage
         );
       }
-      function test_revert_when_receiver_contract_panics(bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_receiver_contract_panics(bytes memory data) public {
         mintFixture();
         bytes4 retval = type(IERC721Receiver).interfaceId;
         Mock_ERC721Receiver receiver = new Mock_ERC721Receiver(retval, Mock_ERC721Receiver.Error.Panic);
@@ -664,7 +664,7 @@ contract Deployed is Constants {
           Mock_ERC721Receiver.Error.Panic
         );
       }
-      function test_emit_Transfer_event_when_caller_is_token_owner(uint256 tokenId, bytes memory data) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_token_owner(uint256 tokenId, bytes memory data) public {
         mintFixture();
         tokenId = bound(tokenId, 1, 6); 
         vm.prank(TOKEN_OWNER);
@@ -688,7 +688,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId, bytes memory data) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId, bytes memory data) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -716,7 +716,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId, bytes memory data) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId, bytes memory data) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -744,7 +744,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_revert_when_trying_to_transfer_burned_token(address operator, bytes memory data) public {
+      function test_erc721BatchBurnable_revert_when_trying_to_transfer_burned_token(address operator, bytes memory data) public {
         burnFixture();
         vm.assume(operator != address(0));
         vm.prank(operator);
@@ -762,7 +762,7 @@ contract Deployed is Constants {
       }
     }
     contract SetApprovalForAll is Deployed {
-      function test_revert_when_approving_self() public {
+      function test_erc721BatchBurnable_revert_when_approving_self() public {
         mintFixture();
         vm.prank(TOKEN_OWNER);
         revertWhenInvalidApproval(
@@ -775,7 +775,7 @@ contract Deployed is Constants {
         );
         assertFalse(testContract.isApprovedForAll(TOKEN_OWNER, TOKEN_OWNER), "invalid approval");
       }
-      function test_emit_ApprovalForAll_when_approving_other(address operator) public {
+      function test_erc721BatchBurnable_emit_ApprovalForAll_when_approving_other(address operator) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.assume(operator != address(0));
@@ -797,7 +797,7 @@ contract Deployed is Constants {
           "invalid approval"
         );
       }
-      function test_emit_ApprovalForAll_when_disproving_other(address operator) public {
+      function test_erc721BatchBurnable_emit_ApprovalForAll_when_disproving_other(address operator) public {
         mintFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.assume(operator != address(0));
@@ -823,7 +823,7 @@ contract Deployed is Constants {
       }
     }
     contract TransferFrom is Deployed {
-      function test_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
+      function test_erc721BatchBurnable_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(tokenId > MINTED_SUPPLY);
@@ -839,7 +839,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_revert_when_to_is_address_zero() public {
+      function test_erc721BatchBurnable_revert_when_to_is_address_zero() public {
         mintFixture();
         vm.prank(TOKEN_OWNER);
         revertWhenInvalidReceiver(
@@ -853,7 +853,7 @@ contract Deployed is Constants {
           address(0)
         );
       }
-      function test_revert_when_from_dont_own_token(address from, address to) public {
+      function test_erc721BatchBurnable_revert_when_from_dont_own_token(address from, address to) public {
         mintFixture();
         vm.assume(from != TOKEN_OWNER);
         vm.assume(to != address(0));
@@ -868,7 +868,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_revert_when_operator_not_approved(address operator, address to) public {
+      function test_erc721BatchBurnable_revert_when_operator_not_approved(address operator, address to) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -889,7 +889,7 @@ contract Deployed is Constants {
           TARGET_TOKEN
         );
       }
-      function test_emit_Transfer_event_when_caller_is_token_owner(uint256 tokenId) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_token_owner(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, 1, 6); 
         vm.prank(TOKEN_OWNER);
@@ -912,7 +912,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -939,7 +939,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -966,7 +966,7 @@ contract Deployed is Constants {
           "invalid token owner"
         );
       }
-      function test_revert_when_trying_to_transfer_burned_token(address operator) public {
+      function test_erc721BatchBurnable_revert_when_trying_to_transfer_burned_token(address operator) public {
         burnFixture();
         vm.assume(operator != address(0));
         vm.prank(operator);
@@ -988,7 +988,7 @@ contract Deployed is Constants {
   // * ERC721BatchBurnable *
   // ***********************
     contract Burn is Deployed {
-      function test_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
+      function test_erc721BatchBurnable_revert_when_token_dont_exist(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(tokenId > 10);
@@ -1002,7 +1002,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_revert_when_operator_not_approved(address operator) public {
+      function test_erc721BatchBurnable_revert_when_operator_not_approved(address operator) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -1020,7 +1020,7 @@ contract Deployed is Constants {
           TARGET_TOKEN
         );
       }
-      function test_emit_Transfer_event_when_caller_is_token_owner(uint256 tokenId) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_token_owner(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, 1, 6); 
         vm.prank(TOKEN_OWNER);
@@ -1041,7 +1041,7 @@ contract Deployed is Constants {
           "invalid balance after burn"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_individually_approved(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -1066,7 +1066,7 @@ contract Deployed is Constants {
           "invalid balance after burn"
         );
       }
-      function test_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId) public {
+      function test_erc721BatchBurnable_emit_Transfer_event_when_caller_is_approved_for_all(address operator, uint256 tokenId) public {
         mintFixture();
         vm.assume(operator != address(0));
         vm.assume(operator != TOKEN_OWNER);
@@ -1091,7 +1091,7 @@ contract Deployed is Constants {
           "invalid balance after burn"
         );
       }
-      function test_revert_when_trying_to_burn_burned_token(address operator) public {
+      function test_erc721BatchBurnable_revert_when_trying_to_burn_burned_token(address operator) public {
         burnFixture();
         vm.assume(operator != address(0));
         vm.prank(operator);
@@ -1115,7 +1115,7 @@ contract Deployed is Constants {
   // * IERC721 *
   // ***********
     contract BalanceOf is Deployed {
-      function test_revert_when_checking_balance_of_zero_address() public {
+      function test_erc721BatchBurnable_revert_when_checking_balance_of_zero_address() public {
         mintFixture();
         revertWhenInvalidTokenOwner(
           address(testContract),
@@ -1125,7 +1125,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_balance_of_non_token_owner_is_zero(address nonOwner) public {
+      function test_erc721BatchBurnable_balance_of_non_token_owner_is_zero(address nonOwner) public {
         mintFixture();
         vm.assume(nonOwner != address(0));
         vm.assume(nonOwner != TOKEN_OWNER);
@@ -1136,7 +1136,7 @@ contract Deployed is Constants {
           "invalide balance"
         );
       }
-      function test_balance_of_token_owners_is_accurate() public {
+      function test_erc721BatchBurnable_balance_of_token_owners_is_accurate() public {
         mintFixture();
         assertEq(
           testContract.balanceOf(TOKEN_OWNER),
@@ -1151,7 +1151,7 @@ contract Deployed is Constants {
       }
     }
     contract GetApproved is Deployed {
-      function test_revert_when_requesting_approval_status_of_token_zero() public {
+      function test_erc721BatchBurnable_revert_when_requesting_approval_status_of_token_zero() public {
         mintFixture();
         revertWhenTokenDontExist(
           address(testContract),
@@ -1161,7 +1161,7 @@ contract Deployed is Constants {
           0
         );
       }
-      function test_revert_when_requesting_approval_status_of_non_existant_token(uint256 tokenId) public {
+      function test_erc721BatchBurnable_revert_when_requesting_approval_status_of_non_existant_token(uint256 tokenId) public {
         mintFixture();
         vm.assume(tokenId > MINTED_SUPPLY);
         revertWhenTokenDontExist(
@@ -1172,7 +1172,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_individual_approval_status_of_freshly_minted_token_is_address_zero(uint256 tokenId) public {
+      function test_erc721BatchBurnable_individual_approval_status_of_freshly_minted_token_is_address_zero(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, FIRST_TOKEN, MINTED_SUPPLY);
         assertEq(
@@ -1181,7 +1181,7 @@ contract Deployed is Constants {
           "invalid approval"
         );
       }
-      function test_revert_when_requesting_individual_approval_status_of_burned_token() public {
+      function test_erc721BatchBurnable_revert_when_requesting_individual_approval_status_of_burned_token() public {
         burnFixture();
         revertWhenTokenDontExist(
           address(testContract),
@@ -1192,7 +1192,7 @@ contract Deployed is Constants {
           TARGET_TOKEN
         );
       }
-      function test_revert_when_trying_to_approve_burned_token(address operator) public {
+      function test_erc721BatchBurnable_revert_when_trying_to_approve_burned_token(address operator) public {
         burnFixture();
         vm.assume(operator != TOKEN_OWNER);
         vm.prank(TOKEN_OWNER);
@@ -1208,7 +1208,7 @@ contract Deployed is Constants {
       }
     }
     contract IsApprovedForAll is Deployed {
-      function test_approval_for_all_status_is_false_by_default(address tokenOwner, address operator) public {
+      function test_erc721BatchBurnable_approval_for_all_status_is_false_by_default(address tokenOwner, address operator) public {
         mintFixture();
         assertFalse(
           testContract.isApprovedForAll(tokenOwner, operator),
@@ -1217,7 +1217,7 @@ contract Deployed is Constants {
       }
     }
     contract OwnerOf is Deployed {
-      function test_revert_when_requesting_ownership_of_token_zero() public {
+      function test_erc721BatchBurnable_revert_when_requesting_ownership_of_token_zero() public {
         mintFixture();
         revertWhenTokenDontExist(
           address(testContract),
@@ -1227,7 +1227,7 @@ contract Deployed is Constants {
           0
         );
       }
-      function test_revert_when_requesting_ownership_of_non_existant_token(uint256 tokenId) public {
+      function test_erc721BatchBurnable_revert_when_requesting_ownership_of_non_existant_token(uint256 tokenId) public {
         mintFixture();
         vm.assume(tokenId > MINTED_SUPPLY);
         revertWhenTokenDontExist(
@@ -1238,7 +1238,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_ownership_of_existing_tokens_is_accurate(uint256 tokenId) public {
+      function test_erc721BatchBurnable_ownership_of_existing_tokens_is_accurate(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, FIRST_TOKEN, MINTED_SUPPLY);
         if (tokenId == 7) {
@@ -1256,7 +1256,7 @@ contract Deployed is Constants {
           );
         }
       }
-      function test_revert_when_requesting_ownership_of_burned_token() public {
+      function test_erc721BatchBurnable_revert_when_requesting_ownership_of_burned_token() public {
         burnFixture();
         revertWhenTokenDontExist(
           address(testContract),
@@ -1274,7 +1274,7 @@ contract Deployed is Constants {
   // * IERC721Enumerable *
   // *********************
     contract TokenByIndex is Deployed {
-      function test_revert_when_requesting_token_at_non_existant_index(uint256 index) public {
+      function test_erc721BatchBurnable_revert_when_requesting_token_at_non_existant_index(uint256 index) public {
         mintFixture();
         vm.assume(index > MINTED_SUPPLY - FIRST_TOKEN);
         revertWhenIndexOutOfBounds(
@@ -1286,7 +1286,7 @@ contract Deployed is Constants {
           index
         );
       }
-      function test_token_by_index_is_accurate(uint256 index) public {
+      function test_erc721BatchBurnable_token_by_index_is_accurate(uint256 index) public {
         mintFixture();
         vm.assume(index < MINTED_SUPPLY);
         assertEq(
@@ -1297,7 +1297,7 @@ contract Deployed is Constants {
       }
     }
     contract TokenOfOwnerByIndex is Deployed {
-      function test_revert_when_requesting_index_of_token_owned_by_address_zero(uint256 index) public {
+      function test_erc721BatchBurnable_revert_when_requesting_index_of_token_owned_by_address_zero(uint256 index) public {
         mintFixture();
         revertWhenInvalidTokenOwner(
           address(testContract),
@@ -1308,7 +1308,7 @@ contract Deployed is Constants {
           )
         );
       }
-      function test_revert_when_requesting_index_of_non_owned_token(uint256 index, address tokenOwner) public {
+      function test_erc721BatchBurnable_revert_when_requesting_index_of_non_owned_token(uint256 index, address tokenOwner) public {
         mintFixture();
         vm.assume(index > 9);
         vm.assume(tokenOwner != address(0));
@@ -1322,7 +1322,7 @@ contract Deployed is Constants {
           index
         );
       }
-      function test_token_of_owner_by_index_is_accurate(uint256 index) public {
+      function test_erc721BatchBurnable_token_of_owner_by_index_is_accurate(uint256 index) public {
         mintFixture();
         assertEq(
           testContract.tokenOfOwnerByIndex(OTHER_OWNER, 0),
@@ -1347,14 +1347,14 @@ contract Deployed is Constants {
       }
     }
     contract TotalSupply is Deployed {
-      function test_initial_total_supply_is_accurate() public {
+      function test_erc721BatchBurnable_initial_total_supply_is_accurate() public {
         assertEq(
           testContract.totalSupply(),
           0,
           "invalid total supply"
         );
       }
-      function test_total_supply_is_accurate_after_minting_some_tokens() public {
+      function test_erc721BatchBurnable_total_supply_is_accurate_after_minting_some_tokens() public {
         mintFixture();
         assertEq(
           testContract.totalSupply(),
@@ -1362,7 +1362,7 @@ contract Deployed is Constants {
           "invalid total supply"
         );
       }
-      function test_total_supply_is_accurately_reduced_after_burning() public {
+      function test_erc721BatchBurnable_total_supply_is_accurately_reduced_after_burning() public {
         burnFixture();
         assertEq(
           testContract.totalSupply(),
@@ -1377,7 +1377,7 @@ contract Deployed is Constants {
   // * IERC721Metadata *
   // *******************
     contract Name is Deployed {
-      function test_name_is_accurate() public {
+      function test_erc721BatchBurnable_name_is_accurate() public {
         assertEq(
           testContract.name(),
           NAME,
@@ -1386,7 +1386,7 @@ contract Deployed is Constants {
       }
     }
     contract Symbol is Deployed {
-      function test_symbol_is_accurate() public {
+      function test_erc721BatchBurnable_symbol_is_accurate() public {
         assertEq(
           testContract.symbol(),
           SYMBOL,
@@ -1395,7 +1395,7 @@ contract Deployed is Constants {
       }
     }
     contract TokenURI is Deployed {
-      function test_revert_when_requesting_uri_of_token_zero() public {
+      function test_erc721BatchBurnable_revert_when_requesting_uri_of_token_zero() public {
         revertWhenTokenDontExist(
           address(testContract),
           abi.encodeWithSignature(
@@ -1405,7 +1405,7 @@ contract Deployed is Constants {
           0
         );
       }
-      function test_revert_when_requesting_uri_of_non_existant_token(uint256 tokenId) public {
+      function test_erc721BatchBurnable_revert_when_requesting_uri_of_non_existant_token(uint256 tokenId) public {
         revertWhenTokenDontExist(
           address(testContract),
           abi.encodeWithSignature(
@@ -1415,7 +1415,7 @@ contract Deployed is Constants {
           tokenId
         );
       }
-      function test_token_uri_is_accurate(uint256 tokenId) public {
+      function test_erc721BatchBurnable_token_uri_is_accurate(uint256 tokenId) public {
         mintFixture();
         tokenId = bound(tokenId, FIRST_TOKEN, MINTED_SUPPLY);
         assertEq(
@@ -1424,7 +1424,7 @@ contract Deployed is Constants {
           "invalid uri"
         );
       }
-      function test_revert_when_requesting_uri_of_burned_token() public {
+      function test_erc721BatchBurnable_revert_when_requesting_uri_of_burned_token() public {
         revertWhenTokenDontExist(
           address(testContract),
           abi.encodeWithSignature(
