@@ -42,3 +42,13 @@ git submodule update --init --recursive
 - `forge test --debug <TEST_NAME>` Run TEST_NAME in debugger
 - `forge coverage --report debug` Run test coverage and generate coverage report in command line
 - `forge coverage --report lcov` Run test coverage and generate coverage report file
+
+## Contents
+
+- `contracts`: The list of contracts included in the library.
+- `create-wallet`: A hardhat task that creates a new wallet and displays its address and private key on the command line.
+- `generate-proofs`: A hardhat task to generate a list of proofs to work with the `Whitelist` contract. Requires setting a whitelist.js file that is not included.
+- `lib`: A list of libraries necessary to run forge test suite.
+- `snapshot`: A hardhat task that creates a snapshot of a collection.
+- `test/hardhat`: The hardhat test suite for the library.
+- `test/foundry`: The foundry test suite for the library.
