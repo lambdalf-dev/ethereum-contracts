@@ -11,13 +11,12 @@ import { IERC1155 } from "../../interfaces/IERC1155.sol";
 import { IERC1155MetadataURI } from "../../interfaces/IERC1155MetadataURI.sol";
 import { IERC1155Receiver } from "../../interfaces/IERC1155Receiver.sol";
 import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
-import { DefaultOperatorFilterer } from "operator-filter-registry/src/DefaultOperatorFilterer.sol";
 
 /**
 * @dev Implementation of https://eips.ethereum.org/EIPS/eip-1155[ERC1155] Semi-Fungible Token Standard.
 */
 abstract contract ERC1155 is
-IERC1155, IERC1155MetadataURI, IArrays, DefaultOperatorFilterer {
+IERC1155, IERC1155MetadataURI, IArrays {
   // **************************************
   // *****    BYTECODE  VARIABLES     *****
   // **************************************
@@ -107,7 +106,7 @@ IERC1155, IERC1155MetadataURI, IArrays, DefaultOperatorFilterer {
         uint256[] calldata ids_,
         uint256[] calldata amounts_,
         bytes calldata data_
-      ) external override onlyAllowedOperator(from_) {
+      ) external override {
         if (to_ == address(0)) {
           revert IERC1155_INVALID_RECEIVER(to_);
         }
@@ -166,7 +165,7 @@ IERC1155, IERC1155MetadataURI, IArrays, DefaultOperatorFilterer {
         uint256 id_,
         uint256 amount_,
         bytes calldata data_
-      ) external override isValidSeries(id_) onlyAllowedOperator(from_) {
+      ) external override isValidSeries(id_) {
         if (to_ == address(0)) {
           revert IERC1155_INVALID_RECEIVER(to_);
         }
@@ -193,7 +192,7 @@ IERC1155, IERC1155MetadataURI, IArrays, DefaultOperatorFilterer {
       /// Requirements:
       /// 
       /// - MUST emit the ApprovalForAll event on success.
-      function setApprovalForAll(address operator_, bool approved_) external override onlyAllowedOperatorApproval(operator_) {
+      function setApprovalForAll(address operator_, bool approved_) external override {
         address _tokenOwner_ = msg.sender;
         if (_tokenOwner_ == operator_) {
           revert IERC1155_INVALID_APPROVAL();

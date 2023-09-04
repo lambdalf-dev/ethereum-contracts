@@ -11,10 +11,9 @@ import { IERC721Metadata } from "../../interfaces/IERC721Metadata.sol";
 import { IERC721Enumerable } from "../../interfaces/IERC721Enumerable.sol";
 import { IERC721Receiver } from "../../interfaces/IERC721Receiver.sol";
 import { IERC2309 } from "../../interfaces/IERC2309.sol";
-import { DefaultOperatorFilterer } from "operator-filter-registry/src/DefaultOperatorFilterer.sol";
 
 abstract contract ERC721Batch is
-IERC721, IERC721Metadata, IERC721Enumerable, IERC2309, DefaultOperatorFilterer {
+IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
   // **************************************
   // *****     STORAGE VARIABLES      *****
   // **************************************
@@ -86,7 +85,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309, DefaultOperatorFilterer {
       /// - The token number `tokenId_` must exist.
       /// - The caller must own the token or be an approved operator.
       /// - Must emit an {Approval} event.
-      function approve(address to_, uint256 tokenId_) public virtual override onlyAllowedOperatorApproval(to_) {
+      function approve(address to_, uint256 tokenId_) public virtual override {
         address _tokenOwner_ = ownerOf(tokenId_);
         if (to_ == _tokenOwner_) {
           revert IERC721_INVALID_APPROVAL();
@@ -144,7 +143,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309, DefaultOperatorFilterer {
       /// Requirements:
       /// 
       /// - Must emit an {ApprovalForAll} event.
-      function setApprovalForAll(address operator_, bool approved_) public virtual override onlyAllowedOperatorApproval(operator_) {
+      function setApprovalForAll(address operator_, bool approved_) public virtual override {
         if (operator_ == msg.sender) {
           revert IERC721_INVALID_APPROVAL();
         }
@@ -164,7 +163,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309, DefaultOperatorFilterer {
       /// - The caller must own the token or be an approved operator.
       /// - `to_` must not be the zero address.
       /// - Must emit a {Transfer} event.
-      function transferFrom(address from_, address to_, uint256 tokenId_) public virtual override onlyAllowedOperator(from_) {
+      function transferFrom(address from_, address to_, uint256 tokenId_) public virtual override {
         if (to_ == address(0)) {
           revert IERC721_INVALID_RECEIVER(to_);
         }
