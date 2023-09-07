@@ -7,7 +7,7 @@
   "author": "Lambdalf the White <silvereh@protonmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.3.2",
+    "@openzeppelin/contracts": "^4.3.2"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
