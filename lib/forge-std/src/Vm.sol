@@ -10,6 +10,14 @@ pragma experimental ABIEncoderV2;
 // 3. Otherwise you're `pure`.
 
 interface VmSafe {
+    enum CallerMode {
+        None,
+        Broadcast,
+        RecurrentBroadcast,
+        Prank,
+        RecurrentPrank
+    }
+
     struct Log {
         bytes32[] topics;
         bytes data;
@@ -39,6 +47,30 @@ interface VmSafe {
         uint256 created;
     }
 
+    struct Wallet {
+        address addr;
+        uint256 publicKeyX;
+        uint256 publicKeyY;
+        uint256 privateKey;
+    }
+
+    struct FfiResult {
+        int32 exit_code;
+        bytes stdout;
+        bytes stderr;
+    }
+
+    // Derives a private key from the name, labels the account with that name, and returns the wallet
+    function createWallet(string calldata walletLabel) external returns (Wallet memory wallet);
+    // Generates a wallet from the private key and returns the wallet
+    function createWallet(uint256 privateKey) external returns (Wallet memory wallet);
+    // Generates a wallet from the private key, labels the account with that name, and returns the wallet
+    function createWallet(uint256 privateKey, string calldata walletLabel) external returns (Wallet memory wallet);
+    // Signs data, (Wallet, digest) => (v, r, s)
+    function sign(Wallet calldata wallet, bytes32 digest) external returns (uint8 v, bytes32 r, bytes32 s);
+    // Get nonce for a Wallet
+    function getNonce(Wallet calldata wallet) external returns (uint64 nonce);
+
     // Loads a storage slot from an address
     function load(address target, bytes32 slot) external view returns (bytes32 data);
     // Signs data
@@ -49,6 +81,8 @@ interface VmSafe {
     function getNonce(address account) external view returns (uint64 nonce);
     // Performs a foreign function call via the terminal
     function ffi(string[] calldata commandInput) external returns (bytes memory result);
+    // Performs a foreign function call via terminal and returns the exit code, stdout, and stderr
+    function tryFfi(string[] calldata commandInput) external returns (FfiResult memory result);
     // Sets environment variables
     function setEnv(string calldata name, string calldata value) external;
     // Reads environment variables, (name) => (value)
@@ -107,6 +141,8 @@ interface VmSafe {
     function getDeployedCode(string calldata artifactPath) external view returns (bytes memory runtimeBytecode);
     // Labels an address in call traces
     function label(address account, string calldata newLabel) external;
+    // Gets the label for the specified address
+    function getLabel(address account) external returns (string memory currentLabel);
     // Using the address that calls the test contract, has the next call (at this call depth only) create a transaction that can later be signed and sent onchain
     function broadcast() external;
     // Has the next call (at this call depth only) create a transaction with the address provided as the sender that can later be signed and sent onchain
@@ -139,6 +175,10 @@ interface VmSafe {
     // Writes line to file, creating a file if it does not exist.
     // `path` is relative to the project root.
     function writeLine(string calldata path, string calldata data) external;
+    // Copies the contents of one file to another. This function will **overwrite** the contents of `to`.
+    // On success, the total number of bytes copied is returned and it is equal to the length of the `to` file as reported by `metadata`.
+    // Both `from` and `to` are relative to the project root.
+    function copyFile(string calldata from, string calldata to) external returns (uint64 copied);
     // Closes file for reading, resetting the offset and allowing to read it from beginning with readLine.
     // `path` is relative to the project root.
     function closeFile(string calldata path) external;
@@ -180,6 +220,12 @@ interface VmSafe {
     function readLink(string calldata linkPath) external view returns (string memory targetPath);
     // Given a path, query the file system to get information about a file, directory, etc.
     function fsMetadata(string calldata path) external view returns (FsMetadata memory metadata);
+    // Returns true if the given path points to an existing entity, else returns false
+    function exists(string calldata path) external returns (bool result);
+    // Returns true if the path exists on disk and is pointing at a regular file, else returns false
+    function isFile(string calldata path) external returns (bool result);
+    // Returns true if the path exists on disk and is pointing at a directory, else returns false
+    function isDir(string calldata path) external returns (bool result);
 
     // Convert values to a string
     function toString(address value) external pure returns (string memory stringifiedValue);
@@ -234,20 +280,32 @@ interface VmSafe {
     // and hex numbers '0xEF'.
     // Type coercion works ONLY for discrete values or arrays. That means that the key must return a value or array, not
     // a JSON object.
-    function parseJsonUint(string calldata, string calldata) external returns (uint256);
-    function parseJsonUintArray(string calldata, string calldata) external returns (uint256[] memory);
-    function parseJsonInt(string calldata, string calldata) external returns (int256);
-    function parseJsonIntArray(string calldata, string calldata) external returns (int256[] memory);
-    function parseJsonBool(string calldata, string calldata) external returns (bool);
-    function parseJsonBoolArray(string calldata, string calldata) external returns (bool[] memory);
-    function parseJsonAddress(string calldata, string calldata) external returns (address);
-    function parseJsonAddressArray(string calldata, string calldata) external returns (address[] memory);
-    function parseJsonString(string calldata, string calldata) external returns (string memory);
-    function parseJsonStringArray(string calldata, string calldata) external returns (string[] memory);
-    function parseJsonBytes(string calldata, string calldata) external returns (bytes memory);
-    function parseJsonBytesArray(string calldata, string calldata) external returns (bytes[] memory);
-    function parseJsonBytes32(string calldata, string calldata) external returns (bytes32);
-    function parseJsonBytes32Array(string calldata, string calldata) external returns (bytes32[] memory);
+    function parseJsonUint(string calldata json, string calldata key) external pure returns (uint256);
+    function parseJsonUintArray(string calldata json, string calldata key) external pure returns (uint256[] memory);
+    function parseJsonInt(string calldata json, string calldata key) external pure returns (int256);
+    function parseJsonIntArray(string calldata json, string calldata key) external pure returns (int256[] memory);
+    function parseJsonBool(string calldata json, string calldata key) external pure returns (bool);
+    function parseJsonBoolArray(string calldata json, string calldata key) external pure returns (bool[] memory);
+    function parseJsonAddress(string calldata json, string calldata key) external pure returns (address);
+    function parseJsonAddressArray(string calldata json, string calldata key)
+        external
+        pure
+        returns (address[] memory);
+    function parseJsonString(string calldata json, string calldata key) external pure returns (string memory);
+    function parseJsonStringArray(string calldata json, string calldata key) external pure returns (string[] memory);
+    function parseJsonBytes(string calldata json, string calldata key) external pure returns (bytes memory);
+    function parseJsonBytesArray(string calldata json, string calldata key) external pure returns (bytes[] memory);
+    function parseJsonBytes32(string calldata json, string calldata key) external pure returns (bytes32);
+    function parseJsonBytes32Array(string calldata json, string calldata key)
+        external
+        pure
+        returns (bytes32[] memory);
+
+    // Checks if a key exists in a JSON or TOML object.
+    function keyExists(string calldata json, string calldata key) external view returns (bool);
+
+    // Returns array of keys for a JSON object
+    function parseJsonKeys(string calldata json, string calldata key) external returns (string[] memory keys);
 
     // Serialize a key and value to a JSON object stored in-memory that can be later written to a file
     // It returns the stringified version of the specific JSON file up to that moment.
@@ -335,10 +393,25 @@ interface VmSafe {
     function pauseGasMetering() external;
     // Resumes gas metering (i.e. gas usage is counted again). Noop if already on.
     function resumeGasMetering() external;
+    // Starts recording all map SSTOREs for later retrieval.
+    function startMappingRecording() external;
+    // Stops recording all map SSTOREs for later retrieval and clears the recorded data.
+    function stopMappingRecording() external;
+    // Gets the number of elements in the mapping at the given slot, for a given address.
+    function getMappingLength(address target, bytes32 mappingSlot) external returns (uint256 length);
+    // Gets the elements at index idx of the mapping at the given slot, for a given address. The
+    // index must be less than the length of the mapping (i.e. the number of keys in the mapping).
+    function getMappingSlotAt(address target, bytes32 mappingSlot, uint256 idx) external returns (bytes32 value);
+    // Gets the map key and parent of a mapping at a given slot, for a given address.
+    function getMappingKeyAndParentOf(address target, bytes32 elementSlot)
+        external
+        returns (bool found, bytes32 key, bytes32 parent);
     // Writes a breakpoint to jump to in the debugger
     function breakpoint(string calldata char) external;
     // Writes a conditional breakpoint to jump to in the debugger
     function breakpoint(string calldata char, bool value) external;
+    // Suspends execution of the main thread for `duration` milliseconds
+    function sleep(uint256 duration) external;
 }
 
 interface Vm is VmSafe {
@@ -349,7 +422,13 @@ interface Vm is VmSafe {
     // Sets block.basefee
     function fee(uint256 newBasefee) external;
     // Sets block.difficulty
+    // Not available on EVM versions from Paris onwards. Use `prevrandao` instead.
+    // If used on unsupported EVM versions it will revert.
     function difficulty(uint256 newDifficulty) external;
+    // Sets block.prevrandao
+    // Not available on EVM versions before Paris. Use `difficulty` instead.
+    // If used on unsupported EVM versions it will revert.
+    function prevrandao(bytes32 newPrevrandao) external;
     // Sets block.chainid
     function chainId(uint256 newChainId) external;
     // Sets tx.gasprice
@@ -358,6 +437,10 @@ interface Vm is VmSafe {
     function store(address target, bytes32 slot, bytes32 value) external;
     // Sets the nonce of an account; must be higher than the current nonce of the account
     function setNonce(address account, uint64 newNonce) external;
+    // Sets the nonce of an account to an arbitrary value
+    function setNonceUnsafe(address account, uint64 newNonce) external;
+    // Resets the nonce of an account to 0 for EOAs and 1 for contract accounts
+    function resetNonce(address account) external;
     // Sets the *next* call's msg.sender to be the input address
     function prank(address msgSender) external;
     // Sets all subsequent calls' msg.sender to be the input address until `stopPrank` is called
@@ -368,10 +451,14 @@ interface Vm is VmSafe {
     function startPrank(address msgSender, address txOrigin) external;
     // Resets subsequent calls' msg.sender to be `address(this)`
     function stopPrank() external;
+    // Reads the current `msg.sender` and `tx.origin` from state and reports if there is any active caller modification
+    function readCallers() external returns (CallerMode callerMode, address msgSender, address txOrigin);
     // Sets an address' balance
     function deal(address account, uint256 newBalance) external;
     // Sets an address' code
     function etch(address target, bytes calldata newRuntimeBytecode) external;
+    // Marks a test as skipped. Must be called at the top of the test.
+    function skip(bool skipTest) external;
     // Expects an error on next call
     function expectRevert(bytes calldata revertData) external;
     function expectRevert(bytes4 revertData) external;
