@@ -1,11 +1,19 @@
 {
   "name": "@lambdalf-dev/ethereum-contracts",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An alternative to Open Zeppelin contracts for deployment with cheaper gas cost",
   "main": "index.js",
   "repository": "https://github.com/lambdalf-dev/ethereum-contracts.git",
   "author": "Lambdalf the White <silvereh@protonmail.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "forge build",
+    "deploy:goerli": "npx hardhat run scripts/deploy.js --network goerli",
+    "lint": "npx hardhat check && forge fmt check",
+    "test": "forge test",
+    "test:verbose": "forge test -vvvv",
+    "coverage": "forge coverage --contracts contracts --report lcov; lcov --remove ./lcov.info -o ./lcov.info.pruned 'test/*'; genhtml lcov.info.pruned --output-directory foundry-coverage"
+  },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.2"
   },

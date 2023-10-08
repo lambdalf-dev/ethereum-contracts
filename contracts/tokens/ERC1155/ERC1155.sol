@@ -215,7 +215,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
       ///
       /// @return isValid whether `id_` is a valid series ID
       function exists(uint256 id_) public view returns (bool isValid) {
-        return BitMaps.get(_validSeries, id_);
+        isValid = BitMaps.get(_validSeries, id_);
       }
     // ***********
 
@@ -229,7 +229,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
       /// 
       /// @return ownerBalance The owner's balance of the token type requested
       function balanceOf(address owner_, uint256 id_) public view override isValidSeries(id_) returns (uint256 ownerBalance) {
-        return _balances[id_][owner_];
+        ownerBalance = _balances[id_][owner_];
       }
       /// @dev Get the balance of multiple account/token pairs
       /// 
@@ -255,7 +255,6 @@ IERC1155, IERC1155MetadataURI, IArrays {
           }
           ownerBalances[_len_] = _balances[ids_[_len_]][owners_[_len_]];
         }
-        return ownerBalances;
       }
       /// @dev Queries the approval status of an operator for a given owner.
       /// 
@@ -264,7 +263,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
       /// 
       /// @return isApproved True if the operator is approved, false if not
       function isApprovedForAll(address owner_, address operator_) public view override returns (bool isApproved) {
-        return _operatorApprovals[owner_][operator_];
+        isApproved = _operatorApprovals[owner_][operator_];
       }
     // ************
 
@@ -277,7 +276,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
       ///
       /// @return url the URI of the token
       function uri(uint256 id_) public view virtual override isValidSeries(id_) returns (string memory url) {
-        return bytes(_baseUri).length > 0 ? string(abi.encodePacked(_baseUri, _toString(id_))) : _toString(id_);
+        url = bytes(_baseUri).length > 0 ? string(abi.encodePacked(_baseUri, _toString(id_))) : _toString(id_);
       }
     // *******************
   // **************************************

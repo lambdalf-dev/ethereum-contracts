@@ -7,4 +7,7 @@ cache_path  = 'forge-cache'
 evm_version = 'london'
 solc = '0.8.21'
 
+[fuzz]
+runs = 1000
+
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

@@ -4,7 +4,7 @@
 * Author: Lambdalf the White
 */
 
-pragma solidity 0.8.20;
+pragma solidity >=0.8.4 <0.9.0;
 
 import { IArrays } from "../interfaces/IArrays.sol";
 import { IERC721 } from "../interfaces/IERC721.sol";
@@ -351,7 +351,7 @@ IERC165, ERC721Batch, ERC173, ERC2981, Whitelist, IArrays, ITemplate {
   // **************************************
   // *****          FALLBACK          *****
   // **************************************
-    fallback() external { revert UNKNOWN(); } // solhint-disable payable-fallback
+    fallback() external payable {} // solhint-disable no-empty-blocks
     receive() external payable {} // solhint-disable no-empty-blocks
   // **************************************
 }

@@ -9,6 +9,7 @@ artifacts
 
 # testing
 /coverage
+/foundry-coverage
 coverage.json
 gas-report.txt
 
@@ -36,3 +37,4 @@ snapshot.*
 out
 forge-cache
 lcov.info
+lcov.info.pruned

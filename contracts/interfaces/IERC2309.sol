@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.4;
+pragma solidity >=0.8.4 <0.9.0;
 
 abstract contract IERC2309 {
   /// @dev Emitted instead of {ERC721.Transfer} when several consecutive tokens are being transferred.
