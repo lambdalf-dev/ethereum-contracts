@@ -676,6 +676,66 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 		    );
 				testContract.setRoyaltyInfo(newRecipient, newRate);
 			}
+		  function test_unit_setting_royalties() public {
+		    address newRecipient = OPERATOR.addr;
+		    uint96 newRate = ROYALTY_RATE / 2;
+		    uint256 tokenId = TARGET_TOKEN;
+		    uint256 price = PRIVATE_SALE_PRICE;
+		    address expectedRecipient = newRecipient;
+		    uint256 expectedAmount = price * newRate / ROYALTY_BASE;
+		    testContract.setRoyaltyInfo(newRecipient, newRate);
+		    (address recipient, uint256 royaltyAmount) = testContract.royaltyInfo(tokenId, price);
+		    assertEq(
+		      recipient,
+		      expectedRecipient,
+		      "invalid royalty recipient"
+		    );
+		    assertEq(
+		      royaltyAmount,
+		      expectedAmount,
+		      "invalid royalty amount"
+		    );
+		  }
+		  function test_unit_removing_royalty_recipient() public {
+		    address newRecipient = address(0);
+		    uint96 newRate = ROYALTY_RATE / 2;
+		    uint256 tokenId = TARGET_TOKEN;
+		    uint256 price = PRIVATE_SALE_PRICE;
+		    address expectedRecipient = address(0);
+		    uint256 expectedAmount = 0;
+		    testContract.setRoyaltyInfo(newRecipient, newRate);
+		    (address recipient, uint256 royaltyAmount) = testContract.royaltyInfo(tokenId, price);
+		    assertEq(
+		      recipient,
+		      expectedRecipient,
+		      "invalid royalty recipient"
+		    );
+		    assertEq(
+		      royaltyAmount,
+		      expectedAmount,
+		      "invalid royalty amount"
+		    );
+		  }
+		  function test_unit_removing_royalty_rate() public {
+		    address newRecipient = OPERATOR.addr;
+		    uint96 newRate = 0;
+		    uint256 tokenId = TARGET_TOKEN;
+		    uint256 price = PRIVATE_SALE_PRICE;
+		    address expectedRecipient = address(0);
+		    uint256 expectedAmount = 0;
+		    testContract.setRoyaltyInfo(newRecipient, newRate);
+		    (address recipient, uint256 royaltyAmount) = testContract.royaltyInfo(tokenId, price);
+		    assertEq(
+		      recipient,
+		      expectedRecipient,
+		      "invalid royalty recipient"
+		    );
+		    assertEq(
+		      royaltyAmount,
+		      expectedAmount,
+		      "invalid royalty amount"
+		    );
+		  }
 		}
   // ************
 
@@ -695,6 +755,17 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 		    );
 				testContract.setBaseUri(newBaseUri);
 			}
+      function test_unit_erc721Batch_set_base_uri() public {
+        string memory newBaseUri = NEW_BASE_URI;
+        uint256 tokenId = TARGET_TOKEN;
+        _mintFixture();
+        testContract.setBaseUri(newBaseUri);
+        assertEq(
+          keccak256(abi.encodePacked(testContract.tokenURI(tokenId))),
+          keccak256(abi.encodePacked(newBaseUri, Strings.toString(tokenId))),
+          "invalid uri"
+        );
+			}
 		}
   // *******************
 
@@ -712,6 +783,16 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 		      )
 		    );
 				testContract.setWhitelist(FORGER.addr);
+			}
+			function test_unit_remove_whitelist() public {
+		    uint8 whitelistId = WHITELIST_ID;
+		    uint256 alloted = ALLOCATED;
+		    address account = ALICE.addr;
+		    address whitelistedAccount = ALICE.addr;
+		    IWhitelist.Proof memory proof = _createProof(whitelistId, alloted, whitelistedAccount, SIGNER);
+				testContract.setWhitelist(address(0));
+		    vm.expectRevert(IWhitelist.WHITELIST_NOT_SET.selector);
+		    testContract.checkWhitelistAllowance(account, whitelistId, alloted, proof);
 			}
 		}
   // *************

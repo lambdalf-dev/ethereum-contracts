@@ -12,7 +12,8 @@
     "lint": "npx hardhat check && forge fmt check",
     "test": "forge test",
     "test:verbose": "forge test -vvvv",
-    "coverage": "forge coverage --contracts contracts --report lcov; lcov --remove ./lcov.info -o ./lcov.info.pruned 'test/*'; genhtml lcov.info.pruned --output-directory foundry-coverage"
+    "coverage": "forge coverage --contracts contracts --report lcov",
+    "coverage:html": "genhtml lcov.info.pruned --branch-coverage --output-directory foundry-coverage"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.2"
