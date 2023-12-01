@@ -12,6 +12,7 @@
     "lint": "npx hardhat check && forge fmt check",
     "test": "forge test",
     "test:verbose": "forge test -vvvv",
+    "benchmark": "npx hardhat test --grep benchmark",
     "coverage": "forge coverage --contracts contracts --report lcov",
     "coverage:html": "genhtml lcov.info.pruned --branch-coverage --output-directory foundry-coverage"
   },
@@ -30,6 +31,7 @@
     "dotenv": "^16.0.3",
     "ethereumjs-utils": "^5.2.5",
     "ethers": "^5.7.2",
+    "erc721a": "4.2.3",
     "hardhat": "^2.12.1-ir.0",
     "hardhat-gas-reporter": "^1.0.4",
     "hardhat-watcher": "^2.5.0",

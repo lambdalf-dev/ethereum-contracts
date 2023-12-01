@@ -152,8 +152,8 @@
 		// OTHER OWNER
 		OTHER_OWNER_SUPPLY: OTHER_OWNER_SUPPLY,
 		// METADATA
-		INIT_BASE_URI: `https://api.exemple.com/`,
-		NEW_BASE_URI: `https://exemple.com/api/`,
+		INIT_BASE_URI: `https://api.example.com/`,
+		NEW_BASE_URI: `https://example.com/api/`,
     TOKEN_NAME: `NFT Collection`,
     TOKEN_SYMBOL: `NFT`,
 		// AIRDROP

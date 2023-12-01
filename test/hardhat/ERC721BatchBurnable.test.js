@@ -218,8 +218,8 @@
 		// METADATA
 		TOKEN_NAME: `NFT Collection`,
 		TOKEN_SYMBOL: `NFT`,
-		INIT_BASE_URI: `https://api.exemple.com/`,
-		NEW_BASE_URI: `https://exemple.com/api/`,
+		INIT_BASE_URI: `https://api.example.com/`,
+		NEW_BASE_URI: `https://example.com/api/`,
 		// INTERFACES
 		INTERFACES: [
 			`IERC165`,

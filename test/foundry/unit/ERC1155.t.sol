@@ -7,10 +7,10 @@ import { IERC1155 } from "../../../contracts/interfaces/IERC1155.sol";
 import { IERC1155Receiver } from "../../../contracts/interfaces/IERC1155Receiver.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
-import { IERC1155Events } from "../../../test/mocks/events/IERC1155Events.sol";
-import { Mock_NonERC1155Receiver } from "../../../test/mocks/external/Mock_NonERC1155Receiver.sol";
-import { Mock_ERC1155Receiver } from "../../../test/mocks/external/Mock_ERC1155Receiver.sol";
-import { Mock_ERC1155 } from "../../../test/mocks/tokens/Mock_ERC1155.sol";
+import { IERC1155Events } from "../../../contracts/mocks/events/IERC1155Events.sol";
+import { Mock_NonERC1155Receiver } from "../../../contracts/mocks/external/Mock_NonERC1155Receiver.sol";
+import { Mock_ERC1155Receiver } from "../../../contracts/mocks/external/Mock_ERC1155Receiver.sol";
+import { Mock_ERC1155 } from "../../../contracts/mocks/tokens/Mock_ERC1155.sol";
 
 contract Deployed is TestHelper, IERC1155Events {
   Mock_ERC1155 testContract;

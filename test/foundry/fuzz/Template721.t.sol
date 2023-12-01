@@ -17,11 +17,11 @@ import { IERC165 } from "../../../contracts/interfaces/IERC165.sol";
 import { IERC2981 } from "../../../contracts/interfaces/IERC2981.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
-import { IERC173Events } from "../../../test/mocks/events/IERC173Events.sol";
-import { IERC721Events } from "../../../test/mocks/events/IERC721Events.sol";
-import { Mock_Invalid_Eth_Receiver } from "../../../test/mocks/external/Mock_Invalid_Eth_Receiver.sol";
-import { Mock_NonERC721Receiver } from "../../../test/mocks/external/Mock_NonERC721Receiver.sol";
-import { Mock_ERC721Receiver } from "../../../test/mocks/external/Mock_ERC721Receiver.sol";
+import { IERC173Events } from "../../../contracts/mocks/events/IERC173Events.sol";
+import { IERC721Events } from "../../../contracts/mocks/events/IERC721Events.sol";
+import { Mock_Invalid_Eth_Receiver } from "../../../contracts/mocks/external/Mock_Invalid_Eth_Receiver.sol";
+import { Mock_NonERC721Receiver } from "../../../contracts/mocks/external/Mock_NonERC721Receiver.sol";
+import { Mock_ERC721Receiver } from "../../../contracts/mocks/external/Mock_ERC721Receiver.sol";
 
 contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
   bytes4[] public INTERFACES = [

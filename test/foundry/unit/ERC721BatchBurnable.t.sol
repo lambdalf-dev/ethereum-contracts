@@ -8,10 +8,10 @@ import { IERC721 } from "../../../contracts/interfaces/IERC721.sol";
 import { IERC721Enumerable } from "../../../contracts/interfaces/IERC721Enumerable.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
-import { IERC721Events } from "../../../test/mocks/events/IERC721Events.sol";
-import { Mock_NonERC721Receiver } from "../../../test/mocks/external/Mock_NonERC721Receiver.sol";
-import { Mock_ERC721Receiver } from "../../../test/mocks/external/Mock_ERC721Receiver.sol";
-import { Mock_ERC721BatchBurnable } from "../../../test/mocks/tokens/Mock_ERC721BatchBurnable.sol";
+import { IERC721Events } from "../../../contracts/mocks/events/IERC721Events.sol";
+import { Mock_NonERC721Receiver } from "../../../contracts/mocks/external/Mock_NonERC721Receiver.sol";
+import { Mock_ERC721Receiver } from "../../../contracts/mocks/external/Mock_ERC721Receiver.sol";
+import { Mock_ERC721BatchBurnable } from "../../../contracts/mocks/tokens/Mock_ERC721BatchBurnable.sol";
 
 contract Deployed is TestHelper, IERC721Events, IERC2309 {
   Mock_ERC721BatchBurnable testContract;

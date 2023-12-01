@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { TestHelper } from "../../../test/foundry/utils/TestHelper.sol";
 import { IWhitelist } from "../../../contracts/interfaces/IWhitelist.sol";
 
-import { Mock_Whitelist } from "../../../test/mocks/utils/Mock_Whitelist.sol";
+import { Mock_Whitelist } from "../../../contracts/mocks/utils/Mock_Whitelist.sol";
 
 contract Deployed is TestHelper {
   Mock_Whitelist testContract;

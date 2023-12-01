@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { TestHelper } from "../../../test/foundry/utils/TestHelper.sol";
 import { IERC2981 } from "../../../contracts/interfaces/IERC2981.sol";
 
-import { Mock_ERC2981 } from "../../../test/mocks/utils/Mock_ERC2981.sol";
+import { Mock_ERC2981 } from "../../../contracts/mocks/utils/Mock_ERC2981.sol";
 
 contract Deployed is TestHelper {
   Mock_ERC2981 testContract;

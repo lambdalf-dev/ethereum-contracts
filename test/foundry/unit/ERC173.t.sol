@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 import { TestHelper } from "../../../test/foundry/utils/TestHelper.sol";
 import { IERC173 } from "../../../contracts/interfaces/IERC173.sol";
 
-import { IERC173Events } from "../../../test/mocks/events/IERC173Events.sol";
-import { Mock_ERC173 } from "../../../test/mocks/utils/Mock_ERC173.sol";
+import { IERC173Events } from "../../../contracts/mocks/events/IERC173Events.sol";
+import { Mock_ERC173 } from "../../../contracts/mocks/utils/Mock_ERC173.sol";
 
 contract Deployed is TestHelper, IERC173Events {
   Mock_ERC173 testContract;

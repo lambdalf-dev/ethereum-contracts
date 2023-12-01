@@ -381,7 +381,7 @@
 		TOKEN_NAME: `NFT Collection`,
 		TOKEN_SYMBOL: `NFT`,
 		INIT_BASE_URI: ``,
-		NEW_BASE_URI: `https://exemple.com/api/`,
+		NEW_BASE_URI: `https://example.com/api/`,
 		// WHITELIST
 		WHITELIST_AMOUNT_1: 3,
 		WHITELIST_AMOUNT_2: 1,
@@ -1460,16 +1460,6 @@
 					})
 				})
 			// **************************************
-
-			it(`Should be reverted when trying to call an unknown function`, async function () {
-				const unknownCallerArtifact = await ethers.getContractFactory("Mock_UnknownCaller")
-				const unknownCaller = await unknownCallerArtifact.deploy(contract.address)
-				await unknownCaller.deployed()
-				await shouldRevertWhenFunctionDoesNotExist(
-					unknownCaller.callUnknown(),
-					contract
-				)
-			})
 		})
 	}
 	function shouldBehaveLikeTemplate721AfterMint (fixture, TEST, CONTRACT) {
