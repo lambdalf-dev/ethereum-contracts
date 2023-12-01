@@ -36,6 +36,10 @@ contract Bench_ERC721Batch is ERC721Batch, IERC165 {
     _mint(msg.sender, 20);
   }
 
+  function mint50() external {
+    _mint(msg.sender, 50);
+  }
+
   function supportsInterface(bytes4 interfaceId_) public pure override returns (bool) {
     return 
       interfaceId_ == type(IERC721).interfaceId ||

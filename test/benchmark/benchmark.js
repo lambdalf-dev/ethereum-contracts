@@ -98,8 +98,8 @@ describe("benchmark", function () {
 
 	if (true) {
 		it("benchmark transfer first", async function () {
-			await erc721a.connect(user1).mint20()
-			await erc721batch.connect(user1).mint20()
+			await erc721a.connect(user1).mint50()
+			await erc721batch.connect(user1).mint50()
 			await erc721a.connect(user1).transferFrom(user1.address, user2.address, 0)
 			await erc721batch.connect(user1).transferFrom(user1.address, user2.address, 1)
 			expect(await erc721a.balanceOf(user2.address)).to.equal(1)
@@ -109,10 +109,21 @@ describe("benchmark", function () {
 
 	if (true) {
 		it("benchmark transfer middle", async function () {
-			await erc721a.connect(user1).mint20()
-			await erc721batch.connect(user1).mint20()
-			await erc721a.connect(user1).transferFrom(user1.address, user2.address, 9)
-			await erc721batch.connect(user1).transferFrom(user1.address, user2.address, 10)
+			await erc721a.connect(user1).mint50()
+			await erc721batch.connect(user1).mint50()
+			await erc721a.connect(user1).transferFrom(user1.address, user2.address, 24)
+			await erc721batch.connect(user1).transferFrom(user1.address, user2.address, 25)
+			expect(await erc721a.balanceOf(user2.address)).to.equal(1)
+			expect(await erc721batch.balanceOf(user2.address)).to.equal(1)
+		})
+	}
+
+	if (true) {
+		it("benchmark transfer high", async function () {
+			await erc721a.connect(user1).mint50()
+			await erc721batch.connect(user1).mint50()
+			await erc721a.connect(user1).transferFrom(user1.address, user2.address, 47)
+			await erc721batch.connect(user1).transferFrom(user1.address, user2.address, 48)
 			expect(await erc721a.balanceOf(user2.address)).to.equal(1)
 			expect(await erc721batch.balanceOf(user2.address)).to.equal(1)
 		})
@@ -120,10 +131,10 @@ describe("benchmark", function () {
 
 	if (true) {
 		it("benchmark transfer last", async function () {
-			await erc721a.connect(user1).mint20()
-			await erc721batch.connect(user1).mint20()
-			await erc721a.connect(user1).transferFrom(user1.address, user2.address, 19)
-			await erc721batch.connect(user1).transferFrom(user1.address, user2.address, 20)
+			await erc721a.connect(user1).mint50()
+			await erc721batch.connect(user1).mint50()
+			await erc721a.connect(user1).transferFrom(user1.address, user2.address, 49)
+			await erc721batch.connect(user1).transferFrom(user1.address, user2.address, 50)
 			expect(await erc721a.balanceOf(user2.address)).to.equal(1)
 			expect(await erc721batch.balanceOf(user2.address)).to.equal(1)
 		})

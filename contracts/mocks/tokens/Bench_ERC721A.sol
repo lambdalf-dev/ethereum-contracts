@@ -36,6 +36,10 @@ contract Bench_ERC721A is ERC721A, IERC165 {
     _mint(msg.sender, 20);
   }
 
+  function mint50() external {
+    _mint(msg.sender, 50);
+  }
+
   function supportsInterface(bytes4 interfaceId_) public pure override(IERC165, ERC721A) returns (bool) {
     return 
       interfaceId_ == type(IERC721).interfaceId ||
