@@ -12,6 +12,10 @@ import { IERC721Enumerable } from "../../interfaces/IERC721Enumerable.sol";
 import { IERC721Receiver } from "../../interfaces/IERC721Receiver.sol";
 import { IERC2309 } from "../../interfaces/IERC2309.sol";
 
+/// @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC721] Non-Fungible Token Standard.
+/// @dev This contract does not implement ERC165, unlike the ERC721 specification recommends,
+///   to simplify inheritance tree. Remember to implement it in the final contract.
+///   Note: this implementation has a very inefficient {balanceOf} function.
 abstract contract ERC721Batch is
 IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
   // **************************************
@@ -21,7 +25,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
     // * IERC721 *
     // ***********
       /// @dev Identifier of the next token to be minted
-      uint256 private _nextId = 1;
+      uint256 internal _nextId = 1;
       /// @dev Token ID mapped to approved address
       mapping(uint256 => address) private _approvals;
       /// @dev Token owner mapped to operator approvals
@@ -90,8 +94,8 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
         if (to_ == _tokenOwner_) {
           revert IERC721_INVALID_APPROVAL();
         }
-        bool _isApproved_ = _isApprovedOrOwner(_tokenOwner_, msg.sender, tokenId_);
-        if (! _isApproved_) {
+        bool _isApproved_ = isApprovedForAll(_tokenOwner_, msg.sender);
+        if (msg.sender != _tokenOwner_ && ! _isApproved_) {
           revert IERC721_CALLER_NOT_APPROVED(msg.sender, tokenId_);
         }
         _approvals[tokenId_] = to_;
@@ -299,15 +303,17 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
         uint256 _index_ = 1;
         uint256 _ownerBalance_;
         while (_index_ < _nextId) {
-          if (_owners[_index_] != address(0)) {
-            _currentTokenOwner_ = _owners[_index_];
-          }
-          if (tokenOwner_ == _currentTokenOwner_) {
-            if (index_ == _ownerBalance_) {
-              return _index_;
+          if (_exists(_index_)) {
+            if (_owners[_index_] != address(0)) {
+              _currentTokenOwner_ = _owners[_index_];
             }
-            unchecked {
-              ++_ownerBalance_;
+            if (tokenOwner_ == _currentTokenOwner_) {
+              if (index_ == _ownerBalance_) {
+                return _index_;
+              }
+              unchecked {
+                ++_ownerBalance_;
+              }
             }
           }
           unchecked {

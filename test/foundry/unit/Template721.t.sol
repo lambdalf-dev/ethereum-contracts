@@ -79,10 +79,10 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
   	vm.prank(ALICE.addr);
   	testContract.privateMint{value: price}(amount, alloted, proof);
   }
-	function _createProof(uint8 whitelistId, uint256 allotted, address account, Account memory signer) internal pure returns(IWhitelist.Proof memory proof) {
+	function _createProof(uint8 whitelistId, uint256 allotted, address account, Account memory signer) internal view returns(IWhitelist.Proof memory proof) {
 		(uint8 v, bytes32 r, bytes32 s) = vm.sign(
 			uint256(signer.key),
-			keccak256(abi.encode(whitelistId, allotted, account))
+			keccak256(abi.encode(block.chainid, whitelistId, allotted, account))
 		);
 		return IWhitelist.Proof(r, s, v);
 	}

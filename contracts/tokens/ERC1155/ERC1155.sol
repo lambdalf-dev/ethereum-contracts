@@ -12,9 +12,9 @@ import { IERC1155MetadataURI } from "../../interfaces/IERC1155MetadataURI.sol";
 import { IERC1155Receiver } from "../../interfaces/IERC1155Receiver.sol";
 import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 
-/**
-* @dev Implementation of https://eips.ethereum.org/EIPS/eip-1155[ERC1155] Semi-Fungible Token Standard.
-*/
+/// @dev Implementation of https://eips.ethereum.org/EIPS/eip-1155[ERC1155] Semi-Fungible Token Standard.
+/// @dev This contract does not implement ERC165, unlike the ERC1155 specification recommends,
+///   to simplify inheritance tree. Remember to implement it in the final contract.
 abstract contract ERC1155 is
 IERC1155, IERC1155MetadataURI, IArrays {
   // **************************************

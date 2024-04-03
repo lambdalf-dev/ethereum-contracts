@@ -20,10 +20,10 @@ contract Deployed is TestHelper {
     _whitelistSetFixture();
     testContract.consumeWhitelist(account, whitelistId, consumed, alloted, proof);
   }
-  function _createProof(uint8 whitelistId, uint256 allotted, address account, Account memory signer) internal pure returns(IWhitelist.Proof memory proof) {
+  function _createProof(uint8 whitelistId, uint256 allotted, address account, Account memory signer) internal view returns(IWhitelist.Proof memory proof) {
     (uint8 v, bytes32 r, bytes32 s) = vm.sign(
       uint256(signer.key),
-      keccak256(abi.encode(whitelistId, allotted, account))
+      keccak256(abi.encode(block.chainid, whitelistId, allotted, account))
     );
     return IWhitelist.Proof(r, s, v);
   }
@@ -38,6 +38,21 @@ contract Unit_CheckWhitelistAllowance is Deployed {
     IWhitelist.Proof memory proof = _createProof(whitelistId, alloted, whitelistedAccount, SIGNER);
     vm.expectRevert(IWhitelist.WHITELIST_NOT_SET.selector);
     testContract.checkWhitelistAllowance(account, whitelistId, alloted, proof);
+  }
+  function test_unit_whitelist_return_zero_when_checking_allowance_on_other_chain() public {
+    uint8 whitelistId = WHITELIST_ID;
+    uint256 alloted = ALLOCATED;
+    address account = ALICE.addr;
+    address whitelistedAccount = ALICE.addr;
+    IWhitelist.Proof memory proof = _createProof(whitelistId, alloted, whitelistedAccount, SIGNER);
+    uint256 expectedAllocation = 0;
+    _whitelistSetFixture();
+    vm.chainId(0);
+    assertEq(
+      testContract.checkWhitelistAllowance(account, whitelistId, alloted, proof),
+      expectedAllocation,
+      "invalid allowance"
+    );
   }
   function test_unit_whitelist_return_zero_when_checking_allowance_with_other_user_proof() public {
     uint8 whitelistId = WHITELIST_ID;

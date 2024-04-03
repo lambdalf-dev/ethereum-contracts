@@ -155,14 +155,14 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         uint256 tokenId = TARGET_TOKEN;
         _approveFixture(approvedAccount);
         vm.prank(operator);
-        vm.expectEmit(address(testContract));
-        emit Approval(ALICE.addr, approvedAccount, tokenId);
-        testContract.approve(approvedAccount, tokenId);
-        assertEq(
-          testContract.getApproved(tokenId),
-          approvedAccount,
-          "invalid approval"
+        vm.expectRevert(
+          abi.encodeWithSelector(
+            IERC721.IERC721_CALLER_NOT_APPROVED.selector,
+            operator,
+            tokenId
+          )
         );
+        testContract.approve(approvedAccount, tokenId);
       }
       function test_unit_erc721Batch_emit_Approval_event_when_caller_is_approved_for_all() public {
         address operator = OPERATOR.addr;

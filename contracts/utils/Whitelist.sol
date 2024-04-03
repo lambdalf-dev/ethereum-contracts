@@ -76,7 +76,7 @@ abstract contract Whitelist is IWhitelist {
     /// 
     /// @return isValid whether the signature is valid or not
     function _validateProof(address account_, uint8 whitelistId_, uint256 alloted_, Proof memory proof_) internal virtual view returns (bool isValid) {
-      bytes32 _digest_ = keccak256(abi.encode(whitelistId_, alloted_, account_));
+      bytes32 _digest_ = keccak256(abi.encode(block.chainid, whitelistId_, alloted_, account_));
       address _signer_ = ecrecover(_digest_, proof_.v, proof_.r, proof_.s);
       return _signer_ == _adminSigner;
     }

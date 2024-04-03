@@ -168,20 +168,20 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
           "invalid approval"
         );
       }
-      function test_unit_erc721BatchBurnable_emit_Approval_event_when_caller_is_individually_approved() public {
+      function test_unit_erc721BatchBurnable_revert_when_caller_is_individually_approved() public {
         address operator = OPERATOR.addr;
         address approvedAccount = OPERATOR.addr;
         uint256 tokenId = TARGET_TOKEN;
         _approveFixture(approvedAccount);
         vm.prank(operator);
-        vm.expectEmit(address(testContract));
-        emit Approval(ALICE.addr, approvedAccount, tokenId);
-        testContract.approve(approvedAccount, tokenId);
-        assertEq(
-          testContract.getApproved(tokenId),
-          approvedAccount,
-          "invalid approval"
+        vm.expectRevert(
+          abi.encodeWithSelector(
+            IERC721.IERC721_CALLER_NOT_APPROVED.selector,
+            operator,
+            tokenId
+          )
         );
+        testContract.approve(approvedAccount, tokenId);
       }
       function test_unit_erc721BatchBurnable_emit_Approval_event_when_caller_is_approved_for_all() public {
         address operator = OPERATOR.addr;
@@ -824,6 +824,15 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
           "invalid index"
         );
       }
+      function test_unit_erc721BatchBurnable_token_by_index_is_accurate_afterBurn() public {
+        uint256 index = TARGET_INDEX;
+        _burnFixture();
+        assertEq(
+          testContract.tokenByIndex(index),
+          TARGET_TOKEN + 1,
+          "invalid index"
+        );
+      }
     }
     contract Unit_TokenOfOwnerByIndex is Deployed {
       function test_unit_erc721BatchBurnable_revert_when_requesting_index_of_token_owned_by_address_zero() public {
@@ -855,6 +864,14 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         assertEq(
           testContract.tokenOfOwnerByIndex(ALICE.addr, TARGET_INDEX),
           TARGET_TOKEN,
+          "invalid token id"
+        );
+      }
+      function test_unit_erc721BatchBurnable_token_of_owner_by_index_is_accurate_afterBurn() public {
+        _burnFixture();
+        assertEq(
+          testContract.tokenOfOwnerByIndex(ALICE.addr, TARGET_INDEX),
+          TARGET_TOKEN + 1,
           "invalid token id"
         );
       }

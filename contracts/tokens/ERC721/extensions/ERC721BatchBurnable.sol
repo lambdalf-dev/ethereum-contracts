@@ -42,6 +42,36 @@ abstract contract ERC721BatchBurnable is ERC721Batch {
     // *********************
     // * IERC721Enumerable *
     // *********************
+      /// @dev Enumerate valid NFTs
+      /// 
+      /// @param index_ the index requested
+      /// 
+      /// @return tokenId the identifier of the token at the specified index
+      ///
+      /// Requirements:
+      /// 
+      /// - `index_` must be less than {totalSupply()}
+      function tokenByIndex(uint256 index_) public view virtual override returns (uint256 tokenId) {
+        if (index_ >= _nextId - 1) {
+          revert IERC721Enumerable_INDEX_OUT_OF_BOUNDS(index_);
+        }
+        uint256 _index_ = 1;
+        tokenId = 1;
+        while (tokenId < _nextId) {
+          if (_exists(tokenId)) {
+            if (_index_ - 1 == index_) {
+              return tokenId;
+            }
+            unchecked {
+              ++ _index_;
+            }
+          }
+          unchecked {
+            ++ tokenId;
+          }
+        }
+      }
+
       /// @notice Count NFTs tracked by this contract
       /// 
       /// @return supply the number of NFTs in existence

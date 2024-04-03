@@ -11,6 +11,8 @@
     "deploy:goerli": "npx hardhat run scripts/deploy.js --network goerli",
     "lint": "npx hardhat check && forge fmt check",
     "test": "forge test",
+    "test:unit": "forge test --mt test_unit_",
+    "test:fuzz": "forge test --mt test_fuzz_",
     "test:verbose": "forge test -vvvv",
     "benchmark": "npx hardhat test --grep benchmark",
     "coverage": "forge coverage --contracts contracts --report lcov",
