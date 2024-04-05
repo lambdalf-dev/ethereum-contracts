@@ -1,6 +1,6 @@
 {
   "name": "@lambdalf-dev/ethereum-contracts",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "An alternative to Open Zeppelin contracts for deployment with cheaper gas cost",
   "main": "index.js",
   "repository": "https://github.com/lambdalf-dev/ethereum-contracts.git",
