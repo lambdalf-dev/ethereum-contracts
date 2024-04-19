@@ -15,7 +15,7 @@ import { IERC721Metadata } from "../../src/interfaces/IERC721Metadata.sol";
 import { IERC173 } from "../../src/interfaces/IERC173.sol";
 import { IERC165 } from "../../src/interfaces/IERC165.sol";
 import { IERC2981 } from "../../src/interfaces/IERC2981.sol";
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+import { LibString } from "solady/src/utils/LibString.sol";
 
 import { IERC173Events } from "../../src/mocks/events/IERC173Events.sol";
 import { IERC721Events } from "../../src/mocks/events/IERC721Events.sol";
@@ -762,7 +762,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
         testContract.setBaseUri(newBaseUri);
         assertEq(
           keccak256(abi.encodePacked(testContract.tokenURI(tokenId))),
-          keccak256(abi.encodePacked(newBaseUri, Strings.toString(tokenId))),
+          keccak256(abi.encodePacked(newBaseUri, LibString.toString(tokenId))),
           "invalid uri"
         );
 			}

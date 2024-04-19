@@ -7,14 +7,14 @@
 pragma solidity ^0.8.17;
 
 import { ERC721Batch } from "../ERC721Batch.sol";
-import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
+import { LibBitmap } from "solady/src/utils/LibBitmap.sol";
 
 abstract contract ERC721BatchBurnable is ERC721Batch {
   // **************************************
   // *****     STORAGE VARIABLES      *****
   // **************************************
     // List of burned tokens
-    BitMaps.BitMap private _burned;
+    LibBitmap.Bitmap private _burned;
   // **************************************
 
   // **************************************
@@ -34,7 +34,7 @@ abstract contract ERC721BatchBurnable is ERC721Batch {
         if (! _isApprovedOrOwner(_tokenOwner_, msg.sender, tokenId_)) {
           revert IERC721_CALLER_NOT_APPROVED(msg.sender, tokenId_);
         }
-        BitMaps.set(_burned, tokenId_);
+        LibBitmap.set(_burned, tokenId_);
         _transfer(_tokenOwner_, address(0), tokenId_);
       }
     // ***********************
@@ -106,7 +106,7 @@ abstract contract ERC721BatchBurnable is ERC721Batch {
       /// 
       /// @return tokenExist bool whether the token exists
       function _exists(uint256 tokenId_) internal override view returns (bool tokenExist) {
-        return ! BitMaps.get(_burned, tokenId_) && super._exists(tokenId_);
+        return ! LibBitmap.get(_burned, tokenId_) && super._exists(tokenId_);
       }
     // ***********
   // **************************************

@@ -20,7 +20,7 @@
     "coverage:html": "genhtml lcov.info.pruned --branch-coverage --output-directory foundry-coverage"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.3.2"
+    "solady": "^0.0.192"
   },
   "devDependencies": {
     "ds-test": "https://github.com/dapphub/ds-test.git",

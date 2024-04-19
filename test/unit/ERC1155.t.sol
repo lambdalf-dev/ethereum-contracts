@@ -5,7 +5,7 @@ import { TestHelper } from "../../test/utils/TestHelper.sol";
 import { IArrays } from "../../src/interfaces/IArrays.sol";
 import { IERC1155 } from "../../src/interfaces/IERC1155.sol";
 import { IERC1155Receiver } from "../../src/interfaces/IERC1155Receiver.sol";
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+import { LibString } from "solady/src/utils/LibString.sol";
 
 import { IERC1155Events } from "../../src/mocks/events/IERC1155Events.sol";
 import { Mock_NonERC1155Receiver } from "../../src/mocks/external/Mock_NonERC1155Receiver.sol";
@@ -877,7 +877,7 @@ contract Deployed is TestHelper, IERC1155Events {
         _setupSeriesFixture();
         assertEq(
           keccak256(abi.encodePacked(testContract.uri(id))),
-          keccak256(abi.encodePacked(BASE_URI, Strings.toString(id))),
+          keccak256(abi.encodePacked(BASE_URI, LibString.toString(id))),
           "invalid uri"
         );
       }

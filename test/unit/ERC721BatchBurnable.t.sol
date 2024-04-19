@@ -6,7 +6,7 @@ import { IERC721Receiver } from "../../src/interfaces/IERC721Receiver.sol";
 import { IERC2309 } from "../../src/interfaces/IERC2309.sol";
 import { IERC721 } from "../../src/interfaces/IERC721.sol";
 import { IERC721Enumerable } from "../../src/interfaces/IERC721Enumerable.sol";
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+import { LibString } from "solady/src/utils/LibString.sol";
 
 import { IERC721Events } from "../../src/mocks/events/IERC721Events.sol";
 import { Mock_NonERC721Receiver } from "../../src/mocks/external/Mock_NonERC721Receiver.sol";
@@ -91,7 +91,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         testContract.setBaseUri(newBaseUri);
         assertEq(
           keccak256(abi.encodePacked(testContract.tokenURI(tokenId))),
-          keccak256(abi.encodePacked(newBaseUri, Strings.toString(tokenId))),
+          keccak256(abi.encodePacked(newBaseUri, LibString.toString(tokenId))),
           "invalid uri"
         );
       }
@@ -961,7 +961,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         _mintFixture();
         assertEq(
           keccak256(abi.encodePacked(testContract.tokenURI(tokenId))),
-          keccak256(abi.encodePacked(BASE_URI, Strings.toString(tokenId))),
+          keccak256(abi.encodePacked(BASE_URI, LibString.toString(tokenId))),
           "invalid uri"
         );
       }

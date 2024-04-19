@@ -5,23 +5,17 @@ pragma solidity >=0.8.4 <0.9.0;
 import { Template721 } from "../../src/templates/Template721.sol";
 
 import { TestHelper } from "../../test/utils/TestHelper.sol";
-import { IArrays } from "../../src/interfaces/IArrays.sol";
 import { IWhitelist } from "../../src/interfaces/IWhitelist.sol";
 import { ITemplate } from "../../src/interfaces/ITemplate.sol";
-import { IERC721Receiver } from "../../src/interfaces/IERC721Receiver.sol";
 import { IERC721 } from "../../src/interfaces/IERC721.sol";
 import { IERC721Enumerable } from "../../src/interfaces/IERC721Enumerable.sol";
 import { IERC721Metadata } from "../../src/interfaces/IERC721Metadata.sol";
 import { IERC173 } from "../../src/interfaces/IERC173.sol";
 import { IERC165 } from "../../src/interfaces/IERC165.sol";
 import { IERC2981 } from "../../src/interfaces/IERC2981.sol";
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 import { IERC173Events } from "../../src/mocks/events/IERC173Events.sol";
 import { IERC721Events } from "../../src/mocks/events/IERC721Events.sol";
-import { Mock_Invalid_Eth_Receiver } from "../../src/mocks/external/Mock_Invalid_Eth_Receiver.sol";
-import { Mock_NonERC721Receiver } from "../../src/mocks/external/Mock_NonERC721Receiver.sol";
-import { Mock_ERC721Receiver } from "../../src/mocks/external/Mock_ERC721Receiver.sol";
 
 contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
   bytes4[] public INTERFACES = [

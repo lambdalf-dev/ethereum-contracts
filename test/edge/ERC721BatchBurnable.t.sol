@@ -2,15 +2,10 @@
 pragma solidity ^0.8.0;
 
 import { TestHelper } from "../../test/utils/TestHelper.sol";
-import { IERC721Receiver } from "../../src/interfaces/IERC721Receiver.sol";
 import { IERC2309 } from "../../src/interfaces/IERC2309.sol";
-import { IERC721 } from "../../src/interfaces/IERC721.sol";
 import { IERC721Enumerable } from "../../src/interfaces/IERC721Enumerable.sol";
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 import { IERC721Events } from "../../src/mocks/events/IERC721Events.sol";
-import { Mock_NonERC721Receiver } from "../../src/mocks/external/Mock_NonERC721Receiver.sol";
-import { Mock_ERC721Receiver } from "../../src/mocks/external/Mock_ERC721Receiver.sol";
 import { Mock_ERC721BatchBurnable } from "../../src/mocks/tokens/Mock_ERC721BatchBurnable.sol";
 
 contract Deployed is TestHelper, IERC721Events, IERC2309 {

@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import { TestHelper } from "../../test/utils/TestHelper.sol";
-import { IERC2981 } from "../../src/interfaces/IERC2981.sol";
 
 import { Mock_ERC2981 } from "../../src/mocks/utils/Mock_ERC2981.sol";
 

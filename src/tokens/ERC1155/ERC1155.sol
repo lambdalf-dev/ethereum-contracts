@@ -10,7 +10,7 @@ import { IArrays } from "../../interfaces/IArrays.sol";
 import { IERC1155 } from "../../interfaces/IERC1155.sol";
 import { IERC1155MetadataURI } from "../../interfaces/IERC1155MetadataURI.sol";
 import { IERC1155Receiver } from "../../interfaces/IERC1155Receiver.sol";
-import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
+import { LibBitmap } from "solady/src/utils/LibBitmap.sol";
 
 /// @dev Implementation of https://eips.ethereum.org/EIPS/eip-1155[ERC1155] Semi-Fungible Token Standard.
 /// @dev This contract does not implement ERC165, unlike the ERC1155 specification recommends,
@@ -35,7 +35,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
     // * IERC1155 *
     // ************
       /// @dev List of valid series ID
-      BitMaps.BitMap private _validSeries;
+      LibBitmap.Bitmap private _validSeries;
       /// @dev Series ID mapped to balances
       mapping(uint256 => mapping(address => uint256)) private _balances;
       /// @dev Token owner mapped to operator approvals
@@ -60,7 +60,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
       /// 
       /// @param id_ : the series id to validate 
       modifier isValidSeries(uint256 id_) {
-        if (! BitMaps.get(_validSeries, id_)) {
+        if (! LibBitmap.get(_validSeries, id_)) {
           revert IERC1155_NON_EXISTANT_TOKEN(id_);
         }
         _;
@@ -215,7 +215,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
       ///
       /// @return isValid whether `id_` is a valid series ID
       function exists(uint256 id_) public view returns (bool isValid) {
-        isValid = BitMaps.get(_validSeries, id_);
+        isValid = LibBitmap.get(_validSeries, id_);
       }
     // ***********
 
@@ -298,7 +298,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
         if (exists(id_)) {
           revert IERC1155_EXISTANT_TOKEN(id_);
         }
-        BitMaps.set(_validSeries, id_);
+        LibBitmap.set(_validSeries, id_);
       }
       /// @dev Internal function that checks if the receiver is a smart contract able to handle batches of IERC1155 tokens.
       /// 
