@@ -3,7 +3,10 @@
   "version": "3.0.0",
   "description": "An alternative to Open Zeppelin contracts for deployment with cheaper gas cost",
   "main": "index.js",
-  "repository": "https://github.com/lambdalf-dev/ethereum-contracts.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lambdalf-dev/ethereum-contracts.git"
+  },
   "author": "Lambdalf the White <silvereh@protonmail.com>",
   "license": "MIT",
   "scripts": {
@@ -23,7 +26,7 @@
     "solady": "^0.0.192"
   },
   "devDependencies": {
-    "ds-test": "https://github.com/dapphub/ds-test.git",
+    "ds-test": "git+https://github.com/dapphub/ds-test.git",
     "forge-std": "github:foundry-rs/forge-std#v1.7.5"
   }
 }
