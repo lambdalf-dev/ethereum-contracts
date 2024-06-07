@@ -27,22 +27,22 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
       /// @dev Identifier of the next token to be minted
       uint256 internal _nextId = 1;
       /// @dev Token ID mapped to approved address
-      mapping(uint256 => address) private _approvals;
+      mapping(uint256 => address) internal _approvals;
       /// @dev Token owner mapped to operator approvals
-      mapping(address => mapping(address => bool)) private _operatorApprovals;
+      mapping(address => mapping(address => bool)) internal _operatorApprovals;
       /// @dev List of owner addresses
-      mapping(uint256 => address) private _owners;
+      mapping(uint256 => address) internal _owners;
     // ***********
 
     // *******************
     // * IERC721Metadata *
     // *******************
       /// @dev The token's base URI.
-      string private _baseUri;
+      string internal _baseUri;
       /// @dev The name of the tokens, for token trackers.
-      string private _name;
+      string internal _name;
       /// @dev The symbol of the tokens, for token trackers.
-      string private _symbol;
+      string internal _symbol;
     // *******************
   // **************************************
 

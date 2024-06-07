@@ -35,18 +35,18 @@ IERC1155, IERC1155MetadataURI, IArrays {
     // * IERC1155 *
     // ************
       /// @dev List of valid series ID
-      LibBitmap.Bitmap private _validSeries;
+      LibBitmap.Bitmap internal _validSeries;
       /// @dev Series ID mapped to balances
-      mapping(uint256 => mapping(address => uint256)) private _balances;
+      mapping(uint256 => mapping(address => uint256)) internal _balances;
       /// @dev Token owner mapped to operator approvals
-      mapping(address => mapping(address => bool)) private _operatorApprovals;
+      mapping(address => mapping(address => bool)) internal _operatorApprovals;
     // ************
 
     // ***********************
     // * IERC1155MetadataURI *
     // ***********************
       /// @dev The token's base URI.
-      string private _baseUri;
+      string internal _baseUri;
     // ***********************
   // **************************************
 
@@ -315,7 +315,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
         uint256[] memory ids_,
         uint256[] memory amounts_,
         bytes memory data_
-      ) private {
+      ) internal {
         uint256 _size_;
         assembly {
           _size_ := extcodesize(to_)
@@ -354,7 +354,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
         uint256 id_,
         uint256 amount_,
         bytes memory data_
-      ) private {
+      ) internal {
         uint256 _size_;
         assembly {
           _size_ := extcodesize(to_)

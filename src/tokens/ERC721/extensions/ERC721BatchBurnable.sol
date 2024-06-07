@@ -14,7 +14,7 @@ abstract contract ERC721BatchBurnable is ERC721Batch {
   // *****     STORAGE VARIABLES      *****
   // **************************************
     // List of burned tokens
-    LibBitmap.Bitmap private _burned;
+    LibBitmap.Bitmap internal _burned;
   // **************************************
 
   // **************************************
