@@ -173,12 +173,7 @@ contract Unit_ConsumeWhitelist is Deployed {
     address whitelistedAccount = ALICE.addr;
     IWhitelist.Proof memory proof = _createProof(whitelistId, alloted, whitelistedAccount, FORGER);
     _whitelistSetFixture();
-    vm.expectRevert(
-      abi.encodeWithSelector(
-        IWhitelist.WHITELIST_FORBIDDEN.selector,
-        account
-      )
-    );
+    vm.expectRevert(IWhitelist.WHITELIST_FORBIDDEN.selector);
     testContract.consumeWhitelist(account, whitelistId, amount, alloted, proof);
   }
   function test_unit_whitelist_revert_when_consuming_more_than_allocated() public {
@@ -189,12 +184,7 @@ contract Unit_ConsumeWhitelist is Deployed {
     address whitelistedAccount = ALICE.addr;
     IWhitelist.Proof memory proof = _createProof(whitelistId, alloted, whitelistedAccount, SIGNER);
     _whitelistSetFixture();
-    vm.expectRevert(
-      abi.encodeWithSelector(
-        IWhitelist.WHITELIST_FORBIDDEN.selector,
-        account
-      )
-    );
+    vm.expectRevert(IWhitelist.WHITELIST_FORBIDDEN.selector);
     testContract.consumeWhitelist(account, whitelistId, amount, alloted, proof);
   }
 }

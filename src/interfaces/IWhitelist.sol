@@ -19,9 +19,7 @@ interface IWhitelist {
   // **************************************
     /// @dev Thrown when trying to query the whitelist while it's not set
     error WHITELIST_NOT_SET();
-    /// @dev Thrown when `account` does not have enough alloted access to fulfil their query
-    /// 
-    /// @param account address trying to access the whitelist
-    error WHITELIST_FORBIDDEN(address account);
+    /// @dev Thrown when operator does not have enough alloted access to fulfil their query
+    error WHITELIST_FORBIDDEN();
   // **************************************
 }

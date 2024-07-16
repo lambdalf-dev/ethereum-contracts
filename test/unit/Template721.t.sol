@@ -163,13 +163,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				_depleteSupplyFixture();
 				_setPrivateSaleFixture();
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        ITemplate.NFT_MINTED_OUT.selector,
-		        amount,
-		        0
-		      )
-		    );
+		    vm.expectRevert(ITemplate.NFT_MINTED_OUT.selector);
 				testContract.privateMint{value: price}(amount, alloted, proof);
 			}
 			function test_unit_revert_when_incorrect_amount_of_ether_sent() public {
@@ -182,13 +176,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				uint256 price = amount * PRIVATE_SALE_PRICE;
 				_setPrivateSaleFixture();
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        ITemplate.ETHER_INCORRECT_PRICE.selector,
-		        0,
-		        price
-		      )
-		    );
+		    vm.expectRevert(ITemplate.ETHER_INCORRECT_PRICE.selector);
 				testContract.privateMint(amount, alloted, proof);
 			}
 			function test_unit_revert_when_requesting_more_than_allocated() public {
@@ -201,12 +189,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				uint256 price = amount * PRIVATE_SALE_PRICE;
 				_setPrivateSaleFixture();
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IWhitelist.WHITELIST_FORBIDDEN.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IWhitelist.WHITELIST_FORBIDDEN.selector);
 				testContract.privateMint{value: price}(amount, alloted, proof);
 			}
 			function test_unit_emit_Transfer_events() public {
@@ -279,13 +262,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				uint256 price = amount * PUBLIC_SALE_PRICE;
 				_setPublicSaleFixture();
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        ITemplate.NFT_MAX_BATCH.selector,
-		        amount,
-						MAX_BATCH
-		      )
-		    );
+		    vm.expectRevert(ITemplate.NFT_MAX_BATCH.selector);
 				testContract.publicMint{value: price}(amount);
 			}
 			function test_unit_revert_when_supply_is_depleted() public {
@@ -295,13 +272,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				_depleteSupplyFixture();
 				_setPublicSaleFixture();
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        ITemplate.NFT_MINTED_OUT.selector,
-		        amount,
-		        0
-		      )
-		    );
+		    vm.expectRevert(ITemplate.NFT_MINTED_OUT.selector);
 				testContract.publicMint{value: price}(amount);
 			}
 			function test_unit_revert_when_incorrect_amount_of_ether_sent() public {
@@ -309,13 +280,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				uint256 amount = TARGET_AMOUNT;
 				uint256 price = amount * PUBLIC_SALE_PRICE;
 				_setPublicSaleFixture();
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        ITemplate.ETHER_INCORRECT_PRICE.selector,
-		        0,
-		        price
-		      )
-		    );
+		    vm.expectRevert(ITemplate.ETHER_INCORRECT_PRICE.selector);
 				testContract.publicMint(amount);
 			}
 			function test_unit_emit_Transfer_events() public {
@@ -365,12 +330,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				uint256[] memory amounts = new uint256[](1);
 				amounts[0] = amount;
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IERC173.IERC173_NOT_OWNER.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
 				testContract.airdrop(addresses, amounts);
 			}
 			function test_unit_revert_when_array_lengths_dont_match() public {
@@ -391,13 +351,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				addresses[0] = recipient;
 				uint256[] memory amounts = new uint256[](1);
 				amounts[0] = amount;
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        ITemplate.NFT_MAX_RESERVE.selector,
-		        amount,
-		        RESERVE
-		      )
-		    );
+		    vm.expectRevert(ITemplate.NFT_MAX_RESERVE.selector);
 				testContract.airdrop(addresses, amounts);
 			}
 			function test_unit_revert_when_airdropping_more_than_the_reserve_to_several_users() public {
@@ -409,13 +363,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				uint256[] memory amounts = new uint256[](2);
 				amounts[0] = amount;
 				amounts[1] = RESERVE;
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        ITemplate.NFT_MAX_RESERVE.selector,
-		        RESERVE + TARGET_AMOUNT,
-		        RESERVE
-		      )
-		    );
+		    vm.expectRevert(ITemplate.NFT_MAX_RESERVE.selector);
 				testContract.airdrop(addresses, amounts);
 			}
 			function test_unit_emit_Transfer_events() public {
@@ -465,12 +413,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				address operator = OPERATOR.addr;
 				uint256 newReserve = 0;
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IERC173.IERC173_NOT_OWNER.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
 				testContract.reduceReserve(newReserve);
 			}
 			function test_unit_revert_when_increasing_reserve() public {
@@ -493,12 +436,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				address operator = OPERATOR.addr;
 				uint256 newSupply = RESERVE;
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IERC173.IERC173_NOT_OWNER.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
 				testContract.reduceSupply(newSupply);
 			}
 			function test_unit_revert_when_increasing_supply() public {
@@ -526,12 +464,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				address operator = OPERATOR.addr;
 				uint8 newState = uint8(Template721.ContractState.PUBLIC_SALE);
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IERC173.IERC173_NOT_OWNER.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
 				testContract.setContractState(Template721.ContractState(newState));
 				assertEq(
 					uint8(testContract.contractState()),
@@ -567,12 +500,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				uint256 newDiscountPrice = 0;
 				uint256 newPrice = 0;
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IERC173.IERC173_NOT_OWNER.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
 				testContract.setPrices(newDiscountPrice, newPrice);
 			}
 			function test_unit_update_prices_accurately() public {
@@ -596,12 +524,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				address operator = OPERATOR.addr;
 				address newTreasury = RECIPIENT.addr;
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IERC173.IERC173_NOT_OWNER.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
 				testContract.setTreasury(newTreasury);
 			}
 			function test_unit_update_treasury_successfully() public {
@@ -618,12 +541,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 			function test_unit_revert_when_caller_is_not_contract_owner() public {
 				address operator = OPERATOR.addr;
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IERC173.IERC173_NOT_OWNER.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
 				testContract.withdraw();
 			}
 			function test_unit_revert_when_contract_holds_no_eth() public {
@@ -633,13 +551,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 			function test_unit_revert_when_treasury_cant_receive_eth() public {
 				_mintFixture();
 				testContract.setTreasury(address(this));
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        ITemplate.ETHER_TRANSFER_FAIL.selector,
-		        address(this),
-		        MINTED_SUPPLY * PUBLIC_SALE_PRICE
-		      )
-		    );
+		    vm.expectRevert(ITemplate.ETHER_TRANSFER_FAIL.selector);
 				testContract.withdraw();
 			}
 			function test_unit_eth_balance_transferred_successfully() public {
@@ -668,12 +580,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 		    address newRecipient = OPERATOR.addr;
 		    uint96 newRate = ROYALTY_RATE / 2;
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IERC173.IERC173_NOT_OWNER.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
 				testContract.setRoyaltyInfo(newRecipient, newRate);
 			}
 		  function test_unit_setting_royalties() public {
@@ -747,12 +654,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 				address operator = OPERATOR.addr;
         string memory newBaseUri = NEW_BASE_URI;
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IERC173.IERC173_NOT_OWNER.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
 				testContract.setBaseUri(newBaseUri);
 			}
       function test_unit_erc721Batch_set_base_uri() public {
@@ -776,12 +678,7 @@ contract Deployed is TestHelper, ITemplate, IERC173Events, IERC721Events {
 			function test_unit_revert_when_caller_is_not_contract_owner() public {
 				address operator = OPERATOR.addr;
 				vm.prank(operator);
-		    vm.expectRevert(
-		      abi.encodeWithSelector(
-		        IERC173.IERC173_NOT_OWNER.selector,
-		        operator
-		      )
-		    );
+		    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
 				testContract.setWhitelist(FORGER.addr);
 			}
 			function test_unit_remove_whitelist() public {

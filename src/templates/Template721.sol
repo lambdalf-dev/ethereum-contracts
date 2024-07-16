@@ -111,15 +111,15 @@ IERC165, ERC721Batch, ERC173, ERC2981, Whitelist, IArrays, ITemplate {
       }
       uint256 _remainingSupply_ = maxSupply - reserve - totalSupply();
       if (qty_ > _remainingSupply_) {
-        revert NFT_MINTED_OUT(qty_, _remainingSupply_);
+        revert NFT_MINTED_OUT();
       }
       uint256 _expected_ = qty_ * salePrice[ContractState.PRIVATE_SALE];
       if (msg.value != _expected_) {
-        revert ETHER_INCORRECT_PRICE(msg.value, _expected_);
+        revert ETHER_INCORRECT_PRICE();
       }
       uint256 _remainingAllocation_ = checkWhitelistAllowance(msg.sender, uint8(ContractState.PRIVATE_SALE), alloted_, proof_);
       if (_remainingAllocation_ < qty_) {
-        revert WHITELIST_FORBIDDEN(msg.sender);
+        revert WHITELIST_FORBIDDEN();
       }
       _consumeWhitelist(msg.sender, uint8(ContractState.PRIVATE_SALE), qty_);
       _mint(msg.sender, qty_);
@@ -139,15 +139,15 @@ IERC165, ERC721Batch, ERC173, ERC2981, Whitelist, IArrays, ITemplate {
         revert NFT_INVALID_QTY();
       }
       if (qty_ > MAX_BATCH) {
-        revert NFT_MAX_BATCH(qty_, MAX_BATCH);
+        revert NFT_MAX_BATCH();
       }
       uint256 _remainingSupply_ = maxSupply - reserve - totalSupply();
       if (qty_ > _remainingSupply_) {
-        revert NFT_MINTED_OUT(qty_, _remainingSupply_);
+        revert NFT_MINTED_OUT();
       }
       uint256 _expected_ = qty_ * salePrice[ContractState.PUBLIC_SALE];
       if (msg.value != _expected_) {
-        revert ETHER_INCORRECT_PRICE(msg.value, _expected_);
+        revert ETHER_INCORRECT_PRICE();
       }
       _mint(msg.sender, qty_);
     }
@@ -181,7 +181,7 @@ IERC165, ERC721Batch, ERC173, ERC2981, Whitelist, IArrays, ITemplate {
         }
       }
       if (_totalQty_ > reserve) {
-        revert NFT_MAX_RESERVE(_totalQty_, reserve);
+        revert NFT_MAX_RESERVE();
       }
       unchecked {
         reserve -= _totalQty_;
@@ -267,7 +267,7 @@ IERC165, ERC721Batch, ERC173, ERC2981, Whitelist, IArrays, ITemplate {
       // solhint-disable-next-line
       (bool _success_,) = payable(treasury).call{ value: _balance_ }("");
       if (! _success_) {
-        revert ETHER_TRANSFER_FAIL(treasury, _balance_);
+        revert ETHER_TRANSFER_FAIL();
       }
     }
 

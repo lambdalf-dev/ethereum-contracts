@@ -30,12 +30,7 @@ contract Unit_TransferOwnership is Deployed {
   function test_unit_erc173_cannot_transfer_ownership_when_not_owner() public {
     address operator = OPERATOR.addr;
     vm.prank(operator);
-    vm.expectRevert(
-      abi.encodeWithSelector(
-        IERC173.IERC173_NOT_OWNER.selector,
-        operator
-      )
-    );
+    vm.expectRevert(IERC173.IERC173_NOT_OWNER.selector);
     testContract.transferOwnership(operator);
   }
   function test_unit_erc173_emit_transfer_ownership_when_owner() public {

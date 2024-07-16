@@ -13,10 +13,8 @@ interface IERC173 /* is IERC165 */ {
   // **************************************
   // *****           ERRORS           *****
   // **************************************
-    /// @dev Thrown when `operator` is not the contract owner.
-    /// 
-    /// @param operator address trying to use a function reserved to contract owner without authorization
-    error IERC173_NOT_OWNER(address operator);
+    /// @dev Thrown when operator is not the contract owner.
+    error IERC173_NOT_OWNER();
   // **************************************
 
   // **************************************

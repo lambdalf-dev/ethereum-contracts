@@ -61,7 +61,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
       /// @param id_ : the series id to validate 
       modifier isValidSeries(uint256 id_) {
         if (! LibBitmap.get(_validSeries, id_)) {
-          revert IERC1155_NON_EXISTANT_TOKEN(id_);
+          revert IERC1155_NON_EXISTANT_TOKEN();
         }
         _;
       }
@@ -108,7 +108,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
         bytes calldata data_
       ) external override {
         if (to_ == address(0)) {
-          revert IERC1155_INVALID_RECEIVER(to_);
+          revert IERC1155_INVALID_RECEIVER();
         }
         uint256 _len_ = ids_.length;
         if (amounts_.length != _len_) {
@@ -116,15 +116,15 @@ IERC1155, IERC1155MetadataURI, IArrays {
         }
         address _operator_ = msg.sender;
         if (! _isApprovedOrOwner(from_, _operator_)) {
-          revert IERC1155_CALLER_NOT_APPROVED(from_, _operator_);
+          revert IERC1155_CALLER_NOT_APPROVED();
         }
         for (uint256 i; i < _len_;) {
           if (! exists(ids_[i])) {
-            revert IERC1155_NON_EXISTANT_TOKEN(ids_[i]);
+            revert IERC1155_NON_EXISTANT_TOKEN();
           }
           uint256 _balance_ = _balances[ids_[i]][from_];
           if (_balance_ < amounts_[i]) {
-            revert IERC1155_INSUFFICIENT_BALANCE(from_, ids_[i]);
+            revert IERC1155_INSUFFICIENT_BALANCE();
           }
           unchecked {
             _balances[ids_[i]][from_] = _balance_ - amounts_[i];
@@ -167,15 +167,15 @@ IERC1155, IERC1155MetadataURI, IArrays {
         bytes calldata data_
       ) external override isValidSeries(id_) {
         if (to_ == address(0)) {
-          revert IERC1155_INVALID_RECEIVER(to_);
+          revert IERC1155_INVALID_RECEIVER();
         }
         address _operator_ = msg.sender;
         if (! _isApprovedOrOwner(from_, _operator_)) {
-          revert IERC1155_CALLER_NOT_APPROVED(from_, _operator_);
+          revert IERC1155_CALLER_NOT_APPROVED();
         }
         uint256 _balance_ = _balances[id_][from_];
         if (_balance_ < amount_) {
-          revert IERC1155_INSUFFICIENT_BALANCE(from_, id_);
+          revert IERC1155_INSUFFICIENT_BALANCE();
         }
         unchecked {
           _balances[id_][from_] = _balance_ - amount_;
@@ -251,7 +251,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
             --_len_;
           }
           if (! exists(ids_[_len_])) {
-            revert IERC1155_NON_EXISTANT_TOKEN(ids_[_len_]);
+            revert IERC1155_NON_EXISTANT_TOKEN();
           }
           ownerBalances[_len_] = _balances[ids_[_len_]][owners_[_len_]];
         }
@@ -296,7 +296,7 @@ IERC1155, IERC1155MetadataURI, IArrays {
       /// - `id_` must not be a valid series ID
       function _createSeries(uint256 id_) internal {
         if (exists(id_)) {
-          revert IERC1155_EXISTANT_TOKEN(id_);
+          revert IERC1155_EXISTANT_TOKEN();
         }
         LibBitmap.set(_validSeries, id_);
       }
@@ -324,12 +324,12 @@ IERC1155, IERC1155MetadataURI, IArrays {
           try IERC1155Receiver(to_)
             .onERC1155BatchReceived(operator_, from_, ids_, amounts_, data_) returns (bytes4 response) {
             if (response != IERC1155Receiver.onERC1155BatchReceived.selector) {
-              revert IERC1155_INVALID_RECEIVER(to_);
+              revert IERC1155_INVALID_RECEIVER();
             }
           }
           catch (bytes memory reason) {
             if (reason.length == 0) {
-              revert IERC1155_INVALID_RECEIVER(to_);
+              revert IERC1155_INVALID_RECEIVER();
             }
             else {
               assembly {
@@ -363,12 +363,12 @@ IERC1155, IERC1155MetadataURI, IArrays {
           try IERC1155Receiver(to_)
             .onERC1155Received(operator_, from_, id_, amount_, data_) returns (bytes4 response) {
             if (response != IERC1155Receiver.onERC1155Received.selector) {
-              revert IERC1155_INVALID_RECEIVER(to_);
+              revert IERC1155_INVALID_RECEIVER();
             }
           }
           catch (bytes memory reason) {
             if (reason.length == 0) {
-              revert IERC1155_INVALID_RECEIVER(to_);
+              revert IERC1155_INVALID_RECEIVER();
             }
             else {
               assembly {

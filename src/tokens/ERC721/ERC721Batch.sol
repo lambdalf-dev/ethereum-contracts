@@ -63,7 +63,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
       /// @param tokenId_ identifier of the NFT being referenced
       modifier exists(uint256 tokenId_) {
         if (! _exists(tokenId_)) {
-          revert IERC721_NONEXISTANT_TOKEN(tokenId_);
+          revert IERC721_NONEXISTANT_TOKEN();
         }
         _;
       }
@@ -96,7 +96,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
         }
         bool _isApproved_ = isApprovedForAll(_tokenOwner_, msg.sender);
         if (msg.sender != _tokenOwner_ && ! _isApproved_) {
-          revert IERC721_CALLER_NOT_APPROVED(msg.sender, tokenId_);
+          revert IERC721_CALLER_NOT_APPROVED();
         }
         _approvals[tokenId_] = to_;
         emit Approval(_tokenOwner_, to_, tokenId_);
@@ -136,7 +136,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
       function safeTransferFrom(address from_, address to_, uint256 tokenId_, bytes memory data_) public virtual override {
         transferFrom(from_, to_, tokenId_);
         if (! _checkOnERC721Received(from_, to_, tokenId_, data_)) {
-          revert IERC721_INVALID_RECEIVER(to_);
+          revert IERC721_INVALID_RECEIVER();
         }
       }
       /// @dev Allows or disallows `operator_` to manage the caller's tokens on their behalf.
@@ -169,14 +169,14 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
       /// - Must emit a {Transfer} event.
       function transferFrom(address from_, address to_, uint256 tokenId_) public virtual override {
         if (to_ == address(0)) {
-          revert IERC721_INVALID_RECEIVER(to_);
+          revert IERC721_INVALID_RECEIVER();
         }
         address _tokenOwner_ = ownerOf(tokenId_);
         if (from_ != _tokenOwner_) {
           revert IERC721_INVALID_TOKEN_OWNER();
         }
         if (! _isApprovedOrOwner(_tokenOwner_, msg.sender, tokenId_)) {
-          revert IERC721_CALLER_NOT_APPROVED(msg.sender, tokenId_);
+          revert IERC721_CALLER_NOT_APPROVED();
         }
         _transfer(from_, to_, tokenId_);
       }
@@ -280,7 +280,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
       /// - `index_` must be less than {totalSupply()}
       function tokenByIndex(uint256 index_) public view virtual override returns (uint256) {
         if (index_ >= _nextId - 1) {
-          revert IERC721Enumerable_INDEX_OUT_OF_BOUNDS(index_);
+          revert IERC721Enumerable_INDEX_OUT_OF_BOUNDS();
         }
         return index_ + 1;
       }
@@ -320,7 +320,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
             ++_index_;
           }
         }
-        revert IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS(index_);
+        revert IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS();
       }
       /// @notice Count NFTs tracked by this contract
       /// 
@@ -401,7 +401,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
           }
           catch (bytes memory reason) {
             if (reason.length == 0) {
-              revert IERC721_INVALID_RECEIVER(to_);
+              revert IERC721_INVALID_RECEIVER();
             }
             else {
               assembly {

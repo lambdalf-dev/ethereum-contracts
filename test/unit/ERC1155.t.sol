@@ -50,12 +50,7 @@ contract Deployed is TestHelper, IERC1155Events {
         uint256 id = SERIES_ID;
         uint256 amount = TARGET_AMOUNT;
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector,
-            id
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector);
         testContract.mint(id, amount);
       }
       function test_unit_mint_emit_TransferSingle_event() public {
@@ -87,12 +82,7 @@ contract Deployed is TestHelper, IERC1155Events {
       function test_unit_create_series_revert_when_series_exist() public {
         uint256 id = SERIES_ID;
         _setupSeriesFixture();
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_EXISTANT_TOKEN.selector,
-            id
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_EXISTANT_TOKEN.selector);
         testContract.createSeries(id);
       }
       function test_unit_create_series_successfully() public {
@@ -126,12 +116,7 @@ contract Deployed is TestHelper, IERC1155Events {
         uint256[] memory amounts = new uint256[](1);
         amounts[0] = amount;
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector,
-            id
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector);
         testContract.safeBatchTransferFrom(tokenOwner, recipient, ids, amounts, DATA);
       }
       function test_unit_safe_batch_transfer_revert_when_transfering_from_address_with_insufficient_balance() public {
@@ -146,13 +131,7 @@ contract Deployed is TestHelper, IERC1155Events {
         amounts[0] = amount;
         _setupSeriesFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_INSUFFICIENT_BALANCE.selector,
-            operator,
-            id
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_INSUFFICIENT_BALANCE.selector);
         testContract.safeBatchTransferFrom(tokenOwner, recipient, ids, amounts, DATA);
       }
       function test_unit_safe_batch_transfer_revert_when_array_lengths_dont_match() public {
@@ -168,7 +147,7 @@ contract Deployed is TestHelper, IERC1155Events {
         amounts[1] = amount;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(abi.encodeWithSelector(IArrays.ARRAY_LENGTH_MISMATCH.selector));
+        vm.expectRevert(IArrays.ARRAY_LENGTH_MISMATCH.selector);
         testContract.safeBatchTransferFrom(tokenOwner, recipient, ids, amounts, DATA);
       }
       function test_unit_safe_batch_transfer_revert_when_transfering_to_address_zero() public {
@@ -183,12 +162,7 @@ contract Deployed is TestHelper, IERC1155Events {
         amounts[0] = amount;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_INVALID_RECEIVER.selector,
-            recipient
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_INVALID_RECEIVER.selector);
         testContract.safeBatchTransferFrom(tokenOwner, recipient, ids, amounts, DATA);
       }
       function test_unit_safe_batch_transfer_revert_when_caller_not_owner_or_approved() public {
@@ -203,13 +177,7 @@ contract Deployed is TestHelper, IERC1155Events {
         amounts[0] = amount;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_CALLER_NOT_APPROVED.selector,
-            ALICE.addr,
-            operator
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_CALLER_NOT_APPROVED.selector);
         testContract.safeBatchTransferFrom(tokenOwner, recipient, ids, amounts, DATA);
       }
       function test_unit_safe_batch_transfer_revert_when_transfering_to_non_erc1155_receiver_contract() public {
@@ -225,12 +193,7 @@ contract Deployed is TestHelper, IERC1155Events {
         amounts[0] = amount;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_INVALID_RECEIVER.selector,
-            recipient
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_INVALID_RECEIVER.selector);
         testContract.safeBatchTransferFrom(tokenOwner, recipient, ids, amounts, DATA);
       }
       function test_unit_safe_batch_transfer_revert_when_transfering_to_a_receiver_contract_that_returns_unexpected_value() public {
@@ -249,12 +212,7 @@ contract Deployed is TestHelper, IERC1155Events {
         amounts[0] = amount;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_INVALID_RECEIVER.selector,
-            recipient
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_INVALID_RECEIVER.selector);
         testContract.safeBatchTransferFrom(tokenOwner, recipient, ids, amounts, DATA);
       }
       function test_unit_safe_batch_transfer_revert_when_transfering_to_a_receiver_contract_that_reverts_with_custom_error() public {
@@ -426,12 +384,7 @@ contract Deployed is TestHelper, IERC1155Events {
         address recipient = RECIPIENT.addr;
         uint256 amount = TARGET_AMOUNT;
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector,
-            id
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector);
         testContract.safeTransferFrom(operator, recipient, id, amount, DATA);
       }
       function test_unit_safe_transfer_revert_when_transfering_from_address_with_insufficient_balance() public {
@@ -442,13 +395,7 @@ contract Deployed is TestHelper, IERC1155Events {
         uint256 amount = TARGET_AMOUNT;
         _setupSeriesFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_INSUFFICIENT_BALANCE.selector,
-            operator,
-            id
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_INSUFFICIENT_BALANCE.selector);
         testContract.safeTransferFrom(operator, recipient, id, amount, DATA);
       }
       function test_unit_safe_transfer_revert_when_transfering_to_address_zero() public {
@@ -459,12 +406,7 @@ contract Deployed is TestHelper, IERC1155Events {
         uint256 amount = TARGET_AMOUNT;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_INVALID_RECEIVER.selector,
-            recipient
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_INVALID_RECEIVER.selector);
         testContract.safeTransferFrom(operator, recipient, id, amount, DATA);
       }
       function test_unit_safe_transfer_revert_when_caller_not_owner_or_approved() public {
@@ -475,13 +417,7 @@ contract Deployed is TestHelper, IERC1155Events {
         uint256 amount = TARGET_AMOUNT;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_CALLER_NOT_APPROVED.selector,
-            tokenOwner,
-            operator
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_CALLER_NOT_APPROVED.selector);
         testContract.safeTransferFrom(tokenOwner, recipient, id, amount, DATA);
       }
       function test_unit_safe_transfer_revert_when_transfering_to_non_erc1155_receiver_contract() public {
@@ -493,12 +429,7 @@ contract Deployed is TestHelper, IERC1155Events {
         uint256 amount = TARGET_AMOUNT;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_INVALID_RECEIVER.selector,
-            recipient
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_INVALID_RECEIVER.selector);
         testContract.safeTransferFrom(operator, recipient, id, amount, DATA);
       }
       function test_unit_safe_transfer_revert_when_transfering_to_a_receiver_contract_that_returns_unexpected_value() public {
@@ -513,12 +444,7 @@ contract Deployed is TestHelper, IERC1155Events {
         uint256 amount = TARGET_AMOUNT;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_INVALID_RECEIVER.selector,
-            recipient
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_INVALID_RECEIVER.selector);
         testContract.safeTransferFrom(operator, recipient, id, amount, DATA);
       }
       function test_unit_safe_transfer_revert_when_transfering_to_a_receiver_contract_that_reverts_with_custom_error() public {
@@ -745,12 +671,7 @@ contract Deployed is TestHelper, IERC1155Events {
       function test_unit_revert_when_series_dont_exist() public {
         address tokenOwner = ALICE.addr;
         uint256 id = SERIES_ID;
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector,
-            id
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector);
         testContract.balanceOf(tokenOwner, id);
       }
       function test_unit_balance_of_non_token_owner_is_zero() public {
@@ -788,12 +709,7 @@ contract Deployed is TestHelper, IERC1155Events {
         accounts[0] = tokenOwner;
         uint256[] memory ids = new uint256[](1);
         ids[0] = id;
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector,
-            id
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector);
         testContract.balanceOfBatch(accounts, ids);
       }
       function test_unit_balance_of_batch_revert_when_array_lengths_dont_match() public {
@@ -864,12 +780,7 @@ contract Deployed is TestHelper, IERC1155Events {
     contract Unit_Uri is Deployed {
       function test_unit_uri_revert_when_token_dont_exist() public {
         uint256 id = SERIES_ID;
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector,
-            id
-          )
-        );
+        vm.expectRevert(IERC1155.IERC1155_NON_EXISTANT_TOKEN.selector);
         testContract.uri(id);
       }
       function test_unit_uri_is_accurate() public {

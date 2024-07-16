@@ -8,34 +8,21 @@ contract SelectorCalculator {
     /// @dev Thrown when trying to query the whitelist while it's not set
     error WHITELIST_NOT_SET();
     /// @dev Thrown when `account` does not have enough alloted access to fulfil their query
-    /// 
-    /// @param account address trying to access the whitelist
-    error WHITELIST_FORBIDDEN(address account);
+    error WHITELIST_FORBIDDEN();
     /// @dev Thrown when `operator` is not allowed to manage `tokenId`.
-    /// 
-    /// @param operator address trying to manage the token
-    /// @param tokenId identifier of the NFT being referenced
-    error IERC721_CALLER_NOT_APPROVED(address operator, uint256 tokenId);
+    error IERC721_CALLER_NOT_APPROVED();
     /// @dev Thrown when user tries to approve themselves for managing a token they own.
     error IERC721_INVALID_APPROVAL();
     /// @dev Thrown when a token is being transferred to a contract unable to handle it or the zero address.
-    /// 
-    /// @param receiver address unable to receive the token
-    error IERC721_INVALID_RECEIVER(address receiver);
+    error IERC721_INVALID_RECEIVER();
     /// @dev Thrown when checking ownership of the wrong token owner.
     error IERC721_INVALID_TOKEN_OWNER();
     /// @dev Thrown when the requested token doesn"t exist.
-    /// 
-    /// @param tokenId identifier of the NFT being referenced
-    error IERC721_NONEXISTANT_TOKEN(uint256 tokenId);
+    error IERC721_NONEXISTANT_TOKEN();
     /// @dev Thrown when trying to get the token at an index that doesn"t exist.
-    /// 
-    /// @param index the inexistant index
-    error IERC721Enumerable_INDEX_OUT_OF_BOUNDS(uint256 index);
+    error IERC721Enumerable_INDEX_OUT_OF_BOUNDS();
     /// @dev Thrown when trying to get the token owned by `tokenOwner` at an index that doesn"t exist.
-    /// 
-    /// @param index the inexistant index
-    error IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS(uint256 index);
+    error IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS();
     /// @dev Thrown when the desired royalty rate is higher than 10,000
     error IERC2981_INVALID_ROYALTIES();
     /// @dev Thrown when a function is called with the wrong contract state.
@@ -43,17 +30,11 @@ contract SelectorCalculator {
     /// @dev Thrown when trying to set the contract state to an invalid value.
     error CONTRACT_STATE_INVALID();
     /// @dev Thrown when an incorrect amount of eth is being sent for a payable operation.
-    /// 
-    /// @param amountReceived the amount the contract received
-    /// @param amountExpected the actual amount the contract expected to receive
-    error ETHER_INCORRECT_PRICE(uint256 amountReceived, uint256 amountExpected);
+    error ETHER_INCORRECT_PRICE();
     /// @dev Thrown when trying to withdraw from the contract with no balance.
     error ETHER_NO_BALANCE();
     /// @dev Thrown when contract fails to send ether to recipient.
-    /// 
-    /// @param to the recipient of the ether
-    /// @param amount the amount of ether being sent
-    error ETHER_TRANSFER_FAIL(address to, uint256 amount);
+    error ETHER_TRANSFER_FAIL();
     /// @dev Thrown when trying to mint 0 token.
     error NFT_INVALID_QTY();
     /// @dev Thrown when trying to set reserve to an invalid amount.
@@ -61,50 +42,27 @@ contract SelectorCalculator {
     /// @dev Thrown when trying to set max supply to an invalid amount.
     error NFT_INVALID_SUPPLY();
     /// @dev Thrown when trying to mint more tokens than the max allowed per transaction.
-    /// 
-    /// @param qtyRequested the amount of tokens requested
-    /// @param maxBatch the maximum amount that can be minted per transaction
-    error NFT_MAX_BATCH(uint256 qtyRequested, uint256 maxBatch);
+    error NFT_MAX_BATCH();
     /// @dev Thrown when trying to mint more tokens from the reserve than the amount left.
-    /// 
-    /// @param qtyRequested the amount of tokens requested
-    /// @param reserveLeft the amount of tokens left in the reserve
-    error NFT_MAX_RESERVE(uint256 qtyRequested, uint256 reserveLeft);
+    error NFT_MAX_RESERVE();
     /// @dev Thrown when trying to mint more tokens than the amount left to be minted (except reserve).
-    /// 
-    /// @param qtyRequested the amount of tokens requested
-    /// @param remainingSupply the amount of tokens left in the reserve
-    error NFT_MINTED_OUT(uint256 qtyRequested, uint256 remainingSupply);
+    error NFT_MINTED_OUT();
     /// @dev Thrown when trying to call a non existant function.
     error UNKNOWN();
     /// @dev Thrown when `operator` is not the contract owner.
-    /// 
-    /// @param operator address trying to use a function reserved to contract owner without authorization
-    error IERC173_NOT_OWNER(address operator);
+    error IERC173_NOT_OWNER();
     /// @dev Thrown when `operator` has not been approved to manage `tokenId` on behalf of `tokenOwner`.
-    /// 
-    /// @param from address owning the token
-    /// @param operator address trying to manage the token
-    error IERC1155_CALLER_NOT_APPROVED(address from, address operator);
+    error IERC1155_CALLER_NOT_APPROVED();
     /// @dev Thrown when trying to create series `id` that already exists.
-    /// 
-    /// @param id identifier of the NFT being referenced
-    error IERC1155_EXISTANT_TOKEN(uint256 id);
+    error IERC1155_EXISTANT_TOKEN();
     /// @dev Thrown when `from` tries to transfer more than they own.
-    /// 
-    /// @param from address that the NFT are being transferred from
-    /// @param id identifier of the NFT being referenced
-    error IERC1155_INSUFFICIENT_BALANCE(address from, uint256 id);
+    error IERC1155_INSUFFICIENT_BALANCE();
     /// @dev Thrown when operator tries to approve themselves for managing a token they own.
     error IERC1155_INVALID_APPROVAL();
     /// @dev Thrown when a token is being safely transferred to an address unable to handle it.
-    /// 
-    /// @param receiver address unable to receive the token
-    error IERC1155_INVALID_RECEIVER(address receiver);
+    error IERC1155_INVALID_RECEIVER();
     /// @dev Thrown when the requested token doesn"t exist.
-    /// 
-    /// @param id identifier of the NFT being referenced
-    error IERC1155_NON_EXISTANT_TOKEN(uint256 id);
+    error IERC1155_NON_EXISTANT_TOKEN();
     /// @dev Thrown when two related arrays have different lengths.
     error ARRAY_LENGTH_MISMATCH();
   // **************************************

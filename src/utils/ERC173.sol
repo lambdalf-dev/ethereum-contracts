@@ -26,7 +26,7 @@ abstract contract ERC173 is IERC173 {
     /// @dev Throws if called by any account other than the owner.
     modifier onlyOwner() {
       if (owner() != msg.sender) {
-        revert IERC173_NOT_OWNER(msg.sender);
+        revert IERC173_NOT_OWNER();
       }
       _;
     }

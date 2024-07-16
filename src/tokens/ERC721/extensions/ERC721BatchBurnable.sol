@@ -32,7 +32,7 @@ abstract contract ERC721BatchBurnable is ERC721Batch {
       function burn(uint256 tokenId_) public {
         address _tokenOwner_ = ownerOf(tokenId_);
         if (! _isApprovedOrOwner(_tokenOwner_, msg.sender, tokenId_)) {
-          revert IERC721_CALLER_NOT_APPROVED(msg.sender, tokenId_);
+          revert IERC721_CALLER_NOT_APPROVED();
         }
         LibBitmap.set(_burned, tokenId_);
         _transfer(_tokenOwner_, address(0), tokenId_);
@@ -53,7 +53,7 @@ abstract contract ERC721BatchBurnable is ERC721Batch {
       /// - `index_` must be less than {totalSupply()}
       function tokenByIndex(uint256 index_) public view virtual override returns (uint256 tokenId) {
         if (index_ >= _nextId - 1) {
-          revert IERC721Enumerable_INDEX_OUT_OF_BOUNDS(index_);
+          revert IERC721Enumerable_INDEX_OUT_OF_BOUNDS();
         }
         uint256 _index_ = 1;
         tokenId = 1;

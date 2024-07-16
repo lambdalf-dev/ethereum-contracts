@@ -50,12 +50,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
       function test_edge_erc721BatchBurnable_revert_when_requesting_token_at_non_existant_index() public {
         uint256 index = MINTED_SUPPLY + 1;
         _mintFixture();
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721Enumerable.IERC721Enumerable_INDEX_OUT_OF_BOUNDS.selector,
-            index
-          )
-        );
+        vm.expectRevert(IERC721Enumerable.IERC721Enumerable_INDEX_OUT_OF_BOUNDS.selector);
         testContract.tokenByIndex(index);
       }
     }

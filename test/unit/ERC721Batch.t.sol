@@ -102,12 +102,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         address approvedAccount = OPERATOR.addr;
         uint256 tokenId = TARGET_TOKEN;
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_NONEXISTANT_TOKEN.selector,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_NONEXISTANT_TOKEN.selector);
         testContract.approve(approvedAccount, tokenId);
       }
       function test_unit_erc721Batch_revert_when_operator_not_approved() public {
@@ -116,13 +111,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         uint256 tokenId = TARGET_TOKEN;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_CALLER_NOT_APPROVED.selector,
-            operator,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_CALLER_NOT_APPROVED.selector);
         testContract.approve(approvedAccount, tokenId);
       }
       function test_unit_erc721Batch_revert_when_approving_token_owner() public {
@@ -155,13 +144,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         uint256 tokenId = TARGET_TOKEN;
         _approveFixture(approvedAccount);
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_CALLER_NOT_APPROVED.selector,
-            operator,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_CALLER_NOT_APPROVED.selector);
         testContract.approve(approvedAccount, tokenId);
       }
       function test_unit_erc721Batch_emit_Approval_event_when_caller_is_approved_for_all() public {
@@ -187,12 +170,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         address recipient = RECIPIENT.addr;
         uint256 tokenId = TARGET_TOKEN;
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_NONEXISTANT_TOKEN.selector,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_NONEXISTANT_TOKEN.selector);
         testContract.safeTransferFrom(tokenOwner, recipient, tokenId);
       }
       function test_unit_erc721Batch_revert_when_recipient_is_address_zero() public {
@@ -202,12 +180,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         uint256 tokenId = TARGET_TOKEN;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_INVALID_RECEIVER.selector,
-            recipient
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_INVALID_RECEIVER.selector);
         testContract.safeTransferFrom(tokenOwner, recipient, tokenId);
       }
       function test_unit_erc721Batch_revert_when_from_dont_own_token() public {
@@ -227,13 +200,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         uint256 tokenId = TARGET_TOKEN;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_CALLER_NOT_APPROVED.selector,
-            operator,
-            TARGET_TOKEN
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_CALLER_NOT_APPROVED.selector);
         testContract.safeTransferFrom(tokenOwner, recipient, tokenId);
       }
       function test_unit_erc721Batch_revert_when_receiver_is_non_receiver_contract() public {
@@ -244,12 +211,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         uint256 tokenId = TARGET_TOKEN;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_INVALID_RECEIVER.selector,
-            recipient
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_INVALID_RECEIVER.selector);
         testContract.safeTransferFrom(tokenOwner, recipient, tokenId);
       }
       function test_unit_erc721Batch_revert_when_receiver_contract_returns_unexpected_value() public {
@@ -263,12 +225,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         uint256 tokenId = TARGET_TOKEN;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_INVALID_RECEIVER.selector,
-            recipient
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_INVALID_RECEIVER.selector);
         testContract.safeTransferFrom(tokenOwner, recipient, tokenId);
       }
       function test_unit_erc721Batch_revert_when_receiver_contract_reverts_with_custom_error() public {
@@ -424,12 +381,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         address recipient = RECIPIENT.addr;
         uint256 tokenId = TARGET_TOKEN;
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_NONEXISTANT_TOKEN.selector,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_NONEXISTANT_TOKEN.selector);
         testContract.transferFrom(tokenOwner, recipient, tokenId);
       }
       function test_unit_erc721Batch_revert_when_recipient_is_address_zero() public {
@@ -439,12 +391,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         uint256 tokenId = TARGET_TOKEN;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_INVALID_RECEIVER.selector,
-            recipient
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_INVALID_RECEIVER.selector);
         testContract.transferFrom(tokenOwner, recipient, tokenId);
       }
       function test_unit_erc721Batch_revert_when_from_dont_own_token() public {
@@ -464,13 +411,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         uint256 tokenId = TARGET_TOKEN;
         _mintFixture();
         vm.prank(operator);
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_CALLER_NOT_APPROVED.selector,
-            operator,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_CALLER_NOT_APPROVED.selector);
         testContract.transferFrom(tokenOwner, recipient, tokenId);
       }
       function test_unit_erc721Batch_emit_Transfer_event_when_caller_is_token_owner() public {
@@ -564,22 +505,12 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
       function test_unit_erc721Batch_revert_when_requesting_approval_status_of_token_zero() public {
         uint256 tokenId = 0;
         _mintFixture();
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_NONEXISTANT_TOKEN.selector,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_NONEXISTANT_TOKEN.selector);
         testContract.getApproved(tokenId);
       }
       function test_unit_erc721Batch_revert_when_requesting_approval_status_of_non_existant_token() public {
         uint256 tokenId = TARGET_TOKEN;
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_NONEXISTANT_TOKEN.selector,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_NONEXISTANT_TOKEN.selector);
         testContract.getApproved(tokenId);
       }
       function test_unit_erc721Batch_individual_approval_status_of_freshly_minted_token_is_address_zero() public {
@@ -605,22 +536,12 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
     contract Unit_OwnerOf is Deployed {
       function test_unit_erc721Batch_revert_when_requesting_ownership_of_token_zero() public {
         uint256 tokenId = 0;
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_NONEXISTANT_TOKEN.selector,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_NONEXISTANT_TOKEN.selector);
         testContract.ownerOf(tokenId);
       }
       function test_unit_erc721Batch_revert_when_requesting_ownership_of_non_existant_token() public {
         uint256 tokenId = TARGET_TOKEN;
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_NONEXISTANT_TOKEN.selector,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_NONEXISTANT_TOKEN.selector);
         testContract.ownerOf(tokenId);
       }
       function test_unit_erc721Batch_ownership_of_existing_tokens_is_accurate() public {
@@ -645,12 +566,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
     contract Unit_TokenByIndex is Deployed {
       function test_unit_erc721Batch_revert_when_requesting_token_at_non_existant_index() public {
         uint256 index = TARGET_INDEX;
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721Enumerable.IERC721Enumerable_INDEX_OUT_OF_BOUNDS.selector,
-            index
-          )
-        );
+        vm.expectRevert(IERC721Enumerable.IERC721Enumerable_INDEX_OUT_OF_BOUNDS.selector);
         testContract.tokenByIndex(index);
       }
       function test_unit_erc721Batch_token_by_index_is_accurate() public {
@@ -675,12 +591,7 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
         address tokenOwner = OPERATOR.addr;
         uint256 index = TARGET_INDEX;
         _mintFixture();
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721Enumerable.IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS.selector,
-            index
-          )
-        );
+        vm.expectRevert(IERC721Enumerable.IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS.selector);
         testContract.tokenOfOwnerByIndex(tokenOwner, index);
       }
       function test_unit_erc721Batch_token_of_owner_by_index_is_accurate() public {
@@ -740,22 +651,12 @@ contract Deployed is TestHelper, IERC721Events, IERC2309 {
     contract Unit_TokenURI is Deployed {
       function test_unit_erc721Batch_revert_when_requesting_uri_of_token_zero() public {
         uint256 tokenId = 0;
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_NONEXISTANT_TOKEN.selector,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_NONEXISTANT_TOKEN.selector);
         testContract.tokenURI(tokenId);
       }
       function test_unit_erc721Batch_revert_when_requesting_uri_of_non_existant_token() public {
         uint256 tokenId = TARGET_TOKEN;
-        vm.expectRevert(
-          abi.encodeWithSelector(
-            IERC721.IERC721_NONEXISTANT_TOKEN.selector,
-            tokenId
-          )
-        );
+        vm.expectRevert(IERC721.IERC721_NONEXISTANT_TOKEN.selector);
         testContract.tokenURI(tokenId);
       }
       function test_unit_erc721Batch_token_uri_is_accurate() public {

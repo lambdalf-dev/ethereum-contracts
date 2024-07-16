@@ -13,14 +13,10 @@ interface IERC721Enumerable /* is IERC721 */ {
   // **************************************
   // *****           ERRORS           *****
   // **************************************
-    /// @dev Thrown when trying to get the token at an index that doesn"t exist.
-    /// 
-    /// @param index the inexistant index
-    error IERC721Enumerable_INDEX_OUT_OF_BOUNDS(uint256 index);
-    /// @dev Thrown when trying to get the token owned by `tokenOwner` at an index that doesn"t exist.
-    /// 
-    /// @param index the inexistant index
-    error IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS(uint256 index);
+    /// @dev Thrown when trying to get the token at an index that does not exist.
+    error IERC721Enumerable_INDEX_OUT_OF_BOUNDS();
+    /// @dev Thrown when trying to get the token owned by tokenOwner at an index that does not exist.
+    error IERC721Enumerable_OWNER_INDEX_OUT_OF_BOUNDS();
   // **************************************
 
   // **************************************

@@ -15,7 +15,7 @@ contract Mock_Whitelist is Whitelist {
   function consumeWhitelist(address account_, uint8 whitelistId_, uint256 qty_, uint256 alloted_, Proof calldata proof_) public {
     uint256 _allocation_ = checkWhitelistAllowance(account_, whitelistId_, alloted_, proof_);
     if (_allocation_ < qty_) {
-      revert WHITELIST_FORBIDDEN(account_);
+      revert WHITELIST_FORBIDDEN();
     }
     _consumeWhitelist(account_, whitelistId_, qty_);
   }

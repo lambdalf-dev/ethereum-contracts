@@ -13,23 +13,16 @@ interface IERC721 /* is IERC165 */ {
   // **************************************
   // *****           ERRORS           *****
   // **************************************
-    /// @dev Thrown when `operator` is not allowed to manage `tokenId`.
-    /// 
-    /// @param operator address trying to manage the token
-    /// @param tokenId identifier of the NFT being referenced
-    error IERC721_CALLER_NOT_APPROVED(address operator, uint256 tokenId);
+    /// @dev Thrown when operator is not allowed to manage tokenId.
+    error IERC721_CALLER_NOT_APPROVED();
     /// @dev Thrown when user tries to approve themselves for managing a token they own.
     error IERC721_INVALID_APPROVAL();
     /// @dev Thrown when a token is being transferred to a contract unable to handle it or the zero address.
-    /// 
-    /// @param receiver address unable to receive the token
-    error IERC721_INVALID_RECEIVER(address receiver);
+    error IERC721_INVALID_RECEIVER();
     /// @dev Thrown when checking ownership of the wrong token owner.
     error IERC721_INVALID_TOKEN_OWNER();
-    /// @dev Thrown when the requested token doesn"t exist.
-    /// 
-    /// @param tokenId identifier of the NFT being referenced
-    error IERC721_NONEXISTANT_TOKEN(uint256 tokenId);
+    /// @dev Thrown when the requested token does not exist.
+    error IERC721_NONEXISTANT_TOKEN();
   // **************************************
 
   // **************************************
