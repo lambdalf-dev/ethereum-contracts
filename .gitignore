@@ -6,6 +6,7 @@ artifacts
 
 # dependencies
 /node_modules
+/dependencies
 
 # testing
 /coverage

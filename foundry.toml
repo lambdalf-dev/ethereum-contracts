@@ -12,6 +12,7 @@
   solc = "0.8.25"
   src = "src"
   test = "test"
+  libs = ["dependencies"]
 
 [etherscan]
   arbitrum = { key = "${API_KEY_ARBISCAN}" }
@@ -45,5 +46,16 @@
   optimism = "https://optimism-mainnet.infura.io/v3/${API_KEY_INFURA}"
   polygon = "https://polygon-mainnet.infura.io/v3/${API_KEY_INFURA}"
   sepolia = "https://sepolia.infura.io/v3/${API_KEY_INFURA}"
+
+[dependencies]
+  forge-std = "1.9.7"
+  solady = "0.1.23"
+
+[soldeer]
+  remappings_generate = true
+  remappings_regenerate = false
+  remappings_version = false
+  remappings_prefix = ""
+  remappings_location = "txt"
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
