@@ -366,6 +366,41 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
     // ***********
     // * IERC721 *
     // ***********
+      /// @dev Hook that is called before a set of serially-ordered token IDs
+      /// are about to be transferred. This includes minting.
+      /// And also called before burning one token.
+      ///
+      /// @param from_ the current owner of the NFT
+      /// @param to_ the new owner
+      /// @param startTokenId_ the first token ID to be transferred
+      /// @param quantity_ the amount to be transferred
+      ///
+      /// Calling conditions:
+      ///
+      /// - When `from` and `to` are both non-zero, `from`'s `tokenId` will be
+      /// transferred to `to`.
+      /// - When `from` is zero, `tokenId` will be minted for `to`.
+      /// - When `to` is zero, `tokenId` will be burned by `from`.
+      /// - `from` and `to` are never both zero.
+      function _beforeTokenTransfers(address from_, address to_, uint256 startTokenId_, uint256 quantity_) internal virtual {}
+
+      /// @dev Hook that is called after a set of serially-ordered token IDs
+      /// have been transferred. This includes minting.
+      /// And also called after one token has been burned.
+      ///
+      /// @param from_ the current owner of the NFT
+      /// @param to_ the new owner
+      /// @param startTokenId_ the first token ID to be transferred
+      /// @param quantity_ the amount to be transferred
+      ///
+      /// Calling conditions:
+      ///
+      /// - When `from` and `to` are both non-zero, `from`'s `tokenId` has been
+      /// transferred to `to`.
+      /// - When `from` is zero, `tokenId` has been minted for `to`.
+      /// - When `to` is zero, `tokenId` has been burned by `from`.
+      /// - `from` and `to` are never both zero.
+      function _afterTokenTransfers(address from_, address to_, uint256 startTokenId_, uint256 quantity_) internal virtual {}
       /// @dev Internal function to invoke {IERC721Receiver-onERC721Received} on a target address.
       /// The call is not executed if the target address is not a contract.
       /// 
@@ -489,6 +524,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
       /// @param toAddress_ the new owner
       /// @param tokenId_ identifier of the NFT being referenced
       function _transfer(address fromAddress_, address toAddress_, uint256 tokenId_) internal virtual {
+        _beforeTokenTransfers(from, to, tokenId, 1);
         _approvals[tokenId_] = address(0);
         uint256 _previousId_ = tokenId_ > 1 ? tokenId_ - 1 : 1;
         uint256 _nextId_ = tokenId_ + 1;
@@ -507,6 +543,7 @@ IERC721, IERC721Metadata, IERC721Enumerable, IERC2309 {
         }
         _owners[tokenId_] = toAddress_;
         emit Transfer(fromAddress_, toAddress_, tokenId_);
+        _afterTokenTransfers(from, to, tokenId, 1);
       }
     // ***********
 
